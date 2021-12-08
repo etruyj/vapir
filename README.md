@@ -1,4 +1,4 @@
-# BlueVision blue_api
+# UNDER CONSTRUCTION: SUBSEQUENT README WAS COPIED FROM DIFFERENT REPO
 
 ## Description
 blue_api is a command line script for both linux and Windows (.bat) environments to allow automated administration a Spectra Logic Stack tape library. This is a work in progress that is being expanded as needed. Current it only allows for automating tape moves and tape ejection along with the API calls necessary for these commands to work. If any features are desired, please log them in the Issues as enhancement requests.
