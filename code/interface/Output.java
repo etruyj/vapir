@@ -8,6 +8,7 @@ package com.socialvagrancy.vail.ui;
 import com.socialvagrancy.vail.structures.OutputFormat;
 import com.socialvagrancy.vail.ui.display.Print;
 import com.socialvagrancy.vail.ui.display.Table;
+import com.socialvagrancy.vail.ui.display.XML;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,6 +49,10 @@ public class Output
 			case "csv":
 			case "table":
 				Table.format(output, output_format);
+				break;
+			case "XML":
+			case "xml":
+				XML.display(output);
 				break;
 		}
 	}
