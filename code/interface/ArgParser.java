@@ -1,4 +1,4 @@
-package com.socialvagrancy.bluevision.ui;
+package com.socialvagrancy.vail.ui;
 
 public class ArgParser
 {
@@ -12,6 +12,7 @@ public class ArgParser
 	private String option3;
 	private String option4;
 	private String output_format;
+	private boolean boolean_flag;
 	private boolean help_requested;
 	private boolean option1_set;
 	private boolean option2_set;
@@ -31,6 +32,7 @@ public class ArgParser
 		option3 = "none";
 		option4 = "none";
 		output_format = "shell";
+		boolean_flag = false;
 		help_requested = false;
 		option1_set = false;
 		option2_set = false;
@@ -43,6 +45,7 @@ public class ArgParser
 	//	Getters
 	//==============================================
 	
+	public boolean getBooleanFlag() { return boolean_flag; }
 	public String getCommand() { return command; }
 	public String getIP() { return ip_address; }
 	public String getOption1() { return option1; }
@@ -111,6 +114,20 @@ public class ArgParser
 		}
 	}
 
+	public void setBooleanFlag(boolean option)
+	{
+		if(boolean_flag)
+		{
+			// Already set.
+			isValid = false;
+		}
+		else
+		{
+			boolean_flag = option;
+		}
+	}
+
+
 	public boolean checkValidInputs()
 	{
 		// Just a quick check to make sure 
@@ -148,6 +165,10 @@ public class ArgParser
 		{
 			switch(args[i])
 			{
+				case "--boolean-flag":
+				case "--active-only":
+					setBooleanFlag(true);
+					break;
 				case "-c":
 				case "--command":
 					if((i+1)<args.length)
@@ -169,8 +190,7 @@ public class ArgParser
 					help_requested = true;
 					break;
 				case "--option1":
-				case "--source-type":
-				case "--src-type":
+				case "--account":
 					if((i+1)<args.length)
 					{
 						setOption1(args[i+1]);
@@ -178,8 +198,6 @@ public class ArgParser
 					}
 					break;
 				case "--option2":
-				case "--slot":
-				case "--source":
 					if((i+1)<args.length)
 					{
 						setOption2(args[i+1]);
@@ -187,9 +205,6 @@ public class ArgParser
 					}
 					break;	
 				case "--option3":
-				case "--destination-type":
-				case "--dest-type":
-				case "--target-type":
 					if((i+1)<args.length)
 					{
 						setOption3(args[i+1]);
@@ -197,9 +212,6 @@ public class ArgParser
 					}
 					break;	
 				case "--option4":
-				case "--destination":
-				case "--input-file":
-				case "--target":
 					if((i+1)<args.length)
 					{
 						setOption4(args[i+1]);

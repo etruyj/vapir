@@ -1,4 +1,4 @@
-package com.socialvagrancy.bluevision.utils;
+package com.socialvagrancy.vail.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -156,10 +156,13 @@ public class Connector
 			cxn.setRequestProperty("Accept", "application/json");
 			cxn.setRequestProperty("Authorization", token);
 
-			OutputStream output = cxn.getOutputStream();
-			byte[] input = body.getBytes("utf-8");
-			output.write(input, 0, input.length);
-			
+			if(body.length() > 0)
+			{
+				System.out.println("HERE");
+				OutputStream output = cxn.getOutputStream();
+				byte[] input = body.getBytes("utf-8");
+				output.write(input, 0, input.length);
+			}
 			
 			// Read response	
 			BufferedReader br = new BufferedReader(new InputStreamReader(cxn.getInputStream(), "utf-8"));

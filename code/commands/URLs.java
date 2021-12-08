@@ -1,25 +1,30 @@
-package com.socialvagrancy.bluevision.commands;
+package com.socialvagrancy.vail.commands;
 
 public class URLs
 {
-
-	public static String libraryInventory(String ipaddress, String port)
+	public static String accountsURL(String ipaddress)
 	{
-		return "https://" + ipaddress + ":" + port + "/rest/library/inventory";
+		return "https://" + ipaddress + "/sl/api/accounts";
 	}
 
-	public static String loginURL(String ipaddress, String port)
+	public static String clearCacheURL(String ipaddress)
 	{
-		return "https://" + ipaddress + ":" + port + "/rest/login";
+		return "https://" + ipaddress + "/sl/api/iam/users/clear_cache";
 	}
 
-	public static String moveMediaURL(String ipaddress, String port)
+	public static String keysURL(String ipaddress, String account, String user)
 	{
-		return "https://" + ipaddress + ":" + port + "/rest/library/movemedia";
+		return "https://" + ipaddress + "/sl/api/iam/users/" + account +"/" + user + "/keys";
 	}
 	
-	public static String partitionInfoURL(String ipaddress, String port)
+	public static String loginURL(String ipaddress)
 	{
-		return "https://" + ipaddress + ":" + port + "/rest/partition/information";
+		return "https://" + ipaddress + "/sl/api/tokens";
 	}
+
+	public static String usersURL(String ipaddress)
+	{
+		return "https://" + ipaddress + "/sl/api/iam/users";
+	}
+
 }

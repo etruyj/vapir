@@ -1,9 +1,12 @@
-package com.socialvagrancy.bluevision.commands;
+package com.socialvagrancy.vail.commands;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
-import com.socialvagrancy.bluevision.structures.*;
-import com.socialvagrancy.bluevision.utils.Connector;
+import com.socialvagrancy.vail.structures.Account;
+import com.socialvagrancy.vail.structures.Token;
+import com.socialvagrancy.vail.structures.User;
+import com.socialvagrancy.vail.structures.UserKey;
+import com.socialvagrancy.vail.utils.Connector;
 
 import com.socialvagrancy.utils.Logger;
 
@@ -17,37 +20,125 @@ public class BasicCommands
 		logbook = logs;
 	}
 
-	public Inventory libraryInventory(String ipaddress, String port, String partition)
+	//===========================================================
+	// Commands
+	//===========================================================
+
+	public String clearCache(String ipaddress)
 	{
-		Gson gson = new Gson();
+		String url = URLs.clearCacheURL(ipaddress);
 
-		String url = URLs.libraryInventory(ipaddress, port);
-
-		logbook.logWithSizedLogRotation("Checking inventory...", 1);
-		logbook.logWithSizedLogRotation("GET " + url, 2);
-		logbook.logWithSizedLogRotation("Partition specified: " + partition, 2);
+		logbook.logWithSizedLogRotation("Clearing cached user permissions...", 1);
+		logbook.logWithSizedLogRotation("POST " + url, 2);
 
 		Connector conn = new Connector();
 
+		String response = conn.POST(url, token, "");
+	
+		if(response.length() > 0)
+		{
+			logbook.logWithSizedLogRotation(response, 3);
+			return response;
+		}
+		else
+		{
+			logbook.logWithSizedLogRotation("Cache cleared successfully.", 2);
+			return "Cache cleared successfully.";
+		}
+	}
+
+	public Account[] listAccounts(String ipaddress)
+	{
+		Gson gson = new Gson();
+		
+		String url = URLs.accountsURL(ipaddress);
+
+		logbook.logWithSizedLogRotation("Querying Sphere for list of accounts...", 1);
+		logbook.logWithSizedLogRotation("GET " + url, 2);
+
+		Connector conn = new Connector();
+		
 		String response = conn.GET(url, token);
 
 		try
 		{
-			return gson.fromJson(response, Inventory.class);
+			Account[] accounts = gson.fromJson(response, Account[].class);
+
+			logbook.logWithSizedLogRotation("Found (" + accounts.length + ") accounts", 2);
+
+			return accounts;
 		}
 		catch(JsonParseException e)
 		{
-			System.out.println(e.getMessage());
-
-			return new Inventory();
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+		
+			return null;
 		}
 	}
 
-	public boolean login(String ipaddress, String port, String username, String password)
+	public User[] listUsers(String ipaddress)
+	{
+		Gson gson = new Gson();
+		
+		String url = URLs.usersURL(ipaddress);
+
+		logbook.logWithSizedLogRotation("Querying Sphere for a full list of users...", 1);
+		logbook.logWithSizedLogRotation("GET " + url, 2);
+
+		Connector conn = new Connector();
+		
+		String response = conn.GET(url, token);
+
+		try
+		{
+			User[] users = gson.fromJson(response, User[].class);
+
+			logbook.logWithSizedLogRotation("Found (" + users.length + ") users", 2);
+
+			return users;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+		
+			return null;
+		}
+	}
+
+	public UserKey[] listUserKeys(String ipaddress, String account, String user)
+	{
+		Gson gson = new Gson();
+		
+		String url = URLs.keysURL(ipaddress, account, user);
+
+		logbook.logWithSizedLogRotation("Querying Sphere for access keys associated with " + account + "/" + user + "...", 1);
+		logbook.logWithSizedLogRotation("GET " + url, 2);
+
+		Connector conn = new Connector();
+		
+		String response = conn.GET(url, token);
+
+		try
+		{
+			UserKey[] keys = gson.fromJson(response, UserKey[].class);
+
+			logbook.logWithSizedLogRotation("Found (" + keys.length + ") keys", 2);
+
+			return keys;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+		
+			return null;
+		}
+	}
+
+	public boolean login(String ipaddress, String username, String password)
 	{
 		Gson gson = new Gson();
 
-		String url = URLs.loginURL(ipaddress, port);
+		String url = URLs.loginURL(ipaddress);
 
 		logbook.logWithSizedLogRotation("Logging in...", 1);
 		logbook.logWithSizedLogRotation("POST " + url, 2);
@@ -65,7 +156,7 @@ public class BasicCommands
 		{
 			Token tok = gson.fromJson(response, Token.class);
 		
-			token = tok.getToken();
+			token = "Bearer " + tok.getToken();
 
 			logbook.logWithSizedLogRotation("Login SUCCESSFUL", 2);
 
@@ -79,56 +170,4 @@ public class BasicCommands
 			return false;
 		}
 	}
-
-	public String moveMedia(String ipaddress, String port, MoveDetails move)
-	{
-		Gson gson = new Gson();
-		Connector conn = new Connector();
-
-		String url = URLs.moveMediaURL(ipaddress, port);
-		String body = gson.toJson(move);
-
-		logbook.logWithSizedLogRotation("Issuing move command...", 1);
-		logbook.logWithSizedLogRotation("POST " + url, 2);
-		logbook.logWithSizedLogRotation("Moving " + move.SrcType + ":" + move.SrcAddress + " to " + move.DestType + ":" + move.DestAddress, 2);
-		
-		String response = conn.POST(url, token, body);
-		
-		if(response.length()==0)
-		{
-			logbook.logWithSizedLogRotation("Move SUCCESSFUL", 2);
-			return "[SUCCESS]";
-		}
-		else
-		{
-			logbook.logWithSizedLogRotation("Move FAILED", 2);
-			return	"[FAILED]";
-		}	
-	}
-
-	public PartitionInfo[] partitionInfo(String ipaddress, String port)
-	{
-		Gson gson = new Gson();
-
-		String url = URLs.partitionInfoURL(ipaddress, port);
-
-		Connector conn = new Connector();
-		
-		logbook.logWithSizedLogRotation("Requesting partition information...", 1);
-		logbook.logWithSizedLogRotation("GET " + url, 2);
-		
-		String response = conn.GET(url, token);
-
-		try
-		{
-			PartitionInfo[] partitions = gson.fromJson(response, PartitionInfo[].class);
-			
-			return partitions;
-		}
-		catch(JsonParseException e)
-		{
-			System.out.println(e.getMessage());
-			return new PartitionInfo[0];
-		}
-	}	
 }

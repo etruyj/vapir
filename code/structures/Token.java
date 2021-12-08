@@ -1,4 +1,4 @@
-package com.socialvagrancy.bluevision.structures;
+package com.socialvagrancy.vail.structures;
 
 public class Token
 {
