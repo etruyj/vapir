@@ -6,6 +6,8 @@
 package com.socialvagrancy.vail.ui;
 
 import com.socialvagrancy.vail.structures.OutputFormat;
+import com.socialvagrancy.vail.ui.display.Print;
+import com.socialvagrancy.vail.ui.display.Table;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,7 +23,7 @@ public class Output
 	{
 		for(int i=0; i<response.size(); i++)
 		{
-			println("none", response.get(i), 0, false); 
+			Print.line("none", response.get(i), 0, false); 
 		}
 	}
 
@@ -29,7 +31,7 @@ public class Output
 	{
 		// Print a single line response from a query
 		// Used for failed queries and when there is no info.
-		println("none", singleResponse, 0, false);
+		Print.line("none", singleResponse, 0, false);
 	}
 
 	public static void print(ArrayList<OutputFormat> output, String output_format)
@@ -37,13 +39,15 @@ public class Output
 		switch(output_format)
 		{
 			case "debug":
-				printDebug(output);
+				Print.debug(output);
 				break;
 			case "shell":
-				printShell(output);
+				Print.shell(output);
 				break;
+			case "CSV":
+			case "csv":
 			case "table":
-				formatTable(output);
+				Table.format(output, output_format);
 				break;
 		}
 	}
@@ -51,37 +55,6 @@ public class Output
 	//==============================================
 	//	PRINT FUNCTIONS
 	//==============================================
-
-	public static void printHelp(String file_name)
-	{
-		try
-		{
-			File ifile = new File(file_name);
-
-			BufferedReader br = new BufferedReader(new FileReader(ifile));
-
-			String line = null;
-
-			while((line = br.readLine()) !=null)
-			{
-				System.out.println(line);
-			}
-
-			System.out.print("\n");
-		}
-		catch(IOException e)
-		{
-			System.out.println(e.getMessage());
-		}
-	}
-
-	public static void printDebug(ArrayList<OutputFormat> output)
-	{
-		for(int i=0; i<output.size(); i++)
-		{
-			System.err.println(output.get(i).header + ": " + output.get(i).value);
-		}
-	}
 
 	public static void printDeliminator(int columns, int column_width)
 	{
@@ -98,70 +71,6 @@ public class Output
 			}
 		}
 		System.out.println("+");
-	}
-
-	public static void println(String header, String value, int indent, boolean includeHeaders)
-	{
-		// This is the final output, print to shell class.
-		
-		for(int i=0; i<indent; i++)
-		{
-			System.out.print("\t");
-		}
-
-		if(includeHeaders)
-		{
-			System.out.print(header + ": ");
-		}
-
-		System.out.println(value);
-	}
-
-	public static void printShell(ArrayList<OutputFormat> output)
-	{
-		// formats output for standard shell format.
-
-		int indent = 0;
-		String current_heading = "none";
-		String[] headers;
-
-		for(int i=0; i<output.size(); i++)
-		{
-			headers = output.get(i).header.split(">");
-		
-		
-			// Print categories.	
-			if(output.get(i).value == null)
-			{
-		
-				if(!headers[headers.length-1].equals(current_heading))
-				{
-					// Current header isn't the same as the reference.
-					indent++;
-					current_heading = headers[headers.length-1];
-
-					println(headers[headers.length-1], "", indent-1, true);
-				}
-				else
-				{
-					indent--;
-					// Make sure we're deeper than the root 
-					// element of the tree.
-					if(headers.length>1)
-					{
-						current_heading = headers[headers.length-2];
-					}
-					else
-					{
-						current_heading = "";
-					}
-				}
-			}
-			else
-			{
-				println(headers[headers.length-1], output.get(i).value, indent, true);
-			}
-		}
 	}
 
 	public static void formatTable(ArrayList<OutputFormat> output)
@@ -246,7 +155,7 @@ public class Output
 		else
 		{
 			// Print in shell format if table doesn't fit.
-			printShell(output);
+			Print.shell(output);
 		}
 
 	}

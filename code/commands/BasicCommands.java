@@ -3,6 +3,7 @@ package com.socialvagrancy.vail.commands;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.socialvagrancy.vail.structures.Account;
+import com.socialvagrancy.vail.structures.Bucket;
 import com.socialvagrancy.vail.structures.Token;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
@@ -72,6 +73,32 @@ public class BasicCommands
 		{
 			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
 		
+			return null;
+		}
+	}
+
+	public Bucket[] listBuckets(String ipaddress)
+	{
+		Gson gson = new Gson();
+
+		String url = URLs.bucketsURL(ipaddress);
+	
+		logbook.logWithSizedLogRotation("Querying Sphere for a full list of buckets...", 1);
+		logbook.logWithSizedLogRotation("GET " + url, 2);
+
+		Connector conn = new Connector();
+
+		String response = conn.GET(url, token);
+
+		try
+		{
+			Bucket[] buckets = gson.fromJson(response, Bucket[].class);
+			logbook.logWithSizedLogRotation("Found (" + buckets.length + ")", 2);
+			return buckets;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
 			return null;
 		}
 	}

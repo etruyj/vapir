@@ -1,8 +1,11 @@
 package com.socialvagrancy.vail.commands;
 
 import com.socialvagrancy.vail.commands.sub.PolicyTest;
+import com.socialvagrancy.vail.commands.sub.SummarizeBuckets;
 import com.socialvagrancy.vail.commands.sub.SumarizeUsers;
 import com.socialvagrancy.vail.structures.Account;
+import com.socialvagrancy.vail.structures.Bucket;
+import com.socialvagrancy.vail.structures.BucketSummary;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
 import com.socialvagrancy.vail.structures.UserSummary;
@@ -24,6 +27,20 @@ public class AdvancedCommands
 	public void minimumIAMPermissions(String ip_address)
 	{
 		PolicyTest.findMinIAMPermissions(sphere, ip_address, "../lib/permissions/iam.txt", "../output/MinIAMPolicy.txt", logbook);
+	}
+
+	public ArrayList<BucketSummary> filteredBucketList(String ip_address, String filter_account)
+	{
+		logbook.logWithSizedLogRotation("Summarizing buckets...", 1);
+
+		Account[] accounts = sphere.listAccounts(ip_address);
+		Bucket[] buckets = sphere.listBuckets(ip_address);
+
+		ArrayList<BucketSummary> bucket_list = SummarizeBuckets.filterByAccount(buckets, accounts, filter_account);
+
+		logbook.logWithSizedLogRotation("Found (" + bucket_list.size() + ")", 2);
+
+		return bucket_list;
 	}
 
 	public ArrayList<UserSummary> filteredUserList(String ip_address, String filter_account, boolean is_active)

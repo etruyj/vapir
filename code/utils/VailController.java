@@ -14,6 +14,8 @@ package com.socialvagrancy.vail.utils;
 import com.socialvagrancy.vail.commands.AdvancedCommands;
 import com.socialvagrancy.vail.commands.BasicCommands;
 import com.socialvagrancy.vail.structures.Account;
+import com.socialvagrancy.vail.structures.Bucket;
+import com.socialvagrancy.vail.structures.BucketSummary;
 import com.socialvagrancy.vail.structures.OutputFormat;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
@@ -95,6 +97,50 @@ public class VailController
 			output.add(line);
 		}
 		
+		return output;
+	}
+
+	public ArrayList<OutputFormat> listBuckets(String ip_address, String account)
+	{
+		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
+		OutputFormat line;
+
+		if(account.equals("none"))
+		{
+		}
+		else
+		{
+			ArrayList<BucketSummary> bucket_list = advanced.filteredBucketList(ip_address, account);
+
+			for(int i=0; i<bucket_list.size(); i++)
+			{
+				line = new OutputFormat();
+				line.header = "bucket";
+				line.value = null;
+				output.add(line);
+	
+				line = new OutputFormat();
+				line.header = "bucket>name";
+				line.value = bucket_list.get(i).name;
+				output.add(line);
+
+				line = new OutputFormat();
+				line.header = "bucket>accountName";
+				line.value = bucket_list.get(i).account_name;
+				output.add(line);
+
+				line = new OutputFormat();
+				line.header = "bucket>accountId";
+				line.value = bucket_list.get(i).account_id;
+				output.add(line);
+
+				line = new OutputFormat();
+				line.header = "bucket";
+				line.value = null;
+				output.add(line);
+			}
+		}
+
 		return output;
 	}
 

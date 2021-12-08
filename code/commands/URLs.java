@@ -7,6 +7,11 @@ public class URLs
 		return "https://" + ipaddress + "/sl/api/accounts";
 	}
 
+	public static String bucketsURL(String ipaddress)
+	{
+		return "https://" + ipaddress + "/sl/api/buckets";
+	}
+
 	public static String clearCacheURL(String ipaddress)
 	{
 		return "https://" + ipaddress + "/sl/api/iam/users/clear_cache";

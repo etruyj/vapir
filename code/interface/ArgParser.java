@@ -31,7 +31,7 @@ public class ArgParser
 		option2 = "none";
 		option3 = "none";
 		option4 = "none";
-		output_format = "shell";
+		output_format = "table";
 		boolean_flag = false;
 		help_requested = false;
 		option1_set = false;

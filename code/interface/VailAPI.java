@@ -3,6 +3,7 @@ package com.socialvagrancy.vail.ui;
 import com.socialvagrancy.vail.structures.OutputFormat;
 import com.socialvagrancy.vail.utils.VailController;
 import com.socialvagrancy.vail.ui.Output;
+import com.socialvagrancy.vail.ui.display.Print;
 
 import java.util.ArrayList;
 
@@ -27,6 +28,9 @@ public class VailAPI
 			case "list-accounts":
 				output = controller.listAccounts(ip);
 				break;
+			case "list-buckets":
+				output = controller.listBuckets(ip, option1);
+				break;
 			case "list-users":
 				output = controller.listUsers(ip, option1, boolean_flag);
 				break;
@@ -40,7 +44,14 @@ public class VailAPI
 
 		if(output != null)
 		{
-			Output.print(output, outputFormat);
+			if(output.size()>0)
+			{
+				Output.print(output, outputFormat);
+			}
+			else
+			{
+				Output.print("No results");
+			}
 		}
 	}
 
@@ -59,7 +70,7 @@ public class VailAPI
 		
 			if(aparser.helpRequested())
 			{
-				Output.printHelp("../lib/help/options.txt");
+				Print.help("../lib/help/options.txt");
 			}
 			else if(aparser.getCommand().substring(0, 4).equals("help"))
 			{
