@@ -3,7 +3,6 @@ package com.socialvagrancy.vail.ui;
 import com.socialvagrancy.vail.structures.OutputFormat;
 import com.socialvagrancy.vail.utils.VailController;
 import com.socialvagrancy.vail.ui.Output;
-import com.socialvagrancy.vail.ui.display.Print;
 
 import java.util.ArrayList;
 
@@ -70,7 +69,7 @@ public class VailAPI
 		
 			if(aparser.helpRequested())
 			{
-				Print.help("../lib/help/options.txt");
+				Output.printHelp("../lib/help/options.txt");
 			}
 			else if(aparser.getCommand().substring(0, 4).equals("help"))
 			{
