@@ -24,6 +24,10 @@ public class VailAPI
 			case "clear-cache":
 				controller.clearCache(ip);
 				break;
+			case "help":
+				Output.printHelp("../lib/help/basic.txt");
+				Output.printHelp("../lib/help/advanced.txt");
+				break;
 			case "list-accounts":
 				output = controller.listAccounts(ip);
 				break;
