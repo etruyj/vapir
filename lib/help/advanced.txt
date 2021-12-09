@@ -2,8 +2,6 @@ Advanced Commands
 
 These commands perform more complex tasks on the results of the basic API commands in order to expand the functionality of the API.
 
-eject-list		Ejects all the tapes or slots specified in an eject list file. Requires --input-file
-list-partitions		Prints all partition names.
-move-list		Executes the moves specified in a move list file. Requires --input-file
-protect-mailslots	Moves any tapes in the entry/exit slots to unpartitioned space in the library, protecting the data from unauthorzied access through the backup software.
+list-buckets		List all buckets and ownering accounts. Use --account [ ACCOUNT_NAME | ACCOUNT_ID ] to limit output to buckets belonging to a single account. Use --account all to list all buckets.
+list-users		List all users, the account associated with them and whether the user is activated in the Vail Sphere. Filter down by account with --account [ all | ACCOUNT_NAME | ACCOUNT_ID ] and/or filter down to only activated users with --active-only.
 

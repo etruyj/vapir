@@ -107,6 +107,30 @@ public class VailController
 
 		if(account.equals("none"))
 		{
+			Bucket[] buckets = sphere.listBuckets(ip_address);
+
+			for(int i=0; i< buckets.length; i++)
+			{
+				System.out.println("BUCKET");
+				System.out.println(buckets[i].lifecycle);
+				System.out.println(buckets[i].restore);
+
+				for(int j=0; j<buckets[i].acls.length; j++)
+				{
+					System.out.println("\t" + buckets[i].acls[j].type);
+					System.out.println("\t" + buckets[i].acls[j].id);
+					System.out.println("\tPermissions");
+					
+					for(int k=0; k<buckets[i].acls[j].permissions.length; k++)
+					{
+						System.out.println("\t\t" + buckets[i].acls[j].permissions[k]);
+					}
+				}
+
+				System.out.println(buckets[i].owner);
+				System.out.println(buckets[i].name);
+				System.out.println(buckets[i].created);	
+			}
 		}
 		else
 		{

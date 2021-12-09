@@ -1,7 +1,6 @@
 Basic Commands
 
-These are the basic commands that query the specified API on the Stack. These commands are documented in the Spectra Stack API documentation.
+These are the basic commands that query the specified API on the Spectra Logic Vail Sphere. 
 
-list-inventory		List information on all slots and drives in the library.
-move-media		Sends a move command to the libary. Must specify --source-type, --source, --target-type, and --target
-partition-info		Lists information on all partitions in the library.
+list-accounts		List all the accounts linked with the Vail Sphere system
+list-users		List all the IAM users belonging to any account paired with the Vail system. 
