@@ -15,11 +15,10 @@ import com.socialvagrancy.vail.commands.AdvancedCommands;
 import com.socialvagrancy.vail.commands.BasicCommands;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
-import com.socialvagrancy.vail.structures.BucketSummary;
 import com.socialvagrancy.vail.structures.OutputFormat;
+import com.socialvagrancy.vail.structures.Summary;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
-import com.socialvagrancy.vail.structures.UserSummary;
 import com.socialvagrancy.utils.Logger;
 
 import java.util.ArrayList;
@@ -43,203 +42,44 @@ public class VailController
 		return sphere.clearCache(ip_address);
 	}
 
+	public String createBucket(String ip_address, String bucket_name, String account)
+	{
+		if(!account.equals("none"))
+		{
+			return advanced.createBucketForAccount(ip_address, bucket_name, account);
+		}
+
+		return null;
+	}
+
 	public void findMinIAMPermissions(String ip_address)
 	{
 		advanced.minimumIAMPermissions(ip_address);
 	}
 
-	public ArrayList<OutputFormat> listAccounts(String ip_address)
+	public Account[] listAccounts(String ip_address)
 	{
-		Account[] accounts = sphere.listAccounts(ip_address);
-		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
-		OutputFormat line;
-
-		for(int i=0; i<accounts.length; i++)
-		{
-			line = new OutputFormat();
-			line.header = "account";
-			line.value = null;
-			output.add(line);
-			
-			line = new OutputFormat();
-			line.header = "account>id";
-			line.value = accounts[i].id;
-			output.add(line);
-			
-			line = new OutputFormat();
-			line.header = "account>canonicalId";
-			line.value = accounts[i].canonicalId;
-			output.add(line);
-			
-			line = new OutputFormat();
-			line.header = "account>externalId";
-			line.value = accounts[i].externalId;
-			output.add(line);
-			
-			line = new OutputFormat();
-			line.header = "account>roleArn";
-			line.value = accounts[i].roleArn;
-			output.add(line);
-			
-			line = new OutputFormat();
-			line.header = "account>username";
-			line.value = accounts[i].username;
-			output.add(line);
-			
-			line = new OutputFormat();
-			line.header = "account>email";
-			line.value = accounts[i].email;
-			output.add(line);
-			
-			line = new OutputFormat();
-			line.header = "account";
-			line.value = null;
-			output.add(line);
-		}
-		
-		return output;
+		return sphere.listAccounts(ip_address);
 	}
 
-	public ArrayList<OutputFormat> listBuckets(String ip_address, String account)
+	public Bucket[] listBuckets(String ip_address)
 	{
-		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
-		OutputFormat line;
-
-		if(account.equals("none"))
-		{
-			Bucket[] buckets = sphere.listBuckets(ip_address);
-
-			for(int i=0; i< buckets.length; i++)
-			{
-				System.out.println("BUCKET");
-				System.out.println(buckets[i].lifecycle);
-				System.out.println(buckets[i].restore);
-
-				for(int j=0; j<buckets[i].acls.length; j++)
-				{
-					System.out.println("\t" + buckets[i].acls[j].type);
-					System.out.println("\t" + buckets[i].acls[j].id);
-					System.out.println("\tPermissions");
-					
-					for(int k=0; k<buckets[i].acls[j].permissions.length; k++)
-					{
-						System.out.println("\t\t" + buckets[i].acls[j].permissions[k]);
-					}
-				}
-
-				System.out.println(buckets[i].owner);
-				System.out.println(buckets[i].name);
-				System.out.println(buckets[i].created);	
-			}
-		}
-		else
-		{
-			ArrayList<BucketSummary> bucket_list = advanced.filteredBucketList(ip_address, account);
-
-			for(int i=0; i<bucket_list.size(); i++)
-			{
-				line = new OutputFormat();
-				line.header = "bucket";
-				line.value = null;
-				output.add(line);
+		return sphere.listBuckets(ip_address);
+	}
 	
-				line = new OutputFormat();
-				line.header = "bucket>name";
-				line.value = bucket_list.get(i).name;
-				output.add(line);
-
-				line = new OutputFormat();
-				line.header = "bucket>accountName";
-				line.value = bucket_list.get(i).account_name;
-				output.add(line);
-
-				line = new OutputFormat();
-				line.header = "bucket>accountId";
-				line.value = bucket_list.get(i).account_id;
-				output.add(line);
-
-				line = new OutputFormat();
-				line.header = "bucket";
-				line.value = null;
-				output.add(line);
-			}
-		}
-
-		return output;
+	public ArrayList<Summary> listBucketSummary(String ip_address, String account)
+	{
+		return advanced.filteredBucketList(ip_address, account);
 	}
 
-	public ArrayList<OutputFormat> listUsers(String ip_address, String account, boolean active_only)
+	public User[] listUsers(String ip_address)
 	{
-		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
-		OutputFormat line; 
+		return sphere.listUsers(ip_address);
+	}
 
-		if(!active_only && account.equals("none"))
-		{
-			 User[] users = sphere.listUsers(ip_address);
-		
-			for(int i=0; i<users.length; i++)
-			{
-				line = new OutputFormat();
-				line.header = "user";
-				line.value = null;
-				output.add(line);
-				
-				line = new OutputFormat();
-				line.header = "user>username";
-				line.value = users[i].username;
-				output.add(line);
-				
-				line = new OutputFormat();
-				line.header = "user>accountId";
-				line.value = users[i].accountid;
-				output.add(line);
-				
-				line = new OutputFormat();
-				line.header = "user";
-				line.value = null;
-				output.add(line);
-			}
-		}
-		else
-		{
-			// More complex code.
-			ArrayList<UserSummary> summary = advanced.filteredUserList(ip_address, account, active_only);
-
-			for(int i=0; i<summary.size(); i++)
-			{
-				line = new OutputFormat();
-				line.header = "user";
-				line.value = null;
-				output.add(line);
-
-				line = new OutputFormat();
-				line.header = "user>username";
-				line.value = summary.get(i).username;
-				output.add(line);
-
-				line = new OutputFormat();
-				line.header = "user>accountName";
-				line.value = summary.get(i).account_name;
-				output.add(line);
-
-				line = new OutputFormat();
-				line.header = "user>accountId";
-				line.value = summary.get(i).account_id;
-				output.add(line);
-
-				line = new OutputFormat();
-				line.header = "user>status";
-				line.value = summary.get(i).status;
-				output.add(line);
-
-				line = new OutputFormat();
-				line.header = "user";
-				line.value = null;
-				output.add(line);
-			}
-		}
-
-		return output;
+	public ArrayList<Summary> listUserSummary(String ip_address, String account, boolean active_only)
+	{
+		return advanced.filteredUserList(ip_address, account, active_only);
 	}
 
 	public OutputFormat[] listKeys(String ip_address, String account, String user)

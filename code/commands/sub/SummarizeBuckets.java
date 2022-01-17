@@ -1,3 +1,8 @@
+//*******************************************************************
+// DEFUNCT: ALL FUNCTIONALITY MOVED TO COMMANDS/SUBS/BUCKETS.JAVA
+// ON JAN 17. DELETE IF NO ISSUES FOUND
+//*******************************************************************
+
 package com.socialvagrancy.vail.commands.sub;
 
 import com.socialvagrancy.vail.structures.Account;

@@ -1,3 +1,8 @@
+//*******************************************************************
+// DEFUNCT: FUNCTIONALITY MOVED TO COMMANDS/SUB/USERS.JAVA ON JAN 17
+// DELETE IF NO ISSUES FOUND
+//*******************************************************************
+
 package com.socialvagrancy.vail.commands.sub;
 
 import com.socialvagrancy.vail.commands.BasicCommands;

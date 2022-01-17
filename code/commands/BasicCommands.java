@@ -25,6 +25,41 @@ public class BasicCommands
 	// Commands
 	//===========================================================
 
+	public String createAccount(String ipaddress, String account_name, String email, String external_id, String role_arn)
+	{
+		Gson gson = new Gson();
+		Connector conn = new Connector();
+
+		String url = URLs.accountsURL(ipaddress);
+
+		logbook.logWithSizedLogRotation("Creating account [" + account_name + "] with role ARN: " + role_arn, 1);
+
+		Account account = new Account();
+		
+		if(!email.equals("none"))
+		{
+			account.email = email;
+		}
+		if(!external_id.equals("none"))
+		{
+			account.externalId = external_id;	
+		}
+
+		account.username = account_name;
+		account.roleArn = role_arn;
+
+		String body = gson.toJson(account, Account.class);
+
+		logbook.logWithSizedLogRotation("POST: " + url, 2);
+		logbook.logWithSizedLogRotation("BODY: " + body, 2);
+
+		String response = conn.POST(url, token, body);
+
+		logbook.logWithSizedLogRotation(response, 2);
+
+		return response;
+	}
+
 	public String clearCache(String ipaddress)
 	{
 		String url = URLs.clearCacheURL(ipaddress);
@@ -45,6 +80,102 @@ public class BasicCommands
 		{
 			logbook.logWithSizedLogRotation("Cache cleared successfully.", 2);
 			return "Cache cleared successfully.";
+		}
+	}
+
+	public Bucket createBucket(String ipaddress, String name, String json_body)
+	{
+		Gson gson = new Gson();
+		
+		String url = URLs.bucketsURL(ipaddress);
+
+		logbook.logWithSizedLogRotation("Creating new bucket (" + name + ") ...", 1);
+		logbook.logWithSizedLogRotation("POST " + url, 2);
+
+		Connector conn = new Connector();
+		
+		String response = conn.POST(url, token, json_body);
+
+		try
+		{
+			Bucket bucket = gson.fromJson(response, Bucket.class);
+
+			logbook.logWithSizedLogRotation("Successfully created " + bucket.name, 2);
+
+			return bucket;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+			logbook.logWithSizedLogRotation(response, 3);
+
+			return null;
+		}
+	}
+
+	public UserKey createUserKey(String ipaddress, String account, String user)
+	{
+		Gson gson = new Gson();
+		
+		String url = URLs.keysURL(ipaddress, account, user);
+
+		logbook.logWithSizedLogRotation("Creating new S3 Access key for " + account + "/" + user + "...", 1);
+		logbook.logWithSizedLogRotation("POST " + url, 2);
+
+		Connector conn = new Connector();
+		
+		String response = conn.POST(url, token, "");
+
+		try
+		{
+			UserKey key = gson.fromJson(response, UserKey.class);
+
+			logbook.logWithSizedLogRotation("Created key: " + key.id, 2);
+
+			return key;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+		
+			return null;
+		}
+	}
+
+	public boolean deleteUserKey(String ipaddress, String account, String user, String access_key)
+	{
+		Gson gson = new Gson();
+		
+		String url = URLs.keysDeleteURL(ipaddress, account, user, access_key);
+
+		logbook.logWithSizedLogRotation("Deleting S3 Access key (" + access_key + ") for " + account + "/" + user + "...", 1);
+		logbook.logWithSizedLogRotation("DELETE " + url, 2);
+
+		Connector conn = new Connector();
+		
+		String response = conn.DELETE(url, token);
+
+		System.out.println(response);
+
+		try
+		{
+			if(Integer.valueOf(response)>=200 && Integer.valueOf(response)<=300)
+			{
+				logbook.logWithSizedLogRotation("Key deleted successfully with code " + response, 2);
+				return true;
+			}
+			else
+			{
+				logbook.logWithSizedLogRotation("Keys deletion failed with code " + response, 3);
+				return false;
+			}
+
+		}
+		catch(JsonParseException e)
+		{
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+		
+			return false;
 		}
 	}
 

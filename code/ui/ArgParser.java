@@ -190,6 +190,7 @@ public class ArgParser
 					help_requested = true;
 					break;
 				case "--option1":
+				case "-a":
 				case "--account":
 					if((i+1)<args.length)
 					{
@@ -198,6 +199,8 @@ public class ArgParser
 					}
 					break;
 				case "--option2":
+				case "-b":
+				case "--bucket":
 					if((i+1)<args.length)
 					{
 						setOption2(args[i+1]);

@@ -51,13 +51,64 @@ public class Connector
 		}
 	}
 
+	public String DELETE(String httpRequest, String token)
+	{
+		// Send DELETE command to the server.
+
+		StringBuilder response = new StringBuilder();
+		int response_code = 0;
+
+		// Open connection		
+		try
+		{
+			URL url = new URL(httpRequest);
+			HttpURLConnection cxn = (HttpURLConnection) url.openConnection();
+		
+			// Configuration the connection
+			cxn.setRequestMethod("DELETE");
+			cxn.setDoOutput(true);
+			cxn.setRequestProperty("Content-Type", "application/json; utf-8");
+			cxn.setRequestProperty("Accept", "application/json");
+			cxn.setRequestProperty("Authorization", token);
+
+			// GET response code.
+			response_code = cxn.getResponseCode();
+
+			// Read response	
+			BufferedReader br = new BufferedReader(new InputStreamReader(cxn.getInputStream(), "utf-8"));
+
+			String responseLine = null;
+
+			while((responseLine = br.readLine()) != null)
+			{
+				response.append(responseLine);
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+
+		// Check to see if there is a response.
+		// If not, return the response code instead.
+		if(response.length()==0)
+		{
+			return Integer.toString(response_code);
+		}
+		else
+		{
+			return response.toString();
+		}
+	}
+
 	public String GET(String httpRequest, String token)
 	{
 		// Query library with a header (authorization)
 		// mostly just for logging in.
 
 		StringBuilder response = new StringBuilder();
-		
+		int response_code = 0;
+
 		// Open connection		
 		try
 		{
@@ -75,7 +126,10 @@ public class Connector
 			byte[] input = body.getBytes("utf-8");
 			output.write(input, 0, input.length);
 	*/		
-			
+
+			// GET response code.
+			response_code = cxn.getResponseCode();
+
 			// Read response	
 			BufferedReader br = new BufferedReader(new InputStreamReader(cxn.getInputStream(), "utf-8"));
 
@@ -91,7 +145,16 @@ public class Connector
 			System.out.println(e.getMessage());
 		}
 
-		return response.toString();
+		// Check to see if there is a response.
+		// If not, return the response code instead.
+		if(token.equals("code"))
+		{
+			return Integer.toString(response_code);
+		}
+		else
+		{
+			return response.toString();
+		}
 	}
 	
 	public String POST(String httpRequest, String body)
@@ -130,7 +193,8 @@ public class Connector
 		}
 		catch(Exception e)
 		{
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 
 		return response.toString();
@@ -158,7 +222,6 @@ public class Connector
 
 			if(body.length() > 0)
 			{
-				System.out.println("HERE");
 				OutputStream output = cxn.getOutputStream();
 				byte[] input = body.getBytes("utf-8");
 				output.write(input, 0, input.length);

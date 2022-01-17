@@ -19,9 +19,14 @@ public class URLs
 
 	public static String keysURL(String ipaddress, String account, String user)
 	{
-		return "https://" + ipaddress + "/sl/api/iam/users/" + account +"/" + user + "/keys";
+		return "https://" + ipaddress + "/sl/api/iam/users/" + account + "/" + user + "/keys";
 	}
-	
+
+	public static String keysDeleteURL(String ipaddress, String account, String user, String key)
+	{
+		return "https://" + ipaddress + "/sl/api/iam/users/" + account + "/" + user + "/keys/" + key;
+	}
+
 	public static String loginURL(String ipaddress)
 	{
 		return "https://" + ipaddress + "/sl/api/tokens";
