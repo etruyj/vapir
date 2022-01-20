@@ -27,9 +27,19 @@ public class URLs
 		return "https://" + ipaddress + "/sl/api/iam/users/" + account + "/" + user + "/keys/" + key;
 	}
 
+	public static String lifecycleURL(String ipaddress)
+	{
+		return "https://" + ipaddress + "/sl/api/lifecycles";
+	}
+
 	public static String loginURL(String ipaddress)
 	{
 		return "https://" + ipaddress + "/sl/api/tokens";
+	}
+
+	public static String storageURL(String ipaddress)
+	{
+		return "https://" + ipaddress + "/sl/api/storage";
 	}
 
 	public static String usersURL(String ipaddress)

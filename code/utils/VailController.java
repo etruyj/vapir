@@ -42,6 +42,11 @@ public class VailController
 		return sphere.clearCache(ip_address);
 	}
 
+	public ArrayList<String> configureSphere(String ip_address, String file_path)
+	{
+		return advanced.configureSphere(ip_address, file_path);
+	}
+
 	public String createBucket(String ip_address, String bucket_name, String account)
 	{
 		if(!account.equals("none"))

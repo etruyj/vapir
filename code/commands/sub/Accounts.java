@@ -12,6 +12,7 @@ import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.utils.Logger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Accounts
 {
@@ -167,5 +168,17 @@ public class Accounts
 		}
 
 		return "not found";
+	}
+
+	public static HashMap<String, String> mapNameToCanonicalID(Account[] accounts)
+	{
+		HashMap<String, String> map = new HashMap<String, String>();
+
+		for(int i=0; i<accounts.length; i++)
+		{
+			map.put(accounts[i].username, accounts[i].canonicalId);
+		}
+
+		return map;
 	}
 }

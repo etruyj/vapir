@@ -17,11 +17,79 @@ import com.socialvagrancy.utils.Logger;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Buckets
 {
+	public static Bucket createForAccount(BasicCommands sphere, String ip_address, Bucket bucket, Logger logbook)
+	{
+		logbook.logWithSizedLogRotation("Creating bucket [" + bucket.name + "] for account [" + bucket.owner + "]...", 1);
+
+		Account[] accounts = sphere.listAccounts(ip_address);
+		HashMap<String, String> account_map = Accounts.mapNameToCanonicalID(accounts);
+
+		// Make some edits to the bucket parameters
+		// otherwise Vail won't accept them.
+		
+		Bucket forJson = new Bucket();
+		Gson gson = new Gson();
+
+		forJson.name = bucket.name;
+		forJson.owner = account_map.get(bucket.owner);
+			
+		if(!bucket.lifecycle.equals("none"))
+		{
+			forJson.lifecycle = bucket.lifecycle;
+		}
+			
+		if(bucket.acls != null)
+		{
+			forJson.acls = bucket.acls;
+		}
+			
+		if(bucket.permissionType != null)
+		{
+			forJson.permissionType = bucket.permissionType;
+		}
+		else
+		{
+			forJson.permissionType = "NONE";
+		}
+		
+		// Find Canonical ID for bucket owner.
+		// The Sphere's Canonical ID isn't recognized for some reason.
+		// Testing if adding blank will work here.
+
+		if(bucket.owner.equals("Sphere") || bucket.owner.equals("sphere"))
+		{
+			logbook.logWithSizedLogRotation("Setting owner to \"\" for Sphere account...", 1);
+
+			bucket.owner = "";
+		}	
+		else if(account_map.get(bucket.owner) != null)
+		{
+			logbook.logWithSizedLogRotation("Canonical ID for account [" + bucket.owner + "] found: " + account_map.get(bucket.owner), 1);
+
+
+		}
+		else
+		{
+			logbook.logWithSizedLogRotation("ERROR: Unable to find Canonical ID for account [" + bucket.owner + "]", 3);
+
+			return null;
+		}
+		
+		String json_body = gson.toJson(forJson, Bucket.class);
+
+		return sphere.createBucket(ip_address, bucket.name, json_body);
+	}
+
 	public static String createForAccount(BasicCommands sphere, String ip_address, String bucket_name, String account, Logger logbook)
 	{
+		// Deprecated:
+		//  Canonical ID can be passed as owner in the json body to create the bucket.
+		// Still necessary to create buckets for the Sphere though.
+
 		logbook.logWithSizedLogRotation("Creating bucket (" + bucket_name + ") for account..." + account, 1);
 
 		ArrayList<Summary> account_users = Users.generateFilteredList(sphere, ip_address, account, false, logbook);

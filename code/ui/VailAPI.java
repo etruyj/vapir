@@ -28,6 +28,10 @@ public class VailAPI
 			case "clear-cache":
 				controller.clearCache(ip);
 				break;
+			case "configure":
+			case "configure-sphere":
+				Display.print(controller.configureSphere(ip, option1));
+				break;
 			case "create-bucket":
 				Display.output(controller.createBucket(ip, option2, option1), outputFormat);
 				break;

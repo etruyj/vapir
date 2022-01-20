@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
+import com.socialvagrancy.vail.structures.Lifecycle;
+import com.socialvagrancy.vail.structures.Storage;
 import com.socialvagrancy.vail.structures.Token;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
@@ -24,8 +26,35 @@ public class BasicCommands
 	//===========================================================
 	// Commands
 	//===========================================================
+	
+	public Account addAccount(String ipaddress, String account_name, String role_arn, String json_body)
+	{
+		Gson gson = new Gson();
+		Connector conn = new Connector();
 
-	public String createAccount(String ipaddress, String account_name, String email, String external_id, String role_arn)
+		String url = URLs.accountsURL(ipaddress);
+
+		logbook.logWithSizedLogRotation("Creating account [" + account_name + "] with role ARN: " + role_arn, 1);
+
+		logbook.logWithSizedLogRotation("POST: " + url, 2);
+
+		String response = conn.POST(url, token, json_body);
+
+		try
+		{
+			Account account = gson.fromJson(response, Account.class);
+		
+			return account;
+		}
+		catch(Exception e)
+		{
+			logbook.logWithSizedLogRotation(e.getMessage(), 2);
+			logbook.logWithSizedLogRotation("FAILED: addAccount(" + account_name + ")", 3);
+			return null;
+		}
+	}
+
+	public Account addAccount(String ipaddress, String account_name, String email, String external_id, String role_arn)
 	{
 		Gson gson = new Gson();
 		Connector conn = new Connector();
@@ -55,9 +84,50 @@ public class BasicCommands
 
 		String response = conn.POST(url, token, body);
 
-		logbook.logWithSizedLogRotation(response, 2);
+		try
+		{
+			account = gson.fromJson(response, Account.class);
+		
+			return account;
+		}
+		catch(Exception e)
+		{
+			logbook.logWithSizedLogRotation(e.getMessage(), 3);
+			logbook.logWithSizedLogRotation("FAILED: addAccount(" + account_name + ")", 3);
 
-		return response;
+			return null;
+		}
+	}
+
+	public Storage addStorage(String ipaddress, String name, String body)
+	{
+		Gson gson = new Gson();
+
+		String url = URLs.storageURL(ipaddress);
+
+		logbook.logWithSizedLogRotation("Adding storage location [" + name + "]...", 1);
+		logbook.logWithSizedLogRotation("POST " + url, 2);
+
+		Connector conn = new Connector();
+
+		String response = conn.POST(url, token, body);
+	
+		try
+		{
+			Storage location = gson.fromJson(response, Storage.class);
+
+			logbook.logWithSizedLogRotation("Storage created successfully.", 2);
+
+			return location;
+		}
+		catch(Exception e)
+		{
+			logbook.logWithSizedLogRotation(e.getMessage(), 2);
+			logbook.logWithSizedLogRotation("Unable to create storage location.", 2);
+
+			return null;
+		}
+	
 	}
 
 	public String clearCache(String ipaddress)
@@ -113,6 +183,36 @@ public class BasicCommands
 		}
 	}
 
+	public Lifecycle createLifecycle(String ipaddress, String name, String json_body)
+	{
+		Gson gson = new Gson();
+		
+		String url = URLs.lifecycleURL(ipaddress);
+
+		logbook.logWithSizedLogRotation("Creating new lifecycle rule: " + name + "...", 1);
+		logbook.logWithSizedLogRotation("POST " + url, 2);
+
+		Connector conn = new Connector();
+		
+		String response = conn.POST(url, token, json_body);
+
+		try
+		{
+			Lifecycle rule = gson.fromJson(response, Lifecycle.class);
+
+			logbook.logWithSizedLogRotation("Created lifecycle: " + rule.name, 2);
+
+			return rule;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+		
+			return null;
+		}
+
+	}
+	
 	public UserKey createUserKey(String ipaddress, String account, String user)
 	{
 		Gson gson = new Gson();
@@ -230,6 +330,64 @@ public class BasicCommands
 		catch(JsonParseException e)
 		{
 			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+			return null;
+		}
+	}
+
+	public Lifecycle[] listLifecycles(String ipaddress)
+	{
+		Gson gson = new Gson();
+		
+		String url = URLs.lifecycleURL(ipaddress);
+
+		logbook.logWithSizedLogRotation("Querying Sphere for lifecycle rules...", 1);
+		logbook.logWithSizedLogRotation("GET " + url, 2);
+
+		Connector conn = new Connector();
+		
+		String response = conn.GET(url, token);
+
+		try
+		{
+			Lifecycle[] lifecycles = gson.fromJson(response, Lifecycle[].class);
+
+			logbook.logWithSizedLogRotation("Found (" + lifecycles.length + ") lifecycles", 2);
+
+			return lifecycles;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+		
+			return null;
+		}
+	}
+
+	public Storage[] listStorage(String ipaddress)
+	{
+		Gson gson = new Gson();
+		
+		String url = URLs.storageURL(ipaddress);
+
+		logbook.logWithSizedLogRotation("Querying Sphere for storage locations...", 1);
+		logbook.logWithSizedLogRotation("GET " + url, 2);
+
+		Connector conn = new Connector();
+		
+		String response = conn.GET(url, token);
+
+		try
+		{
+			Storage[] locations = gson.fromJson(response, Storage[].class);
+
+			logbook.logWithSizedLogRotation("Found (" + locations.length + ") storage locations", 2);
+
+			return locations;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+		
 			return null;
 		}
 	}

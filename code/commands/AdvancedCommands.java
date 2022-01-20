@@ -1,6 +1,7 @@
 package com.socialvagrancy.vail.commands;
 
 import com.socialvagrancy.vail.commands.sub.Buckets;
+import com.socialvagrancy.vail.commands.sub.ConfigureSphere;
 import com.socialvagrancy.vail.commands.sub.PolicyTest;
 import com.socialvagrancy.vail.commands.sub.Users;
 import com.socialvagrancy.vail.structures.Account;
@@ -31,6 +32,11 @@ public class AdvancedCommands
 	public String createBucketForAccount(String ip_address, String bucket_name, String account)
 	{
 		return Buckets.createForAccount(sphere, ip_address, bucket_name, account, logbook);
+	}
+
+	public ArrayList<String> configureSphere(String ip_address, String file_path)
+	{
+		return ConfigureSphere.start(sphere, ip_address, file_path, logbook);
 	}
 
 	public void minimumIAMPermissions(String ip_address)
