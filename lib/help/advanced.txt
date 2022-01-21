@@ -2,6 +2,8 @@ Advanced Commands
 
 These commands perform more complex tasks on the results of the basic API commands in order to expand the functionality of the API.
 
+configure-sphere	Loads a configuration file (sample: ../inputs/sample_config.json) for configuring a sphere with --input-file PATH/TO/FILE.
+create-bucket		Creates a bucket --bucket for the specified --account [ ACCOUNT_NAME | ACCOUNT_ID]
 list-buckets		List all buckets and ownering accounts. Use --account [ ACCOUNT_NAME | ACCOUNT_ID ] to limit output to buckets belonging to a single account. Use --account all to list all buckets.
 list-users		List all users, the account associated with them and whether the user is activated in the Vail Sphere. Filter down by account with --account [ all | ACCOUNT_NAME | ACCOUNT_ID ] and/or filter down to only activated users with --active-only.
 
