@@ -17,11 +17,36 @@ import java.util.HashMap;
 
 public class Lifecycles
 {
-	public static Lifecycle create(BasicCommands sphere, String ip_address, String filepath)
+	public static LifecycleRule[] buildRule(String name, String type, String apply, int destination_count, String[] storage_locations, int days, LifecycleRule[] existing)
 	{
-		return null;
-	}
+		LifecycleRule[] new_rule = new LifecycleRule[existing.length+1];
+	       	
+		for(int i=0; i<existing.length; i++)
+		{
+			new_rule[i].name = existing[i].name;
+			new_rule[i].apply = existing[i].apply;
+			new_rule[i].type = existing[i].type;
+			new_rule[i].destinations = existing[i].destinations;
+			new_rule[i].schedule = existing[i].schedule;
+		}
 
+		int last = existing.length; // no need to modify as the actual last index is existing.length - 1
+		new_rule[last] = new LifecycleRule(storage_locations.length);	
+		new_rule[last].name = name;
+		new_rule[last].apply = apply;
+		new_rule[last].type = type;
+		new_rule[last].destinations.count = destination_count;
+		
+		for(int j=0; j<storage_locations.length; j++)
+		{
+			new_rule[last].destinations.storage[j] = storage_locations[j];
+		}
+
+		new_rule[last].schedule.days = days;
+
+		return new_rule;	
+	}
+	
 	public static Lifecycle create(BasicCommands sphere, String ip_address, String name, String description, boolean markers, int uploads, LifecycleRule[] rules, Logger logbook)
 	{
 		logbook.logWithSizedLogRotation("Creating lifecycle rule [" + name + "] from inputs...", 1);
@@ -68,33 +93,4 @@ public class Lifecycles
 		return rule;
 	}
 
-	public static LifecycleRule[] buildRule(String name, String type, String apply, int destination_count, String[] storage_locations, int days, LifecycleRule[] existing)
-	{
-		LifecycleRule[] new_rule = new LifecycleRule[existing.length+1];
-	       	
-		for(int i=0; i<existing.length; i++)
-		{
-			new_rule[i].name = existing[i].name;
-			new_rule[i].apply = existing[i].apply;
-			new_rule[i].type = existing[i].type;
-			new_rule[i].destinations = existing[i].destinations;
-			new_rule[i].schedule = existing[i].schedule;
-		}
-
-		int last = existing.length; // no need to modify as the actual last index is existing.length - 1
-		new_rule[last] = new LifecycleRule(storage_locations.length);	
-		new_rule[last].name = name;
-		new_rule[last].apply = apply;
-		new_rule[last].type = type;
-		new_rule[last].destinations.count = destination_count;
-		
-		for(int j=0; j<storage_locations.length; j++)
-		{
-			new_rule[last].destinations.storage[j] = storage_locations[j];
-		}
-
-		new_rule[last].schedule.days = days;
-
-		return new_rule;	
-	}
 }

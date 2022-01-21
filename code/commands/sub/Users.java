@@ -107,10 +107,14 @@ public class Users
 			}
 		}
 
-		if(account_index>0)
+		if(account_index>=0)
 		{
 			logbook.logWithSizedLogRotation("Filtering user lists", 1);
-			summary = filterList(users, accounts[account_index].username, accounts[account_index].id);
+			logbook.logWithSizedLogRotation("CALL: filterUsers(" + accounts[account_index].id + ")", 1); 
+			summary = filterList(users, accounts[account_index].id);
+			
+			logbook.logWithSizedLogRotation("Getting account names", 1);
+			summary = Accounts.attachNames(summary, accounts);
 		}
 		else
 		{
@@ -155,7 +159,7 @@ public class Users
 	}
 
 
-	private static ArrayList<Summary> filterList(User[] users, String account_name, String account_id)
+	private static ArrayList<Summary> filterList(User[] users, String account_id)
 	{
 		// NEED A BETTER NAME FOR THIS ONE
 		// Filters the user list by account name. 
@@ -176,12 +180,11 @@ public class Users
 				line.type = "user";		
 				line.name = users[i].username;
 				line.account_id = users[i].accountid;
-				line.account_name = account_name;
 
 				summary.add(line);
 			}
 		}
-
+		
 		return summary;
 	}
 }

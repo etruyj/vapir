@@ -23,7 +23,7 @@ public class ArgParser
 	public ArgParser()
 	{
 		ip_address = "127.0.0.1";
-		port = "3031";
+		port = "none";
 		username = "none";
 		password = "none";
 		command = "none";
@@ -47,7 +47,19 @@ public class ArgParser
 	
 	public boolean getBooleanFlag() { return boolean_flag; }
 	public String getCommand() { return command; }
-	public String getIP() { return ip_address; }
+	
+	public String getIP() 
+	{ 
+		if(port.equals("none"))
+		{
+			return ip_address;
+		}
+		else
+		{
+			return ip_address + ":" + port;
+		}
+	}
+	
 	public String getOption1() { return option1; }
 	public String getOption2() { return option2; }
 	public String getOption3() { return option3; }
@@ -61,7 +73,21 @@ public class ArgParser
 	//==============================================
 	//	Parser
 	//==============================================
-	
+
+	public void setIPAddress(String ip)
+	{
+		String[] address = ip.split("/");
+
+		if(address[0].equalsIgnoreCase("HTTP:") || address[0].equalsIgnoreCase("HTTPS:"))
+		{
+			ip_address = address[2];
+		}
+		else
+		{
+			ip_address = address[0];
+		}
+	}
+
 	public void setOption1(String option)
 	{
 		if(!option1_set)
@@ -182,6 +208,7 @@ public class ArgParser
 					if((i+1)<args.length)
 					{
 						ip_address = args[i+1];
+						setIPAddress(args[i+1]);
 						i++;
 					}
 					break;
@@ -215,6 +242,8 @@ public class ArgParser
 					}
 					break;	
 				case "--option4":
+				case "--file":
+				case "--input-file":
 					if((i+1)<args.length)
 					{
 						setOption4(args[i+1]);

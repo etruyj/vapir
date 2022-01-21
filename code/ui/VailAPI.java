@@ -30,7 +30,7 @@ public class VailAPI
 				break;
 			case "configure":
 			case "configure-sphere":
-				Display.print(controller.configureSphere(ip, option1));
+				Display.print(controller.configureSphere(ip, option4));
 				break;
 			case "create-bucket":
 				Display.output(controller.createBucket(ip, option2, option1), outputFormat);
@@ -43,7 +43,7 @@ public class VailAPI
 				Display.output(controller.listAccounts(ip), outputFormat);
 				break;
 			case "list-buckets":
-				if(option1.equals("none"))
+				if(outputFormat.equals("raw"))
 				{
 					Display.output(controller.listBuckets(ip), outputFormat);
 				}
@@ -54,7 +54,7 @@ public class VailAPI
 				}
 				break;
 			case "list-users":
-				if(option1.equals("none") && !boolean_flag)
+				if(outputFormat.equals("raw"))
 				{
 					Display.output(controller.listUsers(ip), outputFormat);;
 				}
@@ -66,6 +66,9 @@ public class VailAPI
 				break;
 			case "min-iam-policy":
 				controller.findMinIAMPermissions(ip);
+				break;
+			case "update-owner":
+				controller.updateOwner(ip, option2, option1);
 				break;
 			case "default":
 				Display.print("Invalid command selected. Please used -c help for a list of valid commands.");

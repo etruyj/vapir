@@ -29,7 +29,7 @@ public class AdvancedCommands
 		logbook = logs;
 	}
 
-	public String createBucketForAccount(String ip_address, String bucket_name, String account)
+	public Bucket createBucketForAccount(String ip_address, String bucket_name, String account)
 	{
 		return Buckets.createForAccount(sphere, ip_address, bucket_name, account, logbook);
 	}
@@ -87,5 +87,12 @@ public class AdvancedCommands
 
 		return summary;	
 	*/
+	}
+
+	public String updateBucketOwner(String ip_address, String bucket_name, String account_name)
+	{
+		Buckets.updateOwner(sphere, ip_address, bucket_name, account_name, logbook);
+	
+		return "yes";
 	}
 }

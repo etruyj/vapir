@@ -49,7 +49,10 @@ public class BasicCommands
 		catch(Exception e)
 		{
 			logbook.logWithSizedLogRotation(e.getMessage(), 2);
+			logbook.logWithSizedLogRotation("BODY: " + json_body, 1);
+			logbook.logWithSizedLogRotation(response, 3);
 			logbook.logWithSizedLogRotation("FAILED: addAccount(" + account_name + ")", 3);
+			
 			return null;
 		}
 	}
@@ -93,6 +96,8 @@ public class BasicCommands
 		catch(Exception e)
 		{
 			logbook.logWithSizedLogRotation(e.getMessage(), 3);
+			logbook.logWithSizedLogRotation("BODY: " + body, 1);
+			logbook.logWithSizedLogRotation(response, 3);
 			logbook.logWithSizedLogRotation("FAILED: addAccount(" + account_name + ")", 3);
 
 			return null;
@@ -123,6 +128,8 @@ public class BasicCommands
 		catch(Exception e)
 		{
 			logbook.logWithSizedLogRotation(e.getMessage(), 2);
+			logbook.logWithSizedLogRotation("BODY: " + body, 1);
+			logbook.logWithSizedLogRotation(response, 3);
 			logbook.logWithSizedLogRotation("Unable to create storage location.", 2);
 
 			return null;
@@ -177,6 +184,7 @@ public class BasicCommands
 		catch(JsonParseException e)
 		{
 			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+			logbook.logWithSizedLogRotation("BODY: " + json_body, 1);
 			logbook.logWithSizedLogRotation(response, 3);
 
 			return null;
@@ -207,6 +215,8 @@ public class BasicCommands
 		catch(JsonParseException e)
 		{
 			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+			logbook.logWithSizedLogRotation("BODY: " + json_body, 1);
+			logbook.logWithSizedLogRotation(response, 3);
 		
 			return null;
 		}
@@ -237,7 +247,8 @@ public class BasicCommands
 		catch(JsonParseException e)
 		{
 			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
-		
+			logbook.logWithSizedLogRotation(response, 3);
+
 			return null;
 		}
 	}
@@ -484,6 +495,37 @@ public class BasicCommands
 			logbook.logWithSizedLogRotation("Login FAILED", 2);
 
 			return false;
+		}
+	}
+
+	public Bucket updateBucket(String ipaddress, String name, String json_body)
+	{
+		Gson gson = new Gson();
+		
+		String url = URLs.bucketsURL(ipaddress);
+
+		logbook.logWithSizedLogRotation("Updating bucket (" + name + ") ...", 1);
+		logbook.logWithSizedLogRotation("PUT " + url, 2);
+
+		Connector conn = new Connector();
+		
+		String response = conn.PUT(url, token, json_body);
+
+		try
+		{
+			Bucket bucket = gson.fromJson(response, Bucket.class);
+
+			logbook.logWithSizedLogRotation("Successfully updated " + bucket.name, 2);
+
+			return bucket;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+			logbook.logWithSizedLogRotation("BODY: " + json_body, 1);
+			logbook.logWithSizedLogRotation(response, 3);
+
+			return null;
 		}
 	}
 }

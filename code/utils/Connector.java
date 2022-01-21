@@ -245,4 +245,49 @@ public class Connector
 		return response.toString();
 	}
 	
+	public String PUT(String httpRequest, String token, String body)
+	{
+		// Query library without a header (authorization)
+		// mostly just for logging in.
+
+		StringBuilder response = new StringBuilder();
+		
+		// Open connection		
+		try
+		{
+			URL url = new URL(httpRequest);
+			HttpURLConnection cxn = (HttpURLConnection) url.openConnection();
+		
+			// Configuration the connection
+			cxn.setRequestMethod("PUT");
+			cxn.setDoOutput(true);
+			cxn.setRequestProperty("Content-Type", "application/json; utf-8");
+			cxn.setRequestProperty("Accept", "application/json");
+			cxn.setRequestProperty("Authorization", token);
+
+			if(body.length() > 0)
+			{
+				OutputStream output = cxn.getOutputStream();
+				byte[] input = body.getBytes("utf-8");
+				output.write(input, 0, input.length);
+			}
+			
+			// Read response	
+			BufferedReader br = new BufferedReader(new InputStreamReader(cxn.getInputStream(), "utf-8"));
+
+			String responseLine = null;
+
+			while((responseLine = br.readLine()) != null)
+			{
+				response.append(responseLine);
+			}
+		}
+		catch(Exception e)
+		{
+			return e.getMessage();
+		}
+
+		return response.toString();
+	}
+	
 }

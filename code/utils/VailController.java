@@ -51,7 +51,14 @@ public class VailController
 	{
 		if(!account.equals("none"))
 		{
-			return advanced.createBucketForAccount(ip_address, bucket_name, account);
+			if(advanced.createBucketForAccount(ip_address, bucket_name, account) != null)
+			{
+				return "Successfully created bucket [" + bucket_name + "] for account [" + account + "].";
+			}	
+			else
+			{
+				return "Unable to create bucket [" + bucket_name + "] for account [" + account + "].";
+			}
 		}
 
 		return null;
@@ -98,4 +105,8 @@ public class VailController
 		return sphere.login(ip_address, username, password);
 	}
 
+	public String updateOwner(String ip_address, String bucket, String account_name)
+	{
+		return advanced.updateBucketOwner(ip_address, bucket, account_name);
+	}
 }

@@ -17,6 +17,30 @@ import java.util.HashMap;
 public class Accounts
 {
 
+	public static ArrayList<Summary> attachNames(ArrayList<Summary> users, Account[] accounts)
+	{
+		String last_id = "0";
+		String last_name = "not specified"; 
+
+		for(int i=0; i<users.size(); i++)
+		{
+			// Quick check to save processing time
+			if(users.get(i).account_id.equals(last_id))
+			{
+				users.get(i).account_name = last_name;
+			}
+			else
+			{
+				// If it's a different account, search the list for the name
+				last_id = users.get(i).account_id;
+				last_name = findName(users.get(i).account_id, accounts);
+				users.get(i).account_name = last_name;
+			}
+		}
+
+		return users;
+	}
+
 	public static ArrayList<Summary> attachNames(User[] users, Account[] accounts)
 	{
 		ArrayList<Summary> summary = new ArrayList<Summary>();
@@ -53,7 +77,7 @@ public class Accounts
 
 	public static int findIndex(String account, Account[] accounts)
 	{
-		int test;
+		Long test;
 		int index = -1;
 		int itr = 0;
 		boolean searching = true;
@@ -62,7 +86,7 @@ public class Accounts
 		{
 			// Check to see if account number or name was supplied.
 			// String should fail and drop to the catch statement.
-			test = Integer.valueOf(account);
+			test = Long.valueOf(account);
 
 			do
 			{
@@ -132,22 +156,32 @@ public class Accounts
 	{
 		String account_name = "not found";
 
-		for(int i=0; i<accounts.length; i++)
+		try
 		{
-			if(accounts[i].id.equals(account_id))
+			long test = Long.valueOf(account_id);
+
+			for(int i=0; i<accounts.length; i++)
 			{
-				if(accounts[i].roleArn.equals(""))
+				if(accounts[i].id.equals(account_id))
 				{
-					return "Sphere";
-				}
-				else
-				{
-					return accounts[i].username;
+					if(accounts[i].roleArn.equals(""))
+					{
+						return "Sphere";
+					}
+					else
+					{
+						return accounts[i].username;
+					}
 				}
 			}
-		}
 
-		return account_name;
+			return account_name;
+		}
+		catch(Exception e)
+		{
+			// Assume an account name was passed instead of an id
+			return account_id;
+		}
 	}
 
 	public static String findNameWithCanonicalID(String canonicalId, Account[] accounts)

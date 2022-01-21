@@ -35,7 +35,6 @@ public class Buckets
 		Gson gson = new Gson();
 
 		forJson.name = bucket.name;
-		forJson.owner = account_map.get(bucket.owner);
 			
 		if(!bucket.lifecycle.equals("none"))
 		{
@@ -64,13 +63,13 @@ public class Buckets
 		{
 			logbook.logWithSizedLogRotation("Setting owner to \"\" for Sphere account...", 1);
 
-			bucket.owner = "";
+			forJson.owner = "";
 		}	
 		else if(account_map.get(bucket.owner) != null)
 		{
 			logbook.logWithSizedLogRotation("Canonical ID for account [" + bucket.owner + "] found: " + account_map.get(bucket.owner), 1);
 
-
+			forJson.owner = account_map.get(bucket.owner);
 		}
 		else
 		{
@@ -84,7 +83,25 @@ public class Buckets
 		return sphere.createBucket(ip_address, bucket.name, json_body);
 	}
 
-	public static String createForAccount(BasicCommands sphere, String ip_address, String bucket_name, String account, Logger logbook)
+	public static Bucket createForAccount(BasicCommands sphere, String ip_address, String bucket_name, String account_name, Logger logbook)
+	{
+		Gson gson = new Gson();
+
+		logbook.logWithSizedLogRotation("Creating bucket [" + bucket_name + "] for account [" + account_name + "]...", 1);
+
+		String canonicalID = findCanonicalID(sphere, ip_address, account_name, logbook);
+
+		Bucket bucket = new Bucket();
+		bucket.name = bucket_name;
+		bucket.owner = canonicalID;
+		bucket.permissionType = "NONE";
+
+		String json_body = gson.toJson(bucket, Bucket.class);
+
+		return sphere.createBucket(ip_address, bucket_name, json_body);
+	}
+
+	public static String createForAccountWithKeys(BasicCommands sphere, String ip_address, String bucket_name, String account, Logger logbook)
 	{
 		// Deprecated:
 		//  Canonical ID can be passed as owner in the json body to create the bucket.
@@ -194,7 +211,7 @@ public class Buckets
 					bucket = new Summary();
 					bucket.type = "bucket";
 					bucket.name = buckets[i].name;
-					bucket.account_name = accounts[account_index].username;
+					bucket.account_name = Accounts.findNameWithCanonicalID(buckets[i].owner, accounts);
 					bucket.account_id = accounts[account_index].id;
 					bucket_list.add(bucket);
 				}
@@ -202,6 +219,55 @@ public class Buckets
 		}
 
 		return bucket_list;
+	}
+
+	public static int findIndex(String name, Bucket[] buckets)
+	{
+		for(int i=0; i<buckets.length; i++)
+		{
+			if(buckets[i].name.equals(name))
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	public static String findCanonicalID(BasicCommands sphere, String ip_address, String account_name, Logger logbook)
+	{
+		// Find Canonical ID for bucket owner.
+		// The Sphere's Canonical ID isn't recognized for some reason.
+		// Testing if adding blank will work here.
+
+		Account[] accounts = sphere.listAccounts(ip_address);
+		HashMap<String, String> account_map = Accounts.mapNameToCanonicalID(accounts);
+
+		// Quick check to convert the account_id to account_name to allow both to be provided.
+		account_name = Accounts.findName(account_name, accounts);
+
+		String canonical_id;
+
+		if(account_name.equalsIgnoreCase("sphere"))
+		{
+			logbook.logWithSizedLogRotation("Setting owner to \"\" for Sphere account...", 1);
+
+			canonical_id = "";
+		}	
+		else if(account_map.get(account_name) != null)
+		{
+			logbook.logWithSizedLogRotation("Canonical ID for account [" + account_name + "] found: " + account_map.get(account_name), 1);
+
+			canonical_id = account_map.get(account_name);
+		}
+		else
+		{
+			logbook.logWithSizedLogRotation("ERROR: Unable to find Canonical ID for account [" + account_name + "]", 3);
+
+			return null;
+		}
+
+		return canonical_id;
 	}
 
 	public static String formatBucketJson(String name, String permission_type, String lifecycle, ACL[] acl)
@@ -217,5 +283,58 @@ public class Buckets
 		return gson.toJson(bucket, Bucket.class);
 	}
 
-	
+	public static Bucket updateOwner(BasicCommands sphere, String ip_address, String bucket_name, String account_name, Logger logbook)
+	{
+		Gson gson = new Gson();
+
+		logbook.logWithSizedLogRotation("Updating bucket ownership for bucket [" + bucket_name + "] to account [" + account_name + "]...", 1);
+
+		Bucket[] buckets = sphere.listBuckets(ip_address);
+
+		int index = findIndex(bucket_name, buckets);
+
+		if(index >=0)
+		{
+			logbook.logWithSizedLogRotation("Found bucket [" + bucket_name + "] at index (" + index + ")", 1);
+			logbook.logWithSizedLogRotation("Bucket owner: " + buckets[index].owner, 1);
+			String owner = findCanonicalID(sphere, ip_address, account_name, logbook);
+
+			if(owner != null)
+			{
+				logbook.logWithSizedLogRotation("Found canonical id for account [" + account_name + "]: " + owner, 1);
+
+				Bucket temp_bucket = buckets[index];
+				temp_bucket.owner = owner;
+
+				String json_body = gson.toJson(temp_bucket, Bucket.class);
+
+				temp_bucket = sphere.updateBucket(ip_address, bucket_name, json_body);
+
+				if(temp_bucket != null)
+				{
+					logbook.logWithSizedLogRotation("Bucket owner updated to " + temp_bucket.owner, 1);
+				}
+				else
+				{
+					logbook.logWithSizedLogRotation("ERROR: Unable to update bucket owner.", 3);
+				}
+
+				return temp_bucket;
+			}
+			else
+			{
+				logbook.logWithSizedLogRotation("ERROR: Unable to find the specified account [" + account_name + "].", 3);
+
+				return null;
+			}
+
+		}
+		else
+		{
+			logbook.logWithSizedLogRotation("ERROR: Unable to find bucket in list.", 3);
+
+			return null;
+		}
+
+	}
 }
