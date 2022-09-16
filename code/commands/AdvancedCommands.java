@@ -2,10 +2,12 @@ package com.socialvagrancy.vail.commands;
 
 import com.socialvagrancy.vail.commands.sub.Buckets;
 import com.socialvagrancy.vail.commands.sub.ConfigureSphere;
+import com.socialvagrancy.vail.commands.sub.FetchConfiguration;
 import com.socialvagrancy.vail.commands.sub.PolicyTest;
 import com.socialvagrancy.vail.commands.sub.Users;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
+import com.socialvagrancy.vail.structures.SphereConfig;
 import com.socialvagrancy.vail.structures.Summary;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
@@ -37,6 +39,11 @@ public class AdvancedCommands
 	public ArrayList<String> configureSphere(String ip_address, String file_path)
 	{
 		return ConfigureSphere.start(sphere, ip_address, file_path, logbook);
+	}
+
+	public SphereConfig fetchConfiguration(String ip_address)
+	{
+		return FetchConfiguration.fromSphere(sphere, ip_address);
 	}
 
 	public void minimumIAMPermissions(String ip_address)

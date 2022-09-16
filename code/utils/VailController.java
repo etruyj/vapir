@@ -16,6 +16,7 @@ import com.socialvagrancy.vail.commands.BasicCommands;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
 import com.socialvagrancy.vail.structures.OutputFormat;
+import com.socialvagrancy.vail.structures.SphereConfig;
 import com.socialvagrancy.vail.structures.Summary;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
@@ -62,6 +63,11 @@ public class VailController
 		}
 
 		return null;
+	}
+
+	public SphereConfig fetchConfiguration(String ip_address)
+	{
+		return advanced.fetchConfiguration(ip_address);
 	}
 
 	public void findMinIAMPermissions(String ip_address)

@@ -8,6 +8,7 @@ package com.socialvagrancy.vail.ui.display;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
 import com.socialvagrancy.vail.structures.OutputFormat;
+import com.socialvagrancy.vail.structures.SphereConfig;
 import com.socialvagrancy.vail.structures.Summary;
 import com.socialvagrancy.vail.structures.User;
 
@@ -57,6 +58,27 @@ public class Display
 		ArrayList<OutputFormat> output = Serializer.convert(summary);
 
 		print(output, output_format);
+	}
+
+	public static void output(SphereConfig config, String output_format, String file_path)
+	{
+		switch(output_format)
+		{
+			default:
+				System.err.println("WARN: Ouput format (" + output_format + ") is invalid with this command. Type 'json' will be used instead.");
+			case "json":
+				String json = JSON.formatJson(config);
+
+				if(file_path.equals("none"))
+				{
+					Print.line("config", json, 0, false);
+				}
+				else
+				{
+					System.err.println("WARN: CODE REQUIRED");
+				}
+				break;
+		}
 	}
 
 	public static void output(User[] users, String output_format)

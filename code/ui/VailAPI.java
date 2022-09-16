@@ -35,6 +35,9 @@ public class VailAPI
 			case "create-bucket":
 				Display.output(controller.createBucket(ip, option2, option1), outputFormat);
 				break;
+			case "fetch-config":
+				Display.output(controller.fetchConfiguration(ip), outputFormat, option4);
+				break;
 			case "help":
 				Display.printHelp("../lib/help/basic.txt");
 				Display.printHelp("../lib/help/advanced.txt");
