@@ -4,5 +4,8 @@ public class ACL
 {
 	public String type;
 	public String id;
-	public String[] permissions;
+	public boolean read;
+	public boolean readACP;
+	public boolean write;
+	public boolean writeACP;
 }

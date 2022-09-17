@@ -5,6 +5,7 @@ public class Storage
 	public String id;
 	public String name;
 	public String type;
+	public boolean forceDelete;
 	public String cloudProvider;
 	public String region;
 	public String endpoint;

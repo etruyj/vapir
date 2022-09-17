@@ -10,10 +10,17 @@ package com.socialvagrancy.vail.structures;
 
 public class Bucket
 {
+	public String versioning;
 	public boolean restore;
+	public boolean compress;
 	public String lifecycle;
 	public ACL[] acls;
 	public String owner;
+	public String control;
+	public boolean blockPublicAcls;
+	public boolean blockPublicPolicy;
+	public boolean ignorePublicAcls;
+	public boolean restricPublicBuckets;
 	public String name;
 	public String created;
 	public String permissionType;

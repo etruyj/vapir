@@ -29,7 +29,12 @@ public class Serializer
 			line.header = "account";
 			line.value = null;
 			output.add(line);
-			
+				
+			line = new OutputFormat();
+			line.header = "account>name";
+			line.value = accounts[i].username;
+			output.add(line);
+		
 			line = new OutputFormat();
 			line.header = "account>id";
 			line.value = accounts[i].id;
@@ -48,11 +53,6 @@ public class Serializer
 			line = new OutputFormat();
 			line.header = "account>roleArn";
 			line.value = accounts[i].roleArn;
-			output.add(line);
-			
-			line = new OutputFormat();
-			line.header = "account>username";
-			line.value = accounts[i].username;
 			output.add(line);
 			
 			line = new OutputFormat();
@@ -113,13 +113,26 @@ public class Serializer
 				line.value = buckets[i].acls[j].id;
 				output.add(line);
 		
-				for(int k=0; k<buckets[i].acls[j].permissions.length; k++)
-				{
-					line = new OutputFormat();
-					line.header = "bucket>acls>permissions>permission";
-					line.value = buckets[i].acls[j].permissions[k];
-					output.add(line);
-				}
+				line = new OutputFormat();
+				line.header = "bucket>acls>read";
+				line.value = boolToString(buckets[i].acls[j].read);
+				output.add(line);
+			
+				line = new OutputFormat();
+				line.header = "bucket>acls>readACP";
+				line.value = boolToString(buckets[i].acls[j].readACP);
+				output.add(line);
+			
+				line = new OutputFormat();
+				line.header = "bucket>acls>write";
+				line.value = boolToString(buckets[i].acls[j].write);
+				output.add(line);
+			
+				line = new OutputFormat();
+				line.header = "bucket>acls>writeACP";
+				line.value = boolToString(buckets[i].acls[j].writeACP);
+				output.add(line);
+			
 			}
 
 			line = new OutputFormat();
@@ -212,7 +225,7 @@ public class Serializer
 			output.add(line);
 
 			line = new OutputFormat();
-			line.header = list.get(i).type + ">username";
+			line.header = list.get(i).type + ">bucketName";
 			line.value = list.get(i).name;
 			output.add(line);
 
@@ -242,5 +255,21 @@ public class Serializer
 		}
 
 		return output;
+	}
+
+	//=======================================
+	// Private Functions
+	//=======================================
+
+	private static String boolToString(boolean val)
+	{
+		if(val)
+		{
+			return "true";
+		}
+		else
+		{
+			return "false";
+		}
 	}
 }
