@@ -56,16 +56,13 @@ public class VailAPI
 					Display.output(response, outputFormat);
 				}
 				break;
+			case "list-groups":
+				response = controller.listGroups(ip, option1);
+				Display.output(response, outputFormat);
+				break;
 			case "list-users":
-				if(outputFormat.equals("raw"))
-				{
-					Display.output(controller.listUsers(ip), outputFormat);;
-				}
-				else
-				{
-					response = controller.listUserSummary(ip, option1, boolean_flag);
-					Display.output(response, outputFormat);
-				}
+				response = controller.listUsers(ip, option1, boolean_flag);
+				Display.output(response, outputFormat);
 				break;
 			case "min-iam-policy":
 				controller.findMinIAMPermissions(ip);

@@ -90,14 +90,14 @@ public class VailController
 		return advanced.filteredBucketList(ip_address, account);
 	}
 
-	public User[] listUsers(String ip_address)
+	public ArrayList<Summary> listGroups(String ip_address, String account)
 	{
-		return sphere.listUsers(ip_address);
+		return advanced.listGroups(ip_address, account);
 	}
 
-	public ArrayList<Summary> listUserSummary(String ip_address, String account, boolean active_only)
+	public ArrayList<Summary> listUsers(String ip_address, String account, boolean active_only)
 	{
-		return advanced.filteredUserList(ip_address, account, active_only);
+		return advanced.listUsers(ip_address, account, active_only);
 	}
 
 	public OutputFormat[] listKeys(String ip_address, String account, String user)

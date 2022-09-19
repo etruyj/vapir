@@ -225,7 +225,7 @@ public class Serializer
 			output.add(line);
 
 			line = new OutputFormat();
-			line.header = list.get(i).type + ">bucketName";
+			line.header = list.get(i).type + ">name";
 			line.value = list.get(i).name;
 			output.add(line);
 
@@ -238,6 +238,17 @@ public class Serializer
 			line.header = list.get(i).type + ">accountId";
 			line.value = list.get(i).account_id;
 			output.add(line);
+
+			if(list.get(i).groups != null)
+			{
+				for(int j=0; j < list.get(i).groups.size(); j++)
+				{
+					line = new OutputFormat();
+					line.header = list.get(i).type + ">group";
+					line.value = list.get(i).groups.get(j);
+					output.add(line);
+				}
+			}
 
 			if(list.get(i).status != null)
 			{

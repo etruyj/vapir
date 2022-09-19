@@ -3,6 +3,8 @@ package com.socialvagrancy.vail.commands;
 import com.socialvagrancy.vail.commands.sub.Buckets;
 import com.socialvagrancy.vail.commands.sub.ConfigureSphere;
 import com.socialvagrancy.vail.commands.sub.FetchConfiguration;
+import com.socialvagrancy.vail.commands.sub.ListGroups;
+import com.socialvagrancy.vail.commands.sub.ListUsers;
 import com.socialvagrancy.vail.commands.sub.PolicyTest;
 import com.socialvagrancy.vail.commands.sub.Users;
 import com.socialvagrancy.vail.structures.Account;
@@ -43,7 +45,7 @@ public class AdvancedCommands
 
 	public SphereConfig fetchConfiguration(String ip_address)
 	{
-		return FetchConfiguration.fromSphere(sphere, ip_address);
+		return FetchConfiguration.fromSphere(sphere, ip_address, logbook);
 	}
 
 	public void minimumIAMPermissions(String ip_address)
@@ -65,35 +67,14 @@ public class AdvancedCommands
 		return bucket_list;
 	}
 
-	public ArrayList<Summary> filteredUserList(String ip_address, String filter_account, boolean is_active)
+	public ArrayList<Summary> listGroups(String ip, String account)
 	{
-		return Users.generateFilteredList(sphere, ip_address, filter_account, is_active, logbook);
-	/*
-		logbook.logWithSizedLogRotation("Creating summarized user name list...", 1);
+		return ListGroups.inSphere(sphere, ip, account, logbook);
+	}
 
-		Account[] accounts = sphere.listAccounts(ip_address);
-		User[] users = sphere.listUsers(ip_address);
-
-		logbook.logWithSizedLogRotation("Adding account names", 1);
-		ArrayList<UserSummary> summary = SumarizeUsers.filterByAccount(users, accounts, filter_account, logbook);
-		logbook.logWithSizedLogRotation("Found (" + summary.size() + ") users", 1);
-
-
-		if(is_active)
-		{
-			logbook.logWithSizedLogRotation("Filtering out inactive users", 1);
-		}
-		else
-		{
-			logbook.logWithSizedLogRotation("Finding user status", 1);
-		}
-	
-		summary = SumarizeUsers.filterByActive(sphere, ip_address, summary, is_active);
-
-		logbook.logWithSizedLogRotation("Returning (" + summary.size() + ") users", 2);
-
-		return summary;	
-	*/
+	public ArrayList<Summary> listUsers(String ip, String account, boolean active_only)
+	{
+		return ListUsers.inSphere(sphere, ip, account, active_only, logbook);
 	}
 
 	public String updateBucketOwner(String ip_address, String bucket_name, String account_name)
