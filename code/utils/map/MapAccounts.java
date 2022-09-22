@@ -52,6 +52,42 @@ public class MapAccounts
 		return account_map;
 	}
 
+	public static HashMap<String, String> createIDCanonicalIDMap(Account[] accounts)
+	{
+		HashMap<String, String> account_map = new HashMap<String, String>();
+
+		for(int i=0; i < accounts.length; i++)
+		{
+			account_map.put(accounts[i].id, accounts[i].canonicalId);
+		}
+
+		return account_map;	
+	}
+
+	public static HashMap<String, String> createIDNameMap(Account[] accounts)
+	{
+		HashMap<String, String> account_map = new HashMap<String, String>();
+
+		for(int i=0; i < accounts.length; i++)
+		{
+			account_map.put(accounts[i].id, accounts[i].username);
+		}
+
+		return account_map;
+	}
+	
+	public static HashMap<String, String> createNameCanonicalIDMap(Account[] accounts)
+	{
+		HashMap<String, String> account_map = new HashMap<String, String>();
+
+		for(int i=0; i < accounts.length; i++)
+		{
+			account_map.put(accounts[i].username, accounts[i].canonicalId);
+		}
+
+		return account_map;	
+	}
+
 	public static HashMap<String, String> createNameIDMap(Account[] accounts)
 	{
 		HashMap<String, String> account_map = new HashMap<String, String>();

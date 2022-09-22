@@ -13,11 +13,14 @@
 package com.socialvagrancy.vail.commands.sub;
 
 import com.socialvagrancy.vail.commands.BasicCommands;
+import com.socialvagrancy.vail.commands.sub.CreateGroup;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
 import com.socialvagrancy.vail.structures.Lifecycle;
 import com.socialvagrancy.vail.structures.SphereConfig;
 import com.socialvagrancy.vail.structures.Storage;
+import com.socialvagrancy.vail.structures.Summary;
+import com.socialvagrancy.vail.utils.map.MapAccounts;
 import com.socialvagrancy.utils.Logger;
 
 import com.google.gson.Gson;
@@ -109,6 +112,52 @@ public class ConfigureSphere
 		return success_count;	
 	}
 
+	public static int addGroups(BasicCommands sphere, String ip_address, ArrayList<Summary> groups, HashMap<String, String> name_id_map, Logger logbook)
+	{
+		int success_count = 0;
+		String response;
+		String[] account_pair = new String[2];
+		account_pair[0] = "";
+
+		logbook.INFO("Adding (" + groups.size() + ") groups to Sphere...");
+
+		for(int i=0; i<groups.size(); i++)
+		{
+			// Find account id
+
+			if(!groups.get(i).account_name.equals(account_pair[0]))
+			{
+				account_pair[0] = groups.get(i).account_name;
+
+				if(name_id_map.get(account_pair[0]) == null)
+				{
+					account_pair[1] = "none";
+				}
+				else
+				{
+					account_pair[1] = name_id_map.get(account_pair[0]);
+				}
+			}
+			
+			// Create account
+
+			if(!account_pair[1].equals("none"))
+			{
+				response = CreateGroup.withAccountID(sphere, ip_address, groups.get(i).name, account_pair[1], logbook);
+				if(!response.substring(0, 6).equals("Unable"))
+				{
+					success_count++;
+				}
+			
+			}
+		}
+
+		logbook.INFO("Successfully created (" + success_count + ") groups");
+		logbook.WARN("Failed to create (" + String.valueOf(groups.size() - success_count) + ") groups.");
+
+		return success_count;
+	}
+
 	public static int addLifecycles(BasicCommands sphere, String ip_address, Lifecycle[] lifecycles, HashMap<String, String> storage_map, Logger logbook)
 	{
 		// Returns the number of successfully added accounts
@@ -195,30 +244,40 @@ storage_map.get(lifecycles[i].rules[r].destinations.storage[s]);
 
 	public static ArrayList<String> buildSphere(BasicCommands sphere, String ip_address, SphereConfig config, Logger logbook)
 	{
-		int[] success = new int[4];
+		int[] success = new int[5];
 		ArrayList<String> report = new ArrayList<String>();
 
 		// Add accounts
 		success[0] = addAccounts(sphere, ip_address, config.accounts, logbook);
+		
+		// Create a list of all accounts.
+		// Using the api to get the list instead of config allows
+		// for using the configure sphere to add to the config instead of 
+		Account[] accounts = sphere.listAccounts(ip_address);
+		HashMap<String, String> account_name_id_map = MapAccounts.createNameIDMap(accounts);
+
+		// Add groups
+		success[1] = addGroups(sphere, ip_address, config.groups, account_name_id_map, logbook);
 
 		// Add storage
-		success[1] = addStorage(sphere, ip_address, config.storage, logbook);
+		success[2] = addStorage(sphere, ip_address, config.storage, logbook);
 
 		// Add lifecycles
 		Storage[] locations = sphere.listStorage(ip_address);
 		HashMap<String, String> map = StorageLocations.map(locations);
-		success[2] = addLifecycles(sphere, ip_address, config.lifecycles, map, logbook);
+		success[3] = addLifecycles(sphere, ip_address, config.lifecycles, map, logbook);
 
 		// Add buckets
 		Lifecycle[] lifecycles = sphere.listLifecycles(ip_address);
 		map = Lifecycles.map(lifecycles);
-		success[3] = addBuckets(sphere, ip_address, config.buckets, map, logbook);
+		success[4] = addBuckets(sphere, ip_address, config.buckets, map, logbook);
 	
 		report.add("Configuration complete.");
 		report.add("Added " + success[0] + "/" + config.accounts.length + " accounts.");
-		report.add("Added " + success[1] + "/" + config.storage.length + " storage locations.");
-		report.add("Created " + success[2] + "/" + config.lifecycles.length + " lifecycle rules.");
-		report.add("Created " + success[3] + "/" + config.buckets.length + " buckets.");
+		report.add("Created " + success[1] + "/" + config.groups.size() + " groups.");
+		report.add("Added " + success[2] + "/" + config.storage.length + " storage locations.");
+		report.add("Created " + success[3] + "/" + config.lifecycles.length + " lifecycle rules.");
+		report.add("Created " + success[4] + "/" + config.buckets.length + " buckets.");
 
 		return report;
 	}
@@ -278,19 +337,19 @@ storage_map.get(lifecycles[i].rules[r].destinations.storage[s]);
 	{
 		ArrayList<String> report = new ArrayList<String>();
 
-		logbook.logWithSizedLogRotation("Starting configuration of Vail Sphere (" + ip_address + ")...", 1);
-	
-		logbook.logWithSizedLogRotation("Loading configuration file " + filename, 1);
+		logbook.INFO("Starting configuration of Vail Sphere (" + ip_address + ")...");
+		logbook.INFO("Loading configuration file " + filename);
 
 		SphereConfig config = importJSONConfigFile(filename);
 
 		if(config != null)
 		{
-			logbook.logWithSizedLogRotation("Loading complete.", 1);
-			logbook.logWithSizedLogRotation("Found (" + config.accounts.length + ") accounts.", 1);
-			logbook.logWithSizedLogRotation("Found (" + config.storage.length + ") storage locations.", 1);
-			logbook.logWithSizedLogRotation("Found (" + config.lifecycles.length + ") lifecycle rules.", 1);
-			logbook.logWithSizedLogRotation("Found (" + config.buckets.length + ") buckets.", 1);
+			logbook.INFO("Loading complete.");
+			logbook.INFO("Found (" + config.accounts.length + ") accounts.");
+			logbook.INFO("Found (" + config.groups.size() + ") groups");
+			logbook.INFO("Found (" + config.storage.length + ") storage locations.");
+			logbook.INFO("Found (" + config.lifecycles.length + ") lifecycle rules.");
+			logbook.INFO("Found (" + config.buckets.length + ") buckets.");
 
 			report = buildSphere(sphere, ip_address, config, logbook);
 
@@ -298,7 +357,7 @@ storage_map.get(lifecycles[i].rules[r].destinations.storage[s]);
 		}
 		else
 		{
-			logbook.logWithSizedLogRotation("ERROR: Unable to load config file.", 3);
+			logbook.ERR("ERROR: Unable to load config file.");
 	
 			report.add("ERROR: Unable to load config file.");
 

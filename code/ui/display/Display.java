@@ -9,8 +9,10 @@ import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
 import com.socialvagrancy.vail.structures.OutputFormat;
 import com.socialvagrancy.vail.structures.SphereConfig;
+import com.socialvagrancy.vail.structures.Storage;
 import com.socialvagrancy.vail.structures.Summary;
 import com.socialvagrancy.vail.structures.User;
+import com.socialvagrancy.vail.ui.display.serializers.Serializer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -52,8 +54,15 @@ public class Display
 		}
 
 	}
-	
-	public static void output(ArrayList<Summary> summary, String output_format)
+
+	public static void output(Storage[] storage, String output_format)
+	{
+		ArrayList<OutputFormat> output = Serializer.convert(storage);
+
+		print(output, output_format);
+	}
+
+	public static void output(ArrayList summary, String output_format)
 	{
 		ArrayList<OutputFormat> output = Serializer.convert(summary);
 

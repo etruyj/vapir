@@ -11,7 +11,7 @@ package com.socialvagrancy.vail.commands.sub;
 
 import com.socialvagrancy.vail.commands.BasicCommands;
 import com.socialvagrancy.vail.structures.Account;
-import com.socialvagrancy.vail.structures.Summary;
+import com.socialvagrancy.vail.structures.UserSummary;
 import com.socialvagrancy.vail.structures.UserKey;
 import com.socialvagrancy.vail.structures.json.Group;
 import com.socialvagrancy.vail.structures.json.UserData;
@@ -23,12 +23,12 @@ import java.util.HashMap;
 
 public class ListUsers
 {
-	public static ArrayList<Summary> inSphere(BasicCommands sphere, String ip, String account, boolean active_only, Logger logbook)
+	public static ArrayList<UserSummary> inSphere(BasicCommands sphere, String ip, String account, boolean active_only, Logger logbook)
 	{
 		logbook.INFO("Fetching list of users...");
 
 		Account[] accounts = sphere.listAccounts(ip);
-		ArrayList<Summary> user_list;
+		ArrayList<UserSummary> user_list;
 
 		if(account.equalsIgnoreCase("sphere"))
 		{
@@ -83,7 +83,7 @@ public class ListUsers
 	// Private Functions
 	//=======================================
 
-	public static ArrayList<Summary> attachGroups(BasicCommands sphere, String ip, ArrayList<Summary> user_list)
+	public static ArrayList<UserSummary> attachGroups(BasicCommands sphere, String ip, ArrayList<UserSummary> user_list)
 	{
 		for(int i=0; i < user_list.size(); i++)
 		{
@@ -98,9 +98,9 @@ public class ListUsers
 		return user_list;
 	}
 
-	public static Summary buildUserSummary(String username, String account_id, String account_name)
+	public static UserSummary buildUserSummary(String username, String account_id, String account_name)
 	{
-		Summary user_sum = new Summary();
+		UserSummary user_sum = new UserSummary();
 
 		user_sum.type = "user";
 		user_sum.name = username;
@@ -111,7 +111,7 @@ public class ListUsers
 		
 	}
 
-	private static ArrayList<Summary> determineStatus(BasicCommands sphere, String ip, ArrayList<Summary> user_list)
+	private static ArrayList<UserSummary> determineStatus(BasicCommands sphere, String ip, ArrayList<UserSummary> user_list)
 	{
 		boolean active_key = false;
 
@@ -143,7 +143,7 @@ public class ListUsers
 		return user_list;
 	}
 
-	private static ArrayList<Summary> filterInactive(ArrayList<Summary> user_list)
+	private static ArrayList<UserSummary> filterInactive(ArrayList<UserSummary> user_list)
 	{
 		for(int i = user_list.size() - 1; i >=0; i--)
 		{
@@ -156,9 +156,9 @@ public class ListUsers
 		return user_list;
 	}
 
-	private static ArrayList<Summary> listAccountUsers(BasicCommands sphere, String ip, Account[] accounts, String account, Logger logbook)
+	private static ArrayList<UserSummary> listAccountUsers(BasicCommands sphere, String ip, Account[] accounts, String account, Logger logbook)
 	{
-		ArrayList<Summary> user_list = new ArrayList<Summary>();
+		ArrayList<UserSummary> user_list = new ArrayList<UserSummary>();
 		UserData users;
 		boolean searching_account = true;
 
@@ -213,9 +213,9 @@ public class ListUsers
 		return user_list;
 	}
 
-	private static ArrayList<Summary> listAllUsers(BasicCommands sphere, String ip, Account[] accounts)
+	private static ArrayList<UserSummary> listAllUsers(BasicCommands sphere, String ip, Account[] accounts)
 	{
-		ArrayList<Summary> user_list = new ArrayList<Summary>();
+		ArrayList<UserSummary> user_list = new ArrayList<UserSummary>();
 		UserData users;
 
 		for(int i=0; i < accounts.length; i++)

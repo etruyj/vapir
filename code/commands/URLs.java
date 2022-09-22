@@ -17,6 +17,11 @@ public class URLs
 		return "https://" + ipaddress + "/sl/api/iam/users/clear_cache";
 	}
 
+	public static String createGroupURL(String ipaddress, String account_id, String group)
+	{
+		return "https://" + ipaddress + "/sl/api/iam/groups/" + account_id + "/" + group;
+	}
+
 	public static String groupsURL(String ipaddress, String account)
 	{
 		return "https://" + ipaddress + "/sl/api/iam/groups/" + account;

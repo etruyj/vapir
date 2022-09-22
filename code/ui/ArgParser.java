@@ -228,6 +228,8 @@ public class ArgParser
 				case "--option2":
 				case "-b":
 				case "--bucket":
+				case "-g":
+				case "--group":
 					if((i+1)<args.length)
 					{
 						setOption2(args[i+1]);

@@ -1,9 +1,31 @@
 package com.socialvagrancy.vail.structures;
 
-public class UserSummary
+import java.util.ArrayList;
+
+public class UserSummary extends Summary
 {
-	public String username;
-	public String account_name;
-	public String account_id;
-	public String status;
+	ArrayList<String> groups;
+
+
+	public void addGroup(String group)
+	{
+		if(groups == null)
+		{
+			groups = new ArrayList<String>();
+		}
+
+		groups.add(group);
+	}
+
+	public int groupCount() 
+	{
+		if(groups == null)
+	       	{
+			return 0;
+	    	}	      
+	  
+		return groups.size(); 
+	}
+
+	public String group(int i) { return groups.get(i); }
 }

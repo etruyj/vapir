@@ -5,6 +5,7 @@ import com.google.gson.JsonParseException;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
 import com.socialvagrancy.vail.structures.Lifecycle;
+import com.socialvagrancy.vail.structures.Message;
 import com.socialvagrancy.vail.structures.Storage;
 import com.socialvagrancy.vail.structures.Token;
 import com.socialvagrancy.vail.structures.json.Group;
@@ -189,6 +190,32 @@ public class BasicCommands
 			logbook.logWithSizedLogRotation(response, 3);
 
 			return null;
+		}
+	}
+
+	public boolean createGroup(String ipaddress, String name, String account_id)
+	{
+		// This call is different in that it returns an empty set for a successful
+		// creation call and an error message for a failure.
+
+		String url = URLs.createGroupURL(ipaddress, account_id, name);
+
+		logbook.INFO("Creating new group [" + name + "] for account " + account_id + "...");
+		logbook.INFO("PUT " + url);
+
+		Connector conn = new Connector();
+
+		String response = conn.PUT(url, token, "");
+
+		if(response.length() == 0)
+		{
+			logbook.INFO("Group [" + name + "] created successfully.");
+			return true;
+		}
+		else
+		{
+			logbook.ERR(response);
+			return false;
 		}
 	}
 

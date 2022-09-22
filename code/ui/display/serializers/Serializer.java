@@ -6,12 +6,15 @@
 // 	an ArrayList<OuputFormat>.
 //===================================================================
 
-package com.socialvagrancy.vail.ui.display;
+package com.socialvagrancy.vail.ui.display.serializers;
 
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
+import com.socialvagrancy.vail.structures.BucketSummary;
 import com.socialvagrancy.vail.structures.OutputFormat;
+import com.socialvagrancy.vail.structures.Storage;
 import com.socialvagrancy.vail.structures.Summary;
+import com.socialvagrancy.vail.structures.UserSummary;
 import com.socialvagrancy.vail.structures.User;
 
 import java.util.ArrayList;
@@ -181,6 +184,48 @@ public class Serializer
 		return output;
 	}
 
+	public static ArrayList<OutputFormat> convert(Storage[] storage)
+	{
+		// Displays key info in the storage var
+		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
+		OutputFormat line;
+
+		for(int i=0; i < storage.length; i++)
+		{
+			line = new OutputFormat();
+			line.header = "storage";
+			line.value = null;
+			output.add(line);
+
+			line = new OutputFormat();
+			line.header = "storage>name";
+			line.value = storage[i].name;
+			output.add(line);
+
+			line = new OutputFormat();
+			line.header = "storage>type";
+			line.value = storage[i].type;
+			output.add(line);
+
+			line = new OutputFormat();
+			line.header = "storage>class";
+			line.value = storage[i].storageClass;
+			output.add(line);
+
+			line = new OutputFormat();
+			line.header = "storage>status";
+			line.value = storage[i].status;
+			output.add(line);
+			
+			line = new OutputFormat();
+			line.header = "storage";
+			line.value = null;
+			output.add(line);
+		}
+
+		return output;
+	}
+
 	public static ArrayList<OutputFormat> convert(User[] users)
 	{
 		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
@@ -212,57 +257,24 @@ public class Serializer
 		return output;
 	}
 
-	public static ArrayList<OutputFormat> convert(ArrayList<Summary> list)
+	public static ArrayList<OutputFormat> convert(ArrayList list)
 	{
 		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
-		OutputFormat line; 
-
-		for(int i=0; i<list.size(); i++)
-		{
-			line = new OutputFormat();
-			line.header = list.get(i).type;
-			line.value = null;
-			output.add(line);
-
-			line = new OutputFormat();
-			line.header = list.get(i).type + ">name";
-			line.value = list.get(i).name;
-			output.add(line);
-
-			line = new OutputFormat();
-			line.header = list.get(i).type + ">accountName";
-			line.value = list.get(i).account_name;
-			output.add(line);
-
-			line = new OutputFormat();
-			line.header = list.get(i).type + ">accountId";
-			line.value = list.get(i).account_id;
-			output.add(line);
-
-			if(list.get(i).groups != null)
-			{
-				for(int j=0; j < list.get(i).groups.size(); j++)
-				{
-					line = new OutputFormat();
-					line.header = list.get(i).type + ">group";
-					line.value = list.get(i).groups.get(j);
-					output.add(line);
-				}
-			}
-
-			if(list.get(i).status != null)
-			{
-				line = new OutputFormat();
-				line.header = list.get(i).type + ">status";
-				line.value = list.get(i).status;
-				output.add(line);
-			}
-
-			line = new OutputFormat();
-			line.header = list.get(i).type;
-			line.value = null;
-			output.add(line);
 		
+		if(list.size() > 0)
+		{
+			if(list.get(0) instanceof BucketSummary)
+			{
+				output = SerializeBucketSummary.forOutput(list);
+			}
+			else if(list.get(0) instanceof UserSummary)
+			{
+				output = SerializeUserSummary.forOutput(list);
+			}
+			else if(list.get(0) instanceof Summary)
+			{
+				output = SerializeSummary.forOutput(list);
+			}
 		}
 
 		return output;

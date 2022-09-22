@@ -15,11 +15,14 @@ import com.socialvagrancy.vail.commands.AdvancedCommands;
 import com.socialvagrancy.vail.commands.BasicCommands;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
+import com.socialvagrancy.vail.structures.BucketSummary;
 import com.socialvagrancy.vail.structures.OutputFormat;
 import com.socialvagrancy.vail.structures.SphereConfig;
+import com.socialvagrancy.vail.structures.Storage;
 import com.socialvagrancy.vail.structures.Summary;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
+import com.socialvagrancy.vail.structures.UserSummary;
 import com.socialvagrancy.utils.Logger;
 
 import java.util.ArrayList;
@@ -65,6 +68,11 @@ public class VailController
 		return null;
 	}
 
+	public ArrayList<String> createGroup(String ip_address, String group_name, String account)
+	{
+		return advanced.createGroup(ip_address, group_name, account);
+	}
+	
 	public SphereConfig fetchConfiguration(String ip_address)
 	{
 		return advanced.fetchConfiguration(ip_address);
@@ -85,7 +93,7 @@ public class VailController
 		return sphere.listBuckets(ip_address);
 	}
 	
-	public ArrayList<Summary> listBucketSummary(String ip_address, String account)
+	public ArrayList<BucketSummary> listBucketSummary(String ip_address, String account)
 	{
 		return advanced.filteredBucketList(ip_address, account);
 	}
@@ -95,7 +103,12 @@ public class VailController
 		return advanced.listGroups(ip_address, account);
 	}
 
-	public ArrayList<Summary> listUsers(String ip_address, String account, boolean active_only)
+	public Storage[] listStorage(String ip_address)
+	{
+		return sphere.listStorage(ip_address);
+	}
+
+	public ArrayList<UserSummary> listUsers(String ip_address, String account, boolean active_only)
 	{
 		return advanced.listUsers(ip_address, account, active_only);
 	}
