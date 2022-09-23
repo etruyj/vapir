@@ -74,8 +74,12 @@ public class ListBuckets
 					bucket.name = buckets[i].name;
 					bucket.account_name = canon_name_map.get(buckets[i].owner);
 					bucket.account_id = canon_id_map.get(buckets[i].owner);
-	
-					if(lifecycle_id_map.get(buckets[i].lifecycle) == null)
+					
+					if(buckets[i].lifecycle == null)
+					{
+						bucket.lifecycle = "";
+					}
+					else if(lifecycle_id_map.get(buckets[i].lifecycle) == null)
 					{
 						bucket.lifecycle = "[UNKNOWN]";
 					}

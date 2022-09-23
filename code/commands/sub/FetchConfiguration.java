@@ -72,7 +72,7 @@ public class FetchConfiguration
 
 		for(int i=0; i < config.bucketCount(); i++)
 		{
-			if(id_name_map.get(config.bucketLifecycle(i)) == null)
+			if(id_name_map.get(config.bucketLifecycle(i)) == null && config.bucketLifecycle(i) != null)
 			{
 				logbook.WARN("Unable to find lifecycle with id: " + config.bucketLifecycle(i));
 				System.err.println("WARN: Unable to find lifecycle with id: " + config.bucketLifecycle(i));

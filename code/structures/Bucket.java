@@ -11,6 +11,7 @@ package com.socialvagrancy.vail.structures;
 public class Bucket
 {
 	public String versioning;
+	public boolean encrypt;
 	public boolean restore;
 	public boolean compress;
 	public String lifecycle;
@@ -20,8 +21,31 @@ public class Bucket
 	public boolean blockPublicAcls;
 	public boolean blockPublicPolicy;
 	public boolean ignorePublicAcls;
-	public boolean restricPublicBuckets;
+	public boolean restrictPublicBuckets;
+	public boolean locking;
+	public RetentionPolicy defaultRetention;
 	public String name;
 	public String created;
 	public String permissionType;
+	public String mode;
+	public String timeUnits;
+	public String time;
+
+	//=======================================
+	// Functions
+	//=======================================
+
+	public boolean retentionCompliance() { return defaultRetention.compliance; }
+	public int retentionDays() { return defaultRetention.days; }
+
+
+	//=======================================
+	// Inner Classes
+	//=======================================
+
+	public class RetentionPolicy
+	{
+		boolean compliance;
+		int days;
+	}
 }

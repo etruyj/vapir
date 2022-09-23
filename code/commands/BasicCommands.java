@@ -185,9 +185,10 @@ public class BasicCommands
 		}
 		catch(JsonParseException e)
 		{
-			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
-			logbook.logWithSizedLogRotation("BODY: " + json_body, 1);
-			logbook.logWithSizedLogRotation(response, 3);
+			logbook.ERR(e.getMessage());
+
+			logbook.ERR("BODY: " + json_bod);
+			logbook.ERR(response);
 
 			return null;
 		}

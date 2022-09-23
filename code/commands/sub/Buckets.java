@@ -21,6 +21,8 @@ import java.util.HashMap;
 
 public class Buckets
 {
+	/* MARK FOR DELETION 9/23/22
+	 * Moved to CreateBucket
 	public static Bucket createForAccount(BasicCommands sphere, String ip_address, Bucket bucket, Logger logbook)
 	{
 		logbook.logWithSizedLogRotation("Creating bucket [" + bucket.name + "] for account [" + bucket.owner + "]...", 1);
@@ -80,8 +82,11 @@ public class Buckets
 		
 		String json_body = gson.toJson(forJson, Bucket.class);
 
+		System.err.println(json_body);
+
 		return sphere.createBucket(ip_address, bucket.name, json_body);
 	}
+	*/
 
 	public static Bucket createForAccount(BasicCommands sphere, String ip_address, String bucket_name, String account_name, Logger logbook)
 	{

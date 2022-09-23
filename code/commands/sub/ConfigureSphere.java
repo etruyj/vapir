@@ -67,38 +67,59 @@ public class ConfigureSphere
 		return success_count;	
 	}
 
-	public static int addBuckets(BasicCommands sphere, String ip_address, Bucket[] buckets, HashMap<String, String> lifecycle_map, Logger logbook)
+	public static int addBuckets(BasicCommands sphere, String ip_address, Bucket[] buckets, HashMap<String, String> account_map, HashMap<String, String> lifecycle_map, Logger logbook)
 	{
 		// Returns the number of successfully added accounts
 		// Can use this to measure error rate.
 
-		String json_body;
-		Bucket temp_bucket;
 		Bucket bucket_verify;
 		int success_count = 0;
-		boolean lifecycle_found_successfully = true;
+		boolean account_found = true;
+		boolean lifecycle_found = true;
 
 		logbook.logWithSizedLogRotation("Adding (" + buckets.length + ") buckets to Sphere...", 1);
 
 		for(int i=0; i<buckets.length; i++)
 		{
+			if(buckets[i].locking)
+			{
+				logbook.WARN("Bucket [" + buckets[i].name + "] has object locking enabled.");
+				logbook.WARN("Creating bucket without object locking. Locking can be configured by editing the bucket on the UI.");
+				System.err.println("WARNING: Bucket [" + buckets[i].name + "] has object locking enabled.");
+				System.err.println("WARNING: Creating bucket without object locking. Locking can be configured by editing the bucket on the UI.");
+				
+				buckets[i].locking = false;
+				buckets[i].defaultRetention = null;
+			}
+
+			// Find account Canonical ID
+			if(account_map.get(buckets[i].owner) != null)
+			{
+				buckets[i].owner = account_map.get(buckets[i].owner);
+			}
+			else
+			{
+				logbook.ERR("Unabled to find account [" + buckets[i].owner + "].");
+				account_found = false;
+			}
+
 			// Convert lifecycle names to lifecycle identifiers
 			if(lifecycle_map.get(buckets[i].lifecycle) != null)
 			{
 				buckets[i].lifecycle = lifecycle_map.get(buckets[i].lifecycle);
 			}
-			else if(!buckets[i].lifecycle.equals("none")) // no need to do anything for none.
+			else if(buckets[i].lifecycle != null && !buckets[i].lifecycle.equals("none")) // no need to do anything for none.
 			{
 				logbook.logWithSizedLogRotation("ERROR: Unable to find lifecycle [" + buckets[i].lifecycle + "]", 3);
 
-				lifecycle_found_successfully = false;
+				lifecycle_found = false;
 
 			}
 
 			// Proceed only if translation was successful.
-			if(lifecycle_found_successfully)
+			if(account_found && lifecycle_found)
 			{
-				bucket_verify = Buckets.createForAccount(sphere, ip_address, buckets[i], logbook);
+				bucket_verify = CreateBucket.createWithJson(sphere, ip_address, buckets[i], logbook);
 				if(bucket_verify != null)
 				{
 					success_count++;
@@ -255,22 +276,23 @@ storage_map.get(lifecycles[i].rules[r].destinations.storage[s]);
 		// for using the configure sphere to add to the config instead of 
 		Account[] accounts = sphere.listAccounts(ip_address);
 		HashMap<String, String> account_name_id_map = MapAccounts.createNameIDMap(accounts);
+		HashMap<String, String> account_name_canon_map = MapAccounts.createNameCanonicalIDMap(accounts);
 
 		// Add groups
 		success[1] = addGroups(sphere, ip_address, config.groups, account_name_id_map, logbook);
 
 		// Add storage
 		success[2] = addStorage(sphere, ip_address, config.storage, logbook);
-
-		// Add lifecycles
 		Storage[] locations = sphere.listStorage(ip_address);
 		HashMap<String, String> map = StorageLocations.map(locations);
+
+		// Add lifecycles
 		success[3] = addLifecycles(sphere, ip_address, config.lifecycles, map, logbook);
+		Lifecycle[] lifecycles = sphere.listLifecycles(ip_address);
+		HashMap<String, String> lifecycle_map = Lifecycles.map(lifecycles);
 
 		// Add buckets
-		Lifecycle[] lifecycles = sphere.listLifecycles(ip_address);
-		map = Lifecycles.map(lifecycles);
-		success[4] = addBuckets(sphere, ip_address, config.buckets, map, logbook);
+		success[4] = addBuckets(sphere, ip_address, config.buckets, account_name_canon_map, lifecycle_map, logbook);
 	
 		report.add("Configuration complete.");
 		report.add("Added " + success[0] + "/" + config.accounts.length + " accounts.");
