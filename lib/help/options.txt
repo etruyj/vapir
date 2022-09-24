@@ -12,4 +12,5 @@ This script provides access to the Spectra Logic Vail Sphere via the API. Availa
 --input-file	Specify the input file name. Used for loading configurations.
 --output-format	Specify the output format of the response. Default is table. Accepts csv, shell, table, and xml.
 --password(-p)  Password
---username(-u)	Username
+--username(-u)	Vail Sphere username
+--user		Vail user

@@ -46,11 +46,6 @@ public class VailController
 		return sphere.clearCache(ip_address);
 	}
 
-	public ArrayList<String> configureSphere(String ip_address, String file_path)
-	{
-		return advanced.configureSphere(ip_address, file_path);
-	}
-
 	public String createBucket(String ip_address, String bucket_name, String account)
 	{
 		if(!account.equals("none"))
@@ -73,6 +68,16 @@ public class VailController
 		return advanced.createGroup(ip_address, group_name, account);
 	}
 	
+	public ArrayList<String> createUser(String ip_address, String account, String username)
+	{
+		return advanced.createUser(ip_address, account, username);
+	}
+	
+	public ArrayList<String> configureSphere(String ip_address, String file_path)
+	{
+		return advanced.configureSphere(ip_address, file_path);
+	}
+
 	public SphereConfig fetchConfiguration(String ip_address)
 	{
 		return advanced.fetchConfiguration(ip_address);

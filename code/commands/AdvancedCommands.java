@@ -3,6 +3,7 @@ package com.socialvagrancy.vail.commands;
 import com.socialvagrancy.vail.commands.sub.Buckets;
 import com.socialvagrancy.vail.commands.sub.ConfigureSphere;
 import com.socialvagrancy.vail.commands.sub.CreateGroup;
+import com.socialvagrancy.vail.commands.sub.CreateUser;
 import com.socialvagrancy.vail.commands.sub.FetchConfiguration;
 import com.socialvagrancy.vail.commands.sub.ListGroups;
 import com.socialvagrancy.vail.commands.sub.ListUsers;
@@ -41,6 +42,14 @@ public class AdvancedCommands
 	public Bucket createBucketForAccount(String ip_address, String bucket_name, String account)
 	{
 		return Buckets.createForAccount(sphere, ip_address, bucket_name, account, logbook);
+	}
+
+	public ArrayList<String> createUser(String ipaddress, String account, String username)
+	{
+		ArrayList<String> response = new ArrayList<String>();
+		response.add(CreateUser.createUser(sphere, ipaddress, account, username, logbook));
+
+		return response;
 	}
 
 	public ArrayList<String> createGroup(String ip_address, String group_name, String account)

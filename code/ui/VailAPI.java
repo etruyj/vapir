@@ -38,6 +38,9 @@ public class VailAPI
 			case "create-group":
 				Display.print(controller.createGroup(ip, option2, option1));
 				break;
+			case "create-user":
+				Display.print(controller.createUser(ip, option1, option3));
+				break;
 			case "fetch-config":
 				Display.output(controller.fetchConfiguration(ip), outputFormat, option4);
 				break;

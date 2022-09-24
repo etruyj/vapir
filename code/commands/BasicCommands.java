@@ -11,6 +11,7 @@ import com.socialvagrancy.vail.structures.Token;
 import com.socialvagrancy.vail.structures.json.Group;
 import com.socialvagrancy.vail.structures.json.GroupData;
 import com.socialvagrancy.vail.structures.json.UserData;
+import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
 import com.socialvagrancy.vail.utils.Connector;
 import com.socialvagrancy.utils.Logger;
@@ -187,7 +188,7 @@ public class BasicCommands
 		{
 			logbook.ERR(e.getMessage());
 
-			logbook.ERR("BODY: " + json_bod);
+			logbook.ERR("BODY: " + json_body);
 			logbook.ERR(response);
 
 			return null;
@@ -251,7 +252,38 @@ public class BasicCommands
 		}
 
 	}
-	
+
+	public User createUser(String ipaddress, String account_id, String username)
+	{
+		Gson gson = new Gson();
+
+		String url = URLs.userCreateURL(ipaddress, account_id, username);
+		
+		logbook.INFO("Creating user [" + username + "] for account " + account_id);
+		logbook.INFO("PUT " + url);
+
+		Connector conn = new Connector();
+
+		String response = conn.PUT(url, token, "");
+
+		try
+		{
+			User user =  gson.fromJson(response, User.class);
+
+			logbook.INFO("User [" + username + "] creation successful.");
+
+			return user;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.ERR(e.getMessage());
+			logbook.ERR("Failed to create user [" + username + "].");
+			logbook.ERR(response);
+
+			return null;
+		}
+	}
+
 	public UserKey createUserKey(String ipaddress, String account, String user)
 	{
 		Gson gson = new Gson();

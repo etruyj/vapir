@@ -5,6 +5,7 @@ These commands perform more complex tasks on the results of the basic API comman
 configure-sphere	Loads a configuration file (sample: ../inputs/sample_config.json) for configuring a sphere with --input-file PATH/TO/FILE.
 create-bucket		Creates a bucket --bucket for the specified --account [ ACCOUNT_NAME | ACCOUNT_ID]
 create-group		Creates a group --group for the specified --account [ACCOUNT_NAME | ACCOUNT_ID | CANONICAL_ID]
+create-user		Creates a user --user for the specified --account [ACCOUNT_NAME | ACCOUNT_ID | CANONICAL_ID]
 list-buckets		List all buckets and ownering accounts. Use --account [ ACCOUNT_NAME | ACCOUNT_ID ] to limit output to buckets belonging to a single account. Use --account all to list all buckets.
 fetch-config		Creates a json configuration file that can be used for configuring the sphere. Either outputs to shell or saves to --input-file PATH/TO/FILE 
 list-groups		List all groups and the associated account. Can be filtered with --account [ all | ACCOUNT_NAME | ACCOUNT_ID ]

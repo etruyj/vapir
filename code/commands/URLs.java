@@ -57,6 +57,11 @@ public class URLs
 		return "https://" + ipaddress + "/sl/api/iam/users/" + account_id;
 	}
 
+	public static String userCreateURL(String ipaddress, String account_id, String username)
+	{
+		return "https://" + ipaddress + "/sl/api/iam/users/" + account_id + "/" + username;
+	}
+
 	public static String userGroupsURL(String ipaddress, String account_id, String username)
 	{
 		return "https://" + ipaddress + "/sl/api/iam/users/" + account_id + "/" + username + "/groups";
