@@ -84,7 +84,7 @@ public class Display
 				}
 				else
 				{
-					System.err.println("WARN: CODE REQUIRED");
+					Save.stringToFile(json, file_path);
 				}
 				break;
 		}
