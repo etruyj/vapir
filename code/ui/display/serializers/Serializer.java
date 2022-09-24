@@ -6,12 +6,15 @@
 // 	an ArrayList<OuputFormat>.
 //===================================================================
 
-package com.socialvagrancy.vail.ui.display;
+package com.socialvagrancy.vail.ui.display.serializers;
 
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
+import com.socialvagrancy.vail.structures.BucketSummary;
 import com.socialvagrancy.vail.structures.OutputFormat;
+import com.socialvagrancy.vail.structures.Storage;
 import com.socialvagrancy.vail.structures.Summary;
+import com.socialvagrancy.vail.structures.UserSummary;
 import com.socialvagrancy.vail.structures.User;
 
 import java.util.ArrayList;
@@ -29,7 +32,12 @@ public class Serializer
 			line.header = "account";
 			line.value = null;
 			output.add(line);
-			
+				
+			line = new OutputFormat();
+			line.header = "account>name";
+			line.value = accounts[i].username;
+			output.add(line);
+		
 			line = new OutputFormat();
 			line.header = "account>id";
 			line.value = accounts[i].id;
@@ -48,11 +56,6 @@ public class Serializer
 			line = new OutputFormat();
 			line.header = "account>roleArn";
 			line.value = accounts[i].roleArn;
-			output.add(line);
-			
-			line = new OutputFormat();
-			line.header = "account>username";
-			line.value = accounts[i].username;
 			output.add(line);
 			
 			line = new OutputFormat();
@@ -113,13 +116,26 @@ public class Serializer
 				line.value = buckets[i].acls[j].id;
 				output.add(line);
 		
-				for(int k=0; k<buckets[i].acls[j].permissions.length; k++)
-				{
-					line = new OutputFormat();
-					line.header = "bucket>acls>permissions>permission";
-					line.value = buckets[i].acls[j].permissions[k];
-					output.add(line);
-				}
+				line = new OutputFormat();
+				line.header = "bucket>acls>read";
+				line.value = boolToString(buckets[i].acls[j].read);
+				output.add(line);
+			
+				line = new OutputFormat();
+				line.header = "bucket>acls>readACP";
+				line.value = boolToString(buckets[i].acls[j].readACP);
+				output.add(line);
+			
+				line = new OutputFormat();
+				line.header = "bucket>acls>write";
+				line.value = boolToString(buckets[i].acls[j].write);
+				output.add(line);
+			
+				line = new OutputFormat();
+				line.header = "bucket>acls>writeACP";
+				line.value = boolToString(buckets[i].acls[j].writeACP);
+				output.add(line);
+			
 			}
 
 			line = new OutputFormat();
@@ -168,6 +184,48 @@ public class Serializer
 		return output;
 	}
 
+	public static ArrayList<OutputFormat> convert(Storage[] storage)
+	{
+		// Displays key info in the storage var
+		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
+		OutputFormat line;
+
+		for(int i=0; i < storage.length; i++)
+		{
+			line = new OutputFormat();
+			line.header = "storage";
+			line.value = null;
+			output.add(line);
+
+			line = new OutputFormat();
+			line.header = "storage>name";
+			line.value = storage[i].name;
+			output.add(line);
+
+			line = new OutputFormat();
+			line.header = "storage>type";
+			line.value = storage[i].type;
+			output.add(line);
+
+			line = new OutputFormat();
+			line.header = "storage>class";
+			line.value = storage[i].storageClass;
+			output.add(line);
+
+			line = new OutputFormat();
+			line.header = "storage>status";
+			line.value = storage[i].status;
+			output.add(line);
+			
+			line = new OutputFormat();
+			line.header = "storage";
+			line.value = null;
+			output.add(line);
+		}
+
+		return output;
+	}
+
 	public static ArrayList<OutputFormat> convert(User[] users)
 	{
 		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
@@ -199,48 +257,42 @@ public class Serializer
 		return output;
 	}
 
-	public static ArrayList<OutputFormat> convert(ArrayList<Summary> list)
+	public static ArrayList<OutputFormat> convert(ArrayList list)
 	{
 		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
-		OutputFormat line; 
-
-		for(int i=0; i<list.size(); i++)
-		{
-			line = new OutputFormat();
-			line.header = list.get(i).type;
-			line.value = null;
-			output.add(line);
-
-			line = new OutputFormat();
-			line.header = list.get(i).type + ">username";
-			line.value = list.get(i).name;
-			output.add(line);
-
-			line = new OutputFormat();
-			line.header = list.get(i).type + ">accountName";
-			line.value = list.get(i).account_name;
-			output.add(line);
-
-			line = new OutputFormat();
-			line.header = list.get(i).type + ">accountId";
-			line.value = list.get(i).account_id;
-			output.add(line);
-
-			if(list.get(i).status != null)
-			{
-				line = new OutputFormat();
-				line.header = list.get(i).type + ">status";
-				line.value = list.get(i).status;
-				output.add(line);
-			}
-
-			line = new OutputFormat();
-			line.header = list.get(i).type;
-			line.value = null;
-			output.add(line);
 		
+		if(list.size() > 0)
+		{
+			if(list.get(0) instanceof BucketSummary)
+			{
+				output = SerializeBucketSummary.forOutput(list);
+			}
+			else if(list.get(0) instanceof UserSummary)
+			{
+				output = SerializeUserSummary.forOutput(list);
+			}
+			else if(list.get(0) instanceof Summary)
+			{
+				output = SerializeSummary.forOutput(list);
+			}
 		}
 
 		return output;
+	}
+
+	//=======================================
+	// Private Functions
+	//=======================================
+
+	private static String boolToString(boolean val)
+	{
+		if(val)
+		{
+			return "true";
+		}
+		else
+		{
+			return "false";
+		}
 	}
 }

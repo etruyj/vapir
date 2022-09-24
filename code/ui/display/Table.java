@@ -17,7 +17,7 @@ public class Table
 		int columns = 0;
 		int i = 0;
 		int indent = 0;
-		boolean building_table = true;
+		boolean building_table = false;
 		boolean build_successful = true;
 
 		String current_heading = "none";
@@ -26,9 +26,15 @@ public class Table
 		ArrayList<String> headings = new ArrayList<String>();
 		ArrayList<String> values = new ArrayList<String>();
 
+		if(output.size() > 0)
+		{
+			// Only run through the script if there is output.
+			building_table = true;
+		}
+
 		// Build the table;
 		while(building_table)
-		{	
+		{
 			headers = output.get(i).header.split(">");
 		
 		

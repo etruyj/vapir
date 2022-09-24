@@ -228,6 +228,8 @@ public class ArgParser
 				case "--option2":
 				case "-b":
 				case "--bucket":
+				case "-g":
+				case "--group":
 					if((i+1)<args.length)
 					{
 						setOption2(args[i+1]);
@@ -235,6 +237,7 @@ public class ArgParser
 					}
 					break;	
 				case "--option3":
+				case "--user": // For specifying Vail user, not to be confused with -u/--username which is for logging in.
 					if((i+1)<args.length)
 					{
 						setOption3(args[i+1]);

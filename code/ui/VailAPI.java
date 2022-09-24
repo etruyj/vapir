@@ -21,7 +21,7 @@ public class VailAPI
 
 	public void execute(String ip, String command, String option1, String option2, String option3, String option4, boolean boolean_flag, String outputFormat)
 	{
-		ArrayList<Summary> response;
+		ArrayList response;
 
 		switch(command)
 		{
@@ -34,6 +34,15 @@ public class VailAPI
 				break;
 			case "create-bucket":
 				Display.output(controller.createBucket(ip, option2, option1), outputFormat);
+				break;
+			case "create-group":
+				Display.print(controller.createGroup(ip, option2, option1));
+				break;
+			case "create-user":
+				Display.print(controller.createUser(ip, option1, option3));
+				break;
+			case "fetch-config":
+				Display.output(controller.fetchConfiguration(ip), outputFormat, option4);
 				break;
 			case "help":
 				Display.printHelp("../lib/help/basic.txt");
@@ -49,20 +58,18 @@ public class VailAPI
 				}
 				else
 				{
-					response = controller.listBucketSummary(ip, option1);
-					Display.output(response, outputFormat);
+					Display.output(controller.listBucketSummary(ip, option1), outputFormat);
 				}
 				break;
+			case "list-groups":
+				Display.output(controller.listGroups(ip, option1), outputFormat);
+				break;
+			case "list-storage":
+				Display.output(controller.listStorage(ip), outputFormat);
+				break;
 			case "list-users":
-				if(outputFormat.equals("raw"))
-				{
-					Display.output(controller.listUsers(ip), outputFormat);;
-				}
-				else
-				{
-					response = controller.listUserSummary(ip, option1, boolean_flag);
-					Display.output(response, outputFormat);
-				}
+				response = controller.listUsers(ip, option1, boolean_flag);
+				Display.output(response, outputFormat);
 				break;
 			case "min-iam-policy":
 				controller.findMinIAMPermissions(ip);

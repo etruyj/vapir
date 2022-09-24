@@ -1,5 +1,7 @@
 package com.socialvagrancy.vail.structures;
 
+import java.util.ArrayList;
+
 public class Summary
 {
 	public String type;

@@ -5,12 +5,15 @@ import com.google.gson.JsonParseException;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
 import com.socialvagrancy.vail.structures.Lifecycle;
+import com.socialvagrancy.vail.structures.Message;
 import com.socialvagrancy.vail.structures.Storage;
 import com.socialvagrancy.vail.structures.Token;
+import com.socialvagrancy.vail.structures.json.Group;
+import com.socialvagrancy.vail.structures.json.GroupData;
+import com.socialvagrancy.vail.structures.json.UserData;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
 import com.socialvagrancy.vail.utils.Connector;
-
 import com.socialvagrancy.utils.Logger;
 
 public class BasicCommands
@@ -183,11 +186,38 @@ public class BasicCommands
 		}
 		catch(JsonParseException e)
 		{
-			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
-			logbook.logWithSizedLogRotation("BODY: " + json_body, 1);
-			logbook.logWithSizedLogRotation(response, 3);
+			logbook.ERR(e.getMessage());
+
+			logbook.ERR("BODY: " + json_body);
+			logbook.ERR(response);
 
 			return null;
+		}
+	}
+
+	public boolean createGroup(String ipaddress, String name, String account_id)
+	{
+		// This call is different in that it returns an empty set for a successful
+		// creation call and an error message for a failure.
+
+		String url = URLs.createGroupURL(ipaddress, account_id, name);
+
+		logbook.INFO("Creating new group [" + name + "] for account " + account_id + "...");
+		logbook.INFO("PUT " + url);
+
+		Connector conn = new Connector();
+
+		String response = conn.PUT(url, token, "");
+
+		if(response.length() == 0)
+		{
+			logbook.INFO("Group [" + name + "] created successfully.");
+			return true;
+		}
+		else
+		{
+			logbook.ERR(response);
+			return false;
 		}
 	}
 
@@ -222,7 +252,38 @@ public class BasicCommands
 		}
 
 	}
-	
+
+	public User createUser(String ipaddress, String account_id, String username)
+	{
+		Gson gson = new Gson();
+
+		String url = URLs.userCreateURL(ipaddress, account_id, username);
+		
+		logbook.INFO("Creating user [" + username + "] for account " + account_id);
+		logbook.INFO("PUT " + url);
+
+		Connector conn = new Connector();
+
+		String response = conn.PUT(url, token, "");
+
+		try
+		{
+			User user =  gson.fromJson(response, User.class);
+
+			logbook.INFO("User [" + username + "] creation successful.");
+
+			return user;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.ERR(e.getMessage());
+			logbook.ERR("Failed to create user [" + username + "].");
+			logbook.ERR(response);
+
+			return null;
+		}
+	}
+
 	public UserKey createUserKey(String ipaddress, String account, String user)
 	{
 		Gson gson = new Gson();
@@ -325,8 +386,8 @@ public class BasicCommands
 
 		String url = URLs.bucketsURL(ipaddress);
 	
-		logbook.logWithSizedLogRotation("Querying Sphere for a full list of buckets...", 1);
-		logbook.logWithSizedLogRotation("GET " + url, 2);
+		logbook.INFO("Querying Sphere for a full list of buckets...");
+		logbook.INFO("GET " + url);
 
 		Connector conn = new Connector();
 
@@ -335,14 +396,48 @@ public class BasicCommands
 		try
 		{
 			Bucket[] buckets = gson.fromJson(response, Bucket[].class);
-			logbook.logWithSizedLogRotation("Found (" + buckets.length + ")", 2);
+			logbook.INFO("Found (" + buckets.length + ")");
 			return buckets;
 		}
 		catch(JsonParseException e)
 		{
-			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+			logbook.ERR(e.getMessage());
 			return null;
 		}
+	}
+
+	public GroupData listGroups(String ipaddress, String account)
+	{
+		// The format of the groups JSON is identical to the
+		// Users JSON, so this command will use the same
+		// variable type.
+		
+		Gson gson = new Gson();
+
+		String url = URLs.groupsURL(ipaddress, account);
+
+		logbook.INFO("Querying Sphere for groups associated with account " + account + "...");
+		logbook.INFO("GET " + url);
+
+		Connector conn = new Connector();
+
+		String response = conn.GET(url, token);
+
+		try
+		{
+			GroupData groups = gson.fromJson(response, GroupData.class);
+
+			logbook.INFO("Found (" + groups.count() + ") groups.");
+
+			return groups;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.ERR(e.getMessage());
+
+			return null;
+		}
+
 	}
 
 	public Lifecycle[] listLifecycles(String ipaddress)
@@ -403,13 +498,41 @@ public class BasicCommands
 		}
 	}
 
-	public User[] listUsers(String ipaddress)
+	public Group[] listUserGroups(String ipaddress, String account_id, String username)
 	{
 		Gson gson = new Gson();
-		
-		String url = URLs.usersURL(ipaddress);
 
-		logbook.logWithSizedLogRotation("Querying Sphere for a full list of users...", 1);
+		String url = URLs.userGroupsURL(ipaddress, account_id, username);
+
+		logbook.INFO("Querying Sphere for a list of groups user [" + username + "] belongs to....");
+		logbook.INFO("GET " + url);
+
+		Connector conn = new Connector();
+
+		String response = conn.GET(url, token);
+
+		try
+		{
+			Group[] groups = gson.fromJson(response, Group[].class);
+
+			logbook.INFO("Found (" + groups.length + ") groups");
+
+			return groups;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.ERR(e.getMessage());
+			return null;
+		}
+	}
+
+	public UserData listUsers(String ipaddress, String account_id)
+	{
+		Gson gson = new Gson();
+
+		String url = URLs.usersURL(ipaddress, account_id);
+
+		logbook.logWithSizedLogRotation("Querying Sphere for a list of users associated with account [" + account_id + "]...", 1);
 		logbook.logWithSizedLogRotation("GET " + url, 2);
 
 		Connector conn = new Connector();
@@ -418,9 +541,9 @@ public class BasicCommands
 
 		try
 		{
-			User[] users = gson.fromJson(response, User[].class);
+			UserData users = gson.fromJson(response, UserData.class);
 
-			logbook.logWithSizedLogRotation("Found (" + users.length + ") users", 2);
+			logbook.logWithSizedLogRotation("Found (" + users.count() + ") users", 2);
 
 			return users;
 		}
@@ -428,7 +551,7 @@ public class BasicCommands
 		{
 			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
 		
-			return null;
+			return null; 
 		}
 	}
 

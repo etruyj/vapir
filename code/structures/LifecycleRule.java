@@ -18,15 +18,24 @@ public class LifecycleRule
 	//==============================================
 	// GETTER FUNCTIONS
 	//==============================================
-	
 
+	public int storageCount() { return destinations.storage.length; }	
+	public String storageID(int s) { return destinations.storage[s]; }
+
+	//=============================================
+	// Setter Functions
+	//=============================================
+
+	public void clearDestinationCount() { destinations.count = null; }
+	public void setStorage(int s, String sid) { destinations.storage[s] = sid; }
+	
 	//==============================================
 	// INTERNAL CLASSES
 	//==============================================
 	
 	public class Destination
 	{
-		public int count;
+		public Integer count;
 		public String[] storage;
 	}
 
