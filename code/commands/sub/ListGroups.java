@@ -56,6 +56,7 @@ public class ListGroups
 		{
 			logbook.INFO("Calling listAllGroups(sphere, " + ip + ", Account[])...");
 			group_list = listAllGroups(sphere, ip, accounts);
+		
 			logbook.INFO("Found (" + group_list.size() + ") groups in the sphere.");
 		}
 		else
@@ -134,6 +135,8 @@ public class ListGroups
 
 		groups = sphere.listGroups(ip, account);
 
+
+
 		for(int i=0; i < groups.count(); i++)
 		{
 			group_list.add(buildGroupSummary(groups.name(i), groups.accountID(i), account_map.get(account).username));
@@ -150,10 +153,15 @@ public class ListGroups
 		for(int i=0; i < accounts.length; i++)
 		{
 			groups = sphere.listGroups(ip, accounts[i].id);
-
-			for(int j=0; j < groups.count(); j++)
+			
+			// Error Handling for pre-2.0.0 sphere 
+			// and for the event where people delete all their groups.
+			if(groups != null)
 			{
-				group_list.add(buildGroupSummary(groups.name(j), groups.accountID(j), accounts[i].username));
+				for(int j=0; j < groups.count(); j++)
+				{
+					group_list.add(buildGroupSummary(groups.name(j), groups.accountID(j), accounts[i].username));
+				}
 			}
 		}
 

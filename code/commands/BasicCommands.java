@@ -423,19 +423,27 @@ public class BasicCommands
 
 		String response = conn.GET(url, token);
 
-		try
+		if(response.length() == 0)
 		{
-			GroupData groups = gson.fromJson(response, GroupData.class);
-
-			logbook.INFO("Found (" + groups.count() + ") groups.");
-
-			return groups;
-		}
-		catch(JsonParseException e)
-		{
-			logbook.ERR(e.getMessage());
-
+			logbook.WARN("No results returned from query. May be running a pre-version 2.0.0 sphere.");
 			return null;
+		}
+		else
+		{
+			try
+			{
+				GroupData groups = gson.fromJson(response, GroupData.class);
+
+				logbook.INFO("Found (" + groups.count() + ") groups.");
+
+				return groups;
+			}
+			catch(JsonParseException e)
+			{
+				logbook.ERR(e.getMessage());
+
+				return null;
+			}
 		}
 
 	}

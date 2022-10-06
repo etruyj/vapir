@@ -142,7 +142,7 @@ public class Connector
 		}
 		catch(Exception e)
 		{
-			System.out.println(e.getMessage());
+			System.err.println("ERROR: " + e.getMessage());
 		}
 
 		// Check to see if there is a response.

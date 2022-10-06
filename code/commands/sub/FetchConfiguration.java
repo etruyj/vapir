@@ -101,7 +101,7 @@ public class FetchConfiguration
 			// Clear ACL info if ACLs are set to none.
 			// ACLs Disabled or BucketOwnerEnforced
 
-			if(config.buckets[i].control.equals("BucketOwnerEnforced"))
+			if(config.buckets[i].control != null && config.buckets[i].control.equals("BucketOwnerEnforced"))
 			{
 				config.clearBucketAcls(i);
 			}
