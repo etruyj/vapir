@@ -38,6 +38,8 @@ Some of the flags can be abbreviated to their initial letter. This can be seen i
 --username(-u)&emsp;&ensp;Username  
 
 ### Commands
+--configure-sphere&emsp;Loads a JSON configuration file to configure a sphere.
+--fetch-config&emsp;&emsp;Saves accounts, groups, storage locations, lifecycles, and bucket info in JSON format to --file
 --list-accounts&emsp;List all accounts paired with the Vail system.
 --list-buckets&emsp;List buckets. Use --account [ all | ACCOUNT_NAME | ACCOUNT_ID ] to filter results.
 --list-users&emsp;&ensp;List users. Use --account [ all | ACCOUNT_NAME | ACCOUNT_ID ] and/or --active-only to filter results.
