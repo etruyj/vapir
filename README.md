@@ -51,4 +51,17 @@ vapir stores logs in the log/ sub-directory for the program. The name of the fil
 The configure-sphere command can import a JSON configuration file to automate the configuration of a Vail sphere. The configuration file can specify accounts, groups, storage locations, lifecycles, and buckets.
 
 ### Storage Locations
-The configuration file has a parameter for storage to specify BlackPearl and cloud storage locations. Both sources require credentials to be added to the 
+The configuration file has a parameter for storage to specify BlackPearl and cloud storage locations. Any storage location requires credentials to be added to the sphere. For the BlackPearl storage, the script will prompt you for the username and password. For AWS storage locations, the access key and secret key will need to be included in the JSON.
+
+#### BlackPearl Bucket Storage
+Blackpearl storage locations require only a few fields of information in order to be added to a Vail sphere. At the current version of the script, BlackPearl credentials are not stored in the JSON. A prompt will ask for the BlackPearl's username and password while configuring the storage location for the BlackPearl. This is only required for the first storage location associated with the BlackPearl. Credentials will be cached for subsequent storage locations. All fields are strings unless otherwise noted.
+
+##### Minimum Required Fields
+name&emsp;&emsp;The name of the storage location in Vail. This does not have to be the same as the bucket name.
+bucket&emsp;&emsp;The bucket name in the BlackPearl Nearline Gateway
+type&emsp;&emsp;The storage type. In this case it must be bp.
+endpoint&emsp;&emsp;The hostname of the BlackPearl
+cautionThreshold&emsp;What utilization threshold should generate a caution message. INTEGER
+warningThreshold&emsp;What utilization threshold should generate a warning message. INTEGER
+
+
