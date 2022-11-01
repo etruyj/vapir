@@ -62,7 +62,7 @@ email&emsp;&emsp;&emsp;&emsp;The email associated with the administrator of that
 ##### Additional Fields
 externalId&emsp;&emsp;The external ID, if defined, associated with the role ARN.
 
-#### Groups
+### Groups
 Groups specified in the configuration JSON are internal to Vail and do not exist outside of the sphere in any of the attached AWS accounts. Groups do not have any innate permissions and permissions are applied to groups at the bucket policy level. This parameter, groups, is an array of strings, where the strings are the group names to be added to the account.
 
 ### Storage Locations
