@@ -79,6 +79,9 @@ endpoint&emsp;&emsp;The hostname of the BlackPearl
 cautionThreshold&emsp;What utilization threshold should generate a caution message. INTEGER  
 warningThreshold&emsp;What utilization threshold should generate a warning message. INTEGER  
 
+##### Optional Parameters
+link&emsp;&emsp;A BlackPearl bucket to link to this storage location as read only.
+
 ### Lifecycles
 Lifecycles are the storage rules applied to Vail buckets. They include where the date is stored and for what duration.
 
