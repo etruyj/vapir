@@ -62,6 +62,9 @@ email&emsp;&emsp;&emsp;&emsp;The email associated with the administrator of that
 ##### Additional Fields
 externalId&emsp;&emsp;The external ID, if defined, associated with the role ARN.
 
+#### Groups
+Groups specified in the configuration JSON are internal to Vail and do not exist outside of the sphere in any of the attached AWS accounts. Groups do not have any innate permissions and permissions are applied to groups at the bucket policy level. This parameter, groups, is an array of strings, where the strings are the group names to be added to the account.
+
 ### Storage Locations
 The configuration file has a parameter, storage, to specify BlackPearl and cloud storage locations. Any storage location requires credentials to be added to the sphere. For the BlackPearl storage, the script will prompt you for the username and password. For AWS storage locations, the access key and secret key will need to be included in the JSON.
 
@@ -75,6 +78,9 @@ type&emsp;&emsp;The storage type. In this case it must be bp.
 endpoint&emsp;&emsp;The hostname of the BlackPearl  
 cautionThreshold&emsp;What utilization threshold should generate a caution message. INTEGER  
 warningThreshold&emsp;What utilization threshold should generate a warning message. INTEGER  
+
+### Lifecycles
+Lifecycles are the storage rules applied to Vail buckets. They include where the date is stored and for what duration.
 
 ### Buckets
 Buckets are the primary interface between the Vail system and act as a group of data for the application of storage rules. Due to some limits with information present in the API calls, this script does not support object locking. Any buckets created with object locking enabled will have object locking disabled by the script and a message will be presented informing the user to configure object locking from the UI after bucket creation. While ACLs can be applied with this script, they are a deprecated parameter in AWS and Spectra recommends against using them.
