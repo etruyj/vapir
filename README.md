@@ -48,7 +48,7 @@ Some of the flags can be abbreviated to their initial letter. This can be seen i
 vapir stores logs in the log/ sub-directory for the program. The name of the file is vail_api.log
 
 ## Configuration JSON
-The configure-sphere command can import a JSON configuration file to automate the configuration of a Vail sphere. The configuration file can specify accounts, groups, storage locations, lifecycles, and buckets.
+The configure-sphere command can import a JSON configuration file to automate the configuration of a Vail sphere. The configuration file can specify accounts, groups, storage locations, lifecycles, and buckets. These fields can be defined in any order.
 
 ### Storage Locations
 The configuration file has a parameter for storage to specify BlackPearl and cloud storage locations. Any storage location requires credentials to be added to the sphere. For the BlackPearl storage, the script will prompt you for the username and password. For AWS storage locations, the access key and secret key will need to be included in the JSON.
