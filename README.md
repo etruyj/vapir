@@ -28,12 +28,12 @@ Some of the flags can be abbreviated to their initial letter. This can be seen i
 `./vapir.bat --ignore-ssl -e IP_ADDRESS -u USERNAME -p PASSWORD -c list-buckets --account all`
 
 ### Options
---account&emsp;&emsp;Filter list by owning account name or account id. Use all to list all items in response.
---active-only&emsp;Filter the user list to only display active users.
+--account&emsp;&emsp;Filter list by owning account name or account id. Use all to list all items in response.  
+--active-only&emsp;Filter the user list to only display active users.  
 --command(-c)&emsp;The command to be executed. Commands can be listed with -c help, -c help-basic, or -c help-advanced  
---ignore-ssl&emsp;&emsp;Ignore the SSL certificate returned by the server.
+--ignore-ssl&emsp;&emsp;Ignore the SSL certificate returned by the server.  
 --endpoint(-e)&emsp;&ensp;IP Address of the Stack  
---output-format&emsp;&ensp;The format in which ouput will be displayed. Accepts csv, shell, table, and xml. Defaults to table.
+--output-format&emsp;&ensp;The format in which ouput will be displayed. Accepts csv, shell, table, and xml. Defaults to table.  
 --password(-p)&emsp;Password  
 --username(-u)&emsp;&ensp;Username  
 
