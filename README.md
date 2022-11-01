@@ -50,8 +50,20 @@ vapir stores logs in the log/ sub-directory for the program. The name of the fil
 ## Configuration JSON
 The configure-sphere command can import a JSON configuration file to automate the configuration of a Vail sphere. The configuration file can specify accounts, groups, storage locations, lifecycles, and buckets. These fields can be defined in any order.
 
+### Accounts
+Vail allows for attaching external AWS accounts for handling identity and access management across a large organization. This allows multiple organizations to share a single Vail sphere while maintaining AWS cross-account permissions. The configuration file has a parameter, accounts, for adding these accounts.
+
+#### AWS Accounts
+##### Minimum Required Fields
+username&emsp;&emsp;The username associated with the account. This is functionally the name of the account.
+roleArn&emsp;&emsp;&emsp;The AWS ARN associated with the account. This should be in the format of arn:aws:iam::ACCOUNT_NUMBER:role/ROLE_NAME
+email&emsp;&emsp;&emsp;&emsp;The email associated with the administrator of that account.
+
+##### Additional Fields
+externalID&emsp;&emsp;The external ID, if defined, associated with the role ARN.
+
 ### Storage Locations
-The configuration file has a parameter for storage to specify BlackPearl and cloud storage locations. Any storage location requires credentials to be added to the sphere. For the BlackPearl storage, the script will prompt you for the username and password. For AWS storage locations, the access key and secret key will need to be included in the JSON.
+The configuration file has a parameter, storage, to specify BlackPearl and cloud storage locations. Any storage location requires credentials to be added to the sphere. For the BlackPearl storage, the script will prompt you for the username and password. For AWS storage locations, the access key and secret key will need to be included in the JSON.
 
 #### BlackPearl Bucket Storage
 Blackpearl storage locations require only a few fields of information in order to be added to a Vail sphere. At the current version of the script, BlackPearl credentials are not stored in the JSON. A prompt will ask for the BlackPearl's username and password while configuring the storage location for the BlackPearl. This is only required for the first storage location associated with the BlackPearl. Credentials will be cached for subsequent storage locations. All fields are strings unless otherwise noted.
