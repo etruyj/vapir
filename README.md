@@ -55,8 +55,8 @@ Vail allows for attaching external AWS accounts for handling identity and access
 
 #### AWS Accounts
 ##### Minimum Required Fields
-username&emsp;&emsp;The username associated with the account. This is functionally the name of the account.
-roleArn&emsp;&emsp;&emsp;The AWS ARN associated with the account. This should be in the format of arn:aws:iam::ACCOUNT_NUMBER:role/ROLE_NAME
+username&emsp;&emsp;The username associated with the account. This is functionally the name of the account.  
+roleArn&emsp;&emsp;&emsp;The AWS ARN associated with the account. This should be in the format of arn:aws:iam::ACCOUNT_NUMBER:role/ROLE_NAME  
 email&emsp;&emsp;&emsp;&emsp;The email associated with the administrator of that account.
 
 ##### Additional Fields
