@@ -60,7 +60,7 @@ roleArn&emsp;&emsp;&emsp;The AWS ARN associated with the account. This should be
 email&emsp;&emsp;&emsp;&emsp;The email associated with the administrator of that account.
 
 ##### Additional Fields
-externalID&emsp;&emsp;The external ID, if defined, associated with the role ARN.
+externalId&emsp;&emsp;The external ID, if defined, associated with the role ARN.
 
 ### Storage Locations
 The configuration file has a parameter, storage, to specify BlackPearl and cloud storage locations. Any storage location requires credentials to be added to the sphere. For the BlackPearl storage, the script will prompt you for the username and password. For AWS storage locations, the access key and secret key will need to be included in the JSON.
@@ -76,4 +76,9 @@ endpoint&emsp;&emsp;The hostname of the BlackPearl
 cautionThreshold&emsp;What utilization threshold should generate a caution message. INTEGER  
 warningThreshold&emsp;What utilization threshold should generate a warning message. INTEGER  
 
+### Buckets
+Buckets are the primary interface between the Vail system and act as a group of data for the application of storage rules. Due to some limits with information present in the API calls, this script does not support object locking. Any buckets created with object locking enabled will have object locking disabled by the script and a message will be presented informing the user to configure object locking from the UI after bucket creation. While ACLs can be applied with this script, they are a deprecated parameter in AWS and Spectra recommends against using them.
 
+##### Minimum Required Fields
+name&emsp;&emsp;Bucket name
+owner&emsp;&emsp;The account name of the account that should own the bucket. Sphere can be used to reference the local account or the username of any account should be used.
