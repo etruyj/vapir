@@ -80,5 +80,5 @@ warningThreshold&emsp;What utilization threshold should generate a warning messa
 Buckets are the primary interface between the Vail system and act as a group of data for the application of storage rules. Due to some limits with information present in the API calls, this script does not support object locking. Any buckets created with object locking enabled will have object locking disabled by the script and a message will be presented informing the user to configure object locking from the UI after bucket creation. While ACLs can be applied with this script, they are a deprecated parameter in AWS and Spectra recommends against using them.
 
 ##### Minimum Required Fields
-name&emsp;&emsp;Bucket name
+name&emsp;&emsp;Bucket name  
 owner&emsp;&emsp;The account name of the account that should own the bucket. Sphere can be used to reference the local account or the username of any account should be used.
