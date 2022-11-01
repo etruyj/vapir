@@ -38,12 +38,17 @@ Some of the flags can be abbreviated to their initial letter. This can be seen i
 --username(-u)&emsp;&ensp;Username  
 
 ### Commands
---list-accounts&emsp;List all accounts paired with the Vail system.
---list-buckets&emsp;List buckets. Use --account [ all | ACCOUNT_NAME | ACCOUNT_ID ] to filter results.
---list-users&emsp;&ensp;List users. Use --account [ all | ACCOUNT_NAME | ACCOUNT_ID ] and/or --active-only to filter results.
+--configure-sphere&emsp;Loads a JSON configuration file to configure a sphere.  
+--fetch-config&emsp;&emsp;Saves accounts, groups, storage locations, lifecycles, and bucket info in JSON format to --file  
+--list-accounts&emsp;List all accounts paired with the Vail system.  
+--list-buckets&emsp;List buckets. Use --account [ all | ACCOUNT_NAME | ACCOUNT_ID ] to filter results.  
+--list-users&emsp;&ensp;List users. Use --account [ all | ACCOUNT_NAME | ACCOUNT_ID ] and/or --active-only to filter results.  
 
 ## Errors
 vapir stores logs in the log/ sub-directory for the program. The name of the file is vail_api.log
 
 ## Configuration JSON
-The configure-sphere command can 
+The configure-sphere command can import a JSON configuration file to automate the configuration of a Vail sphere. The configuration file can specify accounts, groups, storage locations, lifecycles, and buckets.
+
+### Storage Locations
+The configuration file has a parameter for storage to specify BlackPearl and cloud storage locations. Both sources require credentials to be added to the 
