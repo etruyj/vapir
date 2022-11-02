@@ -14,13 +14,17 @@ package com.socialvagrancy.vail.commands.sub;
 
 import com.socialvagrancy.vail.commands.BasicCommands;
 import com.socialvagrancy.vail.commands.sub.CreateGroup;
+import com.socialvagrancy.vail.commands.sub.GetBlackPearlCredentials;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
+import com.socialvagrancy.vail.structures.Endpoint;
 import com.socialvagrancy.vail.structures.Lifecycle;
 import com.socialvagrancy.vail.structures.SphereConfig;
 import com.socialvagrancy.vail.structures.Storage;
 import com.socialvagrancy.vail.structures.Summary;
+import com.socialvagrancy.vail.structures.requests.EndpointStorageRequest;
 import com.socialvagrancy.vail.utils.map.MapAccounts;
+import com.socialvagrancy.vail.utils.map.MapEndpoints;
 import com.socialvagrancy.utils.Logger;
 
 import com.google.gson.Gson;
@@ -242,15 +246,64 @@ storage_map.get(lifecycles[i].rules[r].destinations.storage[s]);
 		Storage storage_verify;
 		int success_count = 0;
 
+		// Get a list of endpoints associated with the system
+		Endpoint[] endpoints = sphere.listEndpoints(ip_address);
+		HashMap<String, Endpoint> endpoint_map = MapEndpoints.createNameObjectMap(endpoints);
+
 		Gson gson = new Gson();
+		EndpointStorageRequest request;
+		Endpoint endpoint;
 
 		logbook.logWithSizedLogRotation("Adding (" + locations.length + ") storage locations to Sphere...", 1);
 
 		for(int i=0; i<locations.length; i++)
 		{
-			json_body = gson.toJson(locations[i], Storage.class);
+			// Build the request
+			request = new EndpointStorageRequest();
 
-			storage_verify = sphere.addStorage(ip_address, locations[i].name, json_body);
+			request.bucket = locations[i].bucket;
+			request.name = locations[i].name;
+			request.link = locations[i].link;
+			request.cautionThreshold = locations[i].cautionThreshold;
+			request.warningThreshold = locations[i].warningThreshold;
+
+			if(locations[i].type.equals("bp"))
+			{
+				request.type = "bp";
+				
+				if(endpoint_map.get(locations[i].endpoint) != null)
+				{
+					endpoint = endpoint_map.get(locations[i].endpoint);
+					request.system = endpoint.id();
+
+					if(endpoint.login() == null)
+					{
+						logbook.WARN("No login credentials");
+						endpoint = GetBlackPearlCredentials.addDs3Keys(sphere, endpoint, logbook);
+
+						endpoint_map.put(endpoint.name(), endpoint);
+					}
+				
+					if(endpoint != null)
+					{		
+						request.accessKey = endpoint.login();
+						request.secretKey = endpoint.key();
+					}
+					else
+					{
+						System.err.println("Endpoint is null");
+					}
+				}
+				else
+				{
+					logbook.WARN("Unabled to find BlackPearl endpoint [" + locations[i].endpoint + "].");
+				}
+				
+			}
+
+			json_body = gson.toJson(request);
+
+			storage_verify = sphere.addStorage(ip_address, request.name, json_body);
 			if(storage_verify != null)
 			{
 				success_count++;
@@ -363,6 +416,13 @@ storage_map.get(lifecycles[i].rules[r].destinations.storage[s]);
 		logbook.INFO("Loading configuration file " + filename);
 
 		SphereConfig config = importJSONConfigFile(filename);
+
+		// Error Handling on import
+		if(config.accounts == null) { config.accounts = new Account[0]; }
+		if(config.groups == null) { config.groups = new ArrayList<Summary>(); }
+		if(config.storage == null) { config.storage = new Storage[0]; }
+		if(config.lifecycles == null) { config.lifecycles = new Lifecycle[0]; }
+		if(config.buckets == null) { config.buckets = new Bucket[0]; }
 
 		if(config != null)
 		{

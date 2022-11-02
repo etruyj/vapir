@@ -7,6 +7,27 @@ public class URLs
 		return "https://" + ipaddress + "/sl/api/accounts";
 	}
 
+	public static String blackpearlLoginURL(String url)
+	{
+		// No https:// as vail stores the domain name of the 
+		// endpoint with http(s)://.
+		return url + "/api/tokens.json";
+	}
+
+	public static String blackpearlUserKeyURL(String url, String id)
+	{
+		// No https:// as vail stores the domain name of the 
+		// endpoint with http(s)://.
+		return url + "/api/ds3/keys?user_id=" + id;
+	}
+
+	public static String blackpearlUsersListURL(String url)
+	{
+		// No https:// as vail stores the domain name of the 
+		// endpoint with http(s)://.
+		return url + "/api/users";
+	}
+
 	public static String bucketsURL(String ipaddress)
 	{
 		return "https://" + ipaddress + "/sl/api/buckets";
@@ -20,6 +41,11 @@ public class URLs
 	public static String createGroupURL(String ipaddress, String account_id, String group)
 	{
 		return "https://" + ipaddress + "/sl/api/iam/groups/" + account_id + "/" + group;
+	}
+
+	public static String endpointsURL(String ipaddress)
+	{
+		return "https://" + ipaddress + "/sl/api/endpoints";
 	}
 
 	public static String groupsURL(String ipaddress, String account)
