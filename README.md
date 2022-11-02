@@ -93,4 +93,8 @@ name&emsp;&emsp;Bucket name
 owner&emsp;&emsp;The account name of the account that should own the bucket. Sphere (all lower-case) can be used to reference the local account or the username of any account should be used.
 
 ##### Options Fields
+compress&emsp;&emsp;BOOLEAN. Enable compression.  
+encrypt&emsp;&emps;BOOLEAN. Enable encryption.  
+locking&emsp;&emps;BOOLEAN. Enabled object locking *NOT SUPPORTED. WILL DISABLE*  
+restore&emsp;&emsp;BOOLEAN. Enabled automatic restores.  
 versioning&emsp;&emsp;[enabled | disabled] Whether or not the bucket will version objects.
