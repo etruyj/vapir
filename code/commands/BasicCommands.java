@@ -738,7 +738,13 @@ public class BasicCommands
 		try
 		{
 			Token tok = gson.fromJson(response, Token.class);
-		
+	
+			if(tok == null)
+			{
+				logbook.ERR("Login FAILED");
+				return false;
+			}
+
 			token = "Bearer " + tok.getToken();
 
 			logbook.logWithSizedLogRotation("Login SUCCESSFUL", 2);
