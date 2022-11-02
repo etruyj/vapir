@@ -94,7 +94,7 @@ owner&emsp;&emsp;The account name of the account that should own the bucket. Sph
 
 ##### Options Fields
 compress&emsp;&emsp;BOOLEAN. Enable compression.  
-encrypt&emsp;&emps;BOOLEAN. Enable encryption.  
-locking&emsp;&emps;BOOLEAN. Enabled object locking *NOT SUPPORTED. WILL DISABLE*  
+encrypt&emsp;&emsp;BOOLEAN. Enable encryption.  
+locking&emsp;&emsp;BOOLEAN. Enabled object locking *NOT SUPPORTED. WILL DISABLE*  
 restore&emsp;&emsp;BOOLEAN. Enabled automatic restores.  
 versioning&emsp;&emsp;[enabled | disabled] Whether or not the bucket will version objects.
