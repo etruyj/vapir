@@ -90,10 +90,6 @@ public class MapAccounts
 			{
 				account_map.put("sphere", accounts[i].canonicalId);
 			}
-			else
-			{
-				System.err.println("ARN: " + accounts[i].roleArn);
-			}
 
 		}
 
