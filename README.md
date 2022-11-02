@@ -90,7 +90,7 @@ Buckets are the primary interface between the Vail system and act as a group of 
 
 ##### Minimum Required Fields
 name&emsp;&emsp;Bucket name  
-owner&emsp;&emsp;The account name of the account that should own the bucket. Sphere can be used to reference the local account or the username of any account should be used.
+owner&emsp;&emsp;The account name of the account that should own the bucket. Sphere (all lower-case) can be used to reference the local account or the username of any account should be used.
 
 ##### Options Fields
 versioning&emsp;&emsp;[enabled | disabled] Whether or not the bucket will version objects.
