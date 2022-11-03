@@ -63,7 +63,11 @@ email&emsp;&emsp;&emsp;&emsp;The email associated with the administrator of that
 externalId&emsp;&emsp;The external ID, if defined, associated with the role ARN.
 
 ### Groups
-Groups specified in the configuration JSON are internal to Vail and do not exist outside of the sphere in any of the attached AWS accounts. Groups do not have any innate permissions and permissions are applied to groups at the bucket policy level. This parameter, groups, is an array of strings, where the strings are the group names to be added to the account.
+Groups specified in the configuration JSON are internal to Vail and do not exist outside of the sphere in any of the attached AWS accounts. Groups do not have any innate permissions and permissions are applied to groups at the bucket policy level. This parameter, groups, is a pair of the group name and the account name.
+
+##### Required Fields
+name&emsp;&emsp;The name of the group.  
+account_name&emsp;The username of the account the group is associated with.  
 
 ### Storage Locations
 The configuration file has a parameter, storage, to specify BlackPearl and cloud storage locations. Any storage location requires credentials to be added to the sphere. For the BlackPearl storage, the script will prompt you for the username and password. For AWS storage locations, the access key and secret key will need to be included in the JSON.
