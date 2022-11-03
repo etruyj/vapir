@@ -93,10 +93,12 @@ name&emsp;&emsp;Bucket name
 owner&emsp;&emsp;The account name of the account that should own the bucket. Sphere (all lower-case) can be used to reference the local account or the username of any account should be used.
 
 ##### Options Fields
+blockPublicPolicy&emsp;BOOLEAN. Prevent applying new bucket policies that allow public access to the bucket.
 compress&emsp;&emsp;BOOLEAN. Enable compression.  
 control&emsp;&emsp;[BucketOwnerEnforced | BucketOwnerPreferred | ObjectWriter] Default object ownership. Spectra recommends setting BucketOwnerEnforced. If not specified, it defaults to ObjectWriter.  
 encrypt&emsp;&emsp;BOOLEAN. Enable encryption.  
 lifecycle&emsp;The name of the lifecycle rule to be attached to the bucket.  
 locking&emsp;&emsp;BOOLEAN. Enabled object locking *NOT SUPPORTED. WILL DISABLE*  
 restore&emsp;&emsp;BOOLEAN. Enabled automatic restores.  
+restrictPublicBuckets&emsp; BOOLEAN. Ignore policies that allow public or cross-account access to buckets.
 versioning&emsp;&emsp;[enabled | disabled] Whether or not the bucket will version objects.
