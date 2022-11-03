@@ -66,7 +66,7 @@ externalId&emsp;&emsp;The external ID, if defined, associated with the role ARN.
 Groups specified in the configuration JSON are internal to Vail and do not exist outside of the sphere in any of the attached AWS accounts. Groups do not have any innate permissions and permissions are applied to groups at the bucket policy level. This parameter, groups, is a pair of the group name and the account name.
 
 ##### Required Fields
-name&emsp;&emsp;The name of the group.  
+name&emsp;&emsp;&emsp;&emsp;The name of the group.  
 account_name&emsp;The username of the account the group is associated with.  
 
 ### Storage Locations
