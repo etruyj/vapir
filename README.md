@@ -94,7 +94,7 @@ owner&emsp;&emsp;The account name of the account that should own the bucket. Sph
 
 ##### Options Fields
 compress&emsp;&emsp;BOOLEAN. Enable compression.  
-control&emsp;&emsp;[BucketOwnerEnforced | BucketOwnerPreferred | ObjectWriter] Default object ownership. Spectra recommends setting BucketOwnerEnforced. If not specified, it defaults to ObjectWriter.
+control&emsp;&emsp;[BucketOwnerEnforced | BucketOwnerPreferred | ObjectWriter] Default object ownership. Spectra recommends setting BucketOwnerEnforced. If not specified, it defaults to ObjectWriter.  
 encrypt&emsp;&emsp;BOOLEAN. Enable encryption.  
 locking&emsp;&emsp;BOOLEAN. Enabled object locking *NOT SUPPORTED. WILL DISABLE*  
 restore&emsp;&emsp;BOOLEAN. Enabled automatic restores.  
