@@ -18,7 +18,10 @@ public class Bucket
 	public ACL[] acls;
 	public String owner;
 	public String control;
-	public boolean blockPublicAcls;
+	// blockPublicAcls seems to be a non-configurable setting
+	// in the vail ui. Setting this to true and allowing overwrite to false
+	// if necessary.
+	public boolean blockPublicAcls = true;
 	public boolean blockPublicPolicy;
 	public boolean ignorePublicAcls;
 	public boolean restrictPublicBuckets;
