@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
+import com.socialvagrancy.vail.structures.Endpoint;
 import com.socialvagrancy.vail.structures.Lifecycle;
 import com.socialvagrancy.vail.structures.Message;
 import com.socialvagrancy.vail.structures.Storage;
@@ -13,6 +14,8 @@ import com.socialvagrancy.vail.structures.json.GroupData;
 import com.socialvagrancy.vail.structures.json.UserData;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
+import com.socialvagrancy.vail.structures.blackpearl.BPUser;
+import com.socialvagrancy.vail.structures.blackpearl.Ds3KeyPair;
 import com.socialvagrancy.vail.utils.Connector;
 import com.socialvagrancy.utils.Logger;
 
@@ -138,6 +141,100 @@ public class BasicCommands
 			return null;
 		}
 	
+	}
+
+	public String blackpearlLogin(String ipaddress, String username, char[] password)
+	{
+		Gson gson = new Gson();
+
+		String url = URLs.blackpearlLoginURL(ipaddress);
+
+		logbook.INFO("Connecting to BlackPearl endpoint [" + ipaddress +"]...");
+		logbook.INFO("POST " + url);
+
+		String body = "{ \"username\":\"" + username +"\", \"password\": \"";
+		
+		for(int i=0; i < password.length; i++)
+		{
+			body += password[i];
+		}
+	
+		body += "\" }";
+
+		Connector conn = new Connector();
+
+		String response = conn.POST(url, body);
+		
+		if(token != null)
+		{
+			try
+			{
+				Token token = gson.fromJson(response, Token.class);
+				return token.getToken();
+			}
+			catch(JsonParseException e)
+			{
+				logbook.WARN(e.getMessage());
+				return null;
+			}
+		}
+		else
+		{
+			logbook.ERR("Unabled to connect to the BlackPearl.");
+			return null;
+		}
+	}
+
+	public BPUser blackpearlUserList(String ipaddress, String token)
+	{
+		Gson gson = new Gson();
+		String url = URLs.blackpearlUsersListURL(ipaddress);
+		
+		logbook.INFO("Gathering users from BlackPearl...");
+		logbook.INFO("GET " + url);
+
+		Connector conn = new Connector();
+
+		String response = conn.GET(url, token);
+
+		try
+		{
+			BPUser users = gson.fromJson(response, BPUser.class);
+			logbook.INFO("Found (" + users.count() + ") users.");
+
+			return users;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.WARN(e.getMessage());
+			return null;
+		}
+	}
+
+	public Ds3KeyPair blackpearlUserKeys(String ipaddress, String id, String token)
+	{
+		Gson gson = new Gson();
+		String url = URLs.blackpearlUserKeyURL(ipaddress, id);
+
+		logbook.INFO("Gathering DS3 keys from BlackPearl...");
+		logbook.INFO("GET " + url);
+
+		Connector conn = new Connector();
+
+		String response = conn.GET(url, token);
+
+		try
+		{
+			Ds3KeyPair keys = gson.fromJson(response, Ds3KeyPair.class);
+			
+			logbook.INFO("Found DS3 credentials.");
+			return keys;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.WARN(e.getMessage());
+			return null;
+		}
 	}
 
 	public String clearCache(String ipaddress)
@@ -396,8 +493,36 @@ public class BasicCommands
 		try
 		{
 			Bucket[] buckets = gson.fromJson(response, Bucket[].class);
-			logbook.INFO("Found (" + buckets.length + ")");
+			logbook.INFO("Found (" + buckets.length + ") buckets");
 			return buckets;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.ERR(e.getMessage());
+			return null;
+		}
+	}
+
+	public Endpoint[] listEndpoints(String ipaddress)
+	{
+		// Return a list endpoints associated with the sphere.
+		Gson gson = new Gson();
+
+		String url = URLs.endpointsURL(ipaddress);
+
+		logbook.INFO("Querying Sphere for associated endpoints...");
+		logbook.INFO("GET " + url);
+
+		Connector conn = new Connector();
+
+		String response = conn.GET(url, token);
+
+		try
+		{
+			Endpoint[] endpoints = gson.fromJson(response, Endpoint[].class);
+
+			logbook.INFO("Found (" + endpoints.length + ") endpoints");
+			return endpoints;
 		}
 		catch(JsonParseException e)
 		{
@@ -613,7 +738,13 @@ public class BasicCommands
 		try
 		{
 			Token tok = gson.fromJson(response, Token.class);
-		
+	
+			if(tok == null)
+			{
+				logbook.ERR("Login FAILED");
+				return false;
+			}
+
 			token = "Bearer " + tok.getToken();
 
 			logbook.logWithSizedLogRotation("Login SUCCESSFUL", 2);

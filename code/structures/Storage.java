@@ -16,10 +16,4 @@ public class Storage
 	public String status;
 	public String storageClass;
 	
-	// For creating storage
-	public String arn;
-	public String podId;
-	public String accessKey;
-	public String secretKey;
-
 }

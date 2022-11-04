@@ -83,6 +83,14 @@ public class MapAccounts
 		for(int i=0; i < accounts.length; i++)
 		{
 			account_map.put(accounts[i].username, accounts[i].canonicalId);
+			
+			// Check for Sphere account
+			// add account without ARN to name map as sphere as well.
+			if(accounts[i].roleArn == null || accounts[i].roleArn == "")
+			{
+				account_map.put("sphere", accounts[i].canonicalId);
+			}
+
 		}
 
 		return account_map;	
