@@ -105,7 +105,7 @@ type&emsp;&emsp;&emsp;[clone | move | expire] The type of rule to be applied.
 destinations&emsp;ARRAY. Storage locations stored as a sub-array titled storage. The storage array should be a list of names of the storage locations.  
 
 ##### Sample Lifecycle Rule
-'''
+```
 "lifecycles": [
 		{
 			"name": "scripted-test-1",
@@ -114,13 +114,13 @@ destinations&emsp;ARRAY. Storage locations stored as a sub-array titled storage.
 					"name": "script-clone",
 					"type": "clone",
 					"destinations": {
-						"storage": [ "2.1 s3-share" ]
+						"storage": [ "s3-share" ]
 					}
 				}
 			]
 		}
 	]
-'''
+```
 
 ### Buckets
 Buckets are the primary interface between the Vail system and act as a group of data for the application of storage rules. Due to some limits with information present in the API calls, this script does not support object locking. Any buckets created with object locking enabled will have object locking disabled by the script and a message will be presented informing the user to configure object locking from the UI after bucket creation. While ACLs can be applied with this script, they are a deprecated parameter in AWS and Spectra recommends against using them.
