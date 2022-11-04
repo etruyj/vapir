@@ -221,6 +221,8 @@ storage_map.get(lifecycles[i].rules[r].destinations.storage[s]);
 			// Proceed only if translation was successful.
 			if(storage_found_successfully)
 			{
+				lifecycles[i].setTypeMarkers();
+
 				json_body = gson.toJson(lifecycles[i], Lifecycle.class);
 
 				lifecycle_verify = sphere.createLifecycle(ip_address, lifecycles[i].name, json_body);
