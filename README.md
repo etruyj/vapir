@@ -91,18 +91,23 @@ Lifecycles are the storage rules applied to Vail buckets. They include where the
 
 ##### Minimum Required Fields
 name&emsp;&emsp;&emsp;The name of the lifecycle rule.  
-rules&ems;&emsp;&emsp;ARRAY of lifecycle rules.
+rules&emsp;&emsp;&emsp;ARRAY of lifecycle rules.
 
 ###### Optional Parameters
 description&emsp;&emsp;A description of the lifecycle.  
+markers&emsp;&emsp;&emsp;BOOLEAN. Remove delete markers when they are the only remaining version of an object.
+uploads&emsp;&emsp;&emsp;INTEGER. The number of days a multipart upload should stay active until they are timed-out and deleted.
 
 #### Lifecycle Rules
 Lifecycles are composed of one or more rules dictating how objects will be stored. These fields are required to be listed in an array of the rules parameter of the lifecycle.
 
 ##### Minimum Required Fields
 name&emsp;&emsp;&emsp;The name of the specific rule.
-type&emsp;&emsp;&emsp;[clone | move | expire] The type of rule to be applied. 
-destinations&emsp;ARRAY. Storage locations stored as a sub-array titled storage. The storage array should be a list of names of the storage locations.  
+type&emsp;&emsp;&emsp;[clone | move | expire] The type of rule to be applied. *Expire rules aren't supported until scheduling is added.*
+destinations&emsp;Storage locations stored as a sub-array titled storage. The storage array should be a list of names of the storage locations.  
+
+##### Optional Parameters
+count&emsp;&emsp;INTEGER. Set under the destinations parameter along with storage to specify the number of storage locations as an ANY X of Y rule. The default is all if not specified.
 
 ##### Sample Lifecycle Rule
 ```
