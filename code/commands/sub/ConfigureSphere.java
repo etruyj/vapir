@@ -85,6 +85,7 @@ public class ConfigureSphere
 
 		for(int i=0; i<buckets.length; i++)
 		{
+			// Default settings.
 			if(buckets[i].locking)
 			{
 				logbook.WARN("Bucket [" + buckets[i].name + "] has object locking enabled.");
@@ -94,6 +95,13 @@ public class ConfigureSphere
 				
 				buckets[i].locking = false;
 				buckets[i].defaultRetention = null;
+			}
+
+			if(buckets[i].control == null)
+			{
+				logbook.WARN("Bucket control not specified. Setting to the recommended BucketOwnerEnforce.");
+				System.err.println("WARNING: Bucket control not specified. Setting to the recommended BucketOwnerEnforced.");
+				buckets[i].control = "BucketOwnerEnforced";
 			}
 
 			// Find account Canonical ID
