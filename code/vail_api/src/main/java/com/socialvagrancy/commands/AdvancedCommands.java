@@ -4,6 +4,7 @@ import com.socialvagrancy.vail.commands.sub.Buckets;
 import com.socialvagrancy.vail.commands.sub.ConfigureSphere;
 import com.socialvagrancy.vail.commands.sub.CreateGroup;
 import com.socialvagrancy.vail.commands.sub.CreateUser;
+import com.socialvagrancy.vail.commands.sub.EnableVeeam;
 import com.socialvagrancy.vail.commands.sub.FetchConfiguration;
 import com.socialvagrancy.vail.commands.sub.ListGroups;
 import com.socialvagrancy.vail.commands.sub.ListUsers;
@@ -62,7 +63,11 @@ public class AdvancedCommands
 		return ConfigureSphere.start(sphere, ip_address, file_path, logbook);
 	}
 
-	public SphereConfig fetchConfiguration(String ip_address)
+    public String enableVeeam(String ip_address, String bucket) {
+        return EnableVeeam.configureSosapi(sphere, ip_address, bucket, logbook);
+    }
+
+    public SphereConfig fetchConfiguration(String ip_address)
 	{
 		return FetchConfiguration.fromSphere(sphere, ip_address, logbook);
 	}

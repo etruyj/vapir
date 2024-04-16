@@ -23,6 +23,7 @@ import com.socialvagrancy.vail.structures.Summary;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
 import com.socialvagrancy.vail.structures.UserSummary;
+import com.socialvagrancy.vail.structures.json.CapacitySummary;
 import com.socialvagrancy.utils.io.Logger;
 
 import java.util.ArrayList;
@@ -78,6 +79,10 @@ public class VailController
 		return advanced.configureSphere(ip_address, file_path);
 	}
 
+    public String enableVeeam(String ip_address, String bucket) {
+        return advanced.enableVeeam(ip_address, bucket);
+    }
+
 	public SphereConfig fetchConfiguration(String ip_address)
 	{
 		return advanced.fetchConfiguration(ip_address);
@@ -87,6 +92,11 @@ public class VailController
 	{
 		advanced.minimumIAMPermissions(ip_address);
 	}
+
+    public ArrayList<CapacitySummary> getCapacitySummary(String ip_address)
+    {
+        return sphere.getCapacitySummary(ip_address);
+    }
 
 	public Account[] listAccounts(String ip_address)
 	{

@@ -30,4 +30,18 @@ public class Storage
     public String arn;
     public String podId;
     public String secretKey;
+
+    //===========================================
+    // Getters
+    //===========================================
+    
+    public String getId() { return id; }
+    public String getStorageClass() { return storageClass; }
+
+    //===========================================
+    // Setters
+    //===========================================
+
+    public void setId(String id) { this.id = id; }
+    public void setStorageClass(String storage_class) { this.storageClass = storage_class; }
 }

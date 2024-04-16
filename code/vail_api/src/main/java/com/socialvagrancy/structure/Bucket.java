@@ -16,7 +16,8 @@ public class Bucket
 	public boolean compress;
 	public String lifecycle;
 	public ACL[] acls;
-	public String owner;
+	public BucketPolicy policy;
+    public String owner;
 	public String control;
 	// blockPublicAcls seems to be a non-configurable setting
 	// in the vail ui. Setting this to true and allowing overwrite to false
@@ -33,6 +34,23 @@ public class Bucket
 	public String mode;
 	public String timeUnits;
 	public String time;
+
+    //===========================================
+    // Getters
+    //===========================================
+
+    public BucketPolicy getPolicy() { return policy; }
+    public String getOwner() { return owner; }
+    public String getName() { return name; }
+
+    //===========================================
+    // Setters
+    //===========================================
+    public void addPolicyStatement(BucketPolicyStatement statement) { this.policy.addPolicyStatement(statement); }
+
+    public void setPolicy(BucketPolicy policy) { this.policy = policy; }
+    public void setOwner(String owner) { this.owner = owner; }
+    public void setName(String name) { this.name = name; }
 
 	//=======================================
 	// Functions

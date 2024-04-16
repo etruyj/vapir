@@ -33,6 +33,11 @@ public class URLs
 		return "https://" + ipaddress + "/sl/api/buckets";
 	}
 
+    public static String capacitySummarySphereURL(String ipaddress) 
+    {
+        return "https://" + ipaddress + "/sl/api/capacity/sphere/summary";
+    }
+
 	public static String clearCacheURL(String ipaddress)
 	{
 		return "https://" + ipaddress + "/sl/api/iam/users/clear_cache";
@@ -47,6 +52,14 @@ public class URLs
 	{
 		return "https://" + ipaddress + "/sl/api/endpoints";
 	}
+
+    public static String getBaseApiUrl(String ipaddress) {
+        return "https://" + ipaddress + "/sl/api";
+    }
+
+    public static String getBucketURL(String ipaddress, String bucket) {
+        return  getBaseApiUrl(ipaddress) + "/buckets/" + bucket;
+    }
 
 	public static String groupsURL(String ipaddress, String account)
 	{

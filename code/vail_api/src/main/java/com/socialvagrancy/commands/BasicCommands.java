@@ -9,6 +9,7 @@ import com.socialvagrancy.vail.structures.Lifecycle;
 import com.socialvagrancy.vail.structures.Message;
 import com.socialvagrancy.vail.structures.Storage;
 import com.socialvagrancy.vail.structures.Token;
+import com.socialvagrancy.vail.structures.json.CapacitySummary;
 import com.socialvagrancy.vail.structures.json.Group;
 import com.socialvagrancy.vail.structures.json.GroupData;
 import com.socialvagrancy.vail.structures.json.UserData;
@@ -18,6 +19,8 @@ import com.socialvagrancy.vail.structures.blackpearl.BPUser;
 import com.socialvagrancy.vail.structures.blackpearl.Ds3KeyPair;
 import com.socialvagrancy.vail.utils.Connector;
 import com.socialvagrancy.utils.io.Logger;
+
+import java.util.ArrayList;
 
 public class BasicCommands
 {
@@ -412,6 +415,37 @@ public class BasicCommands
 		}
 	}
 
+	public User deleteUser(String ipaddress, String account_id, String username)
+	{
+		Gson gson = new Gson();
+
+		String url = URLs.userCreateURL(ipaddress, account_id, username);
+		
+		logbook.INFO("Deleting user [" + username + "] for account " + account_id);
+		logbook.INFO("DELETE " + url);
+
+		Connector conn = new Connector();
+
+		String response = conn.DELETE(url, token);
+
+		try
+		{
+			User user =  gson.fromJson(response, User.class);
+
+			logbook.INFO("User [" + username + "] deleted successfully.");
+
+			return user;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.ERR(e.getMessage());
+			logbook.ERR("Failed to delete user [" + username + "].");
+			logbook.ERR(response);
+
+			return null;
+		}
+	}
+
 	public boolean deleteUserKey(String ipaddress, String account, String user, String access_key)
 	{
 		Gson gson = new Gson();
@@ -424,8 +458,6 @@ public class BasicCommands
 		Connector conn = new Connector();
 		
 		String response = conn.DELETE(url, token);
-
-		System.out.println(response);
 
 		try
 		{
@@ -448,6 +480,63 @@ public class BasicCommands
 			return false;
 		}
 	}
+
+    public Bucket getBucket(String ipaddress, String bucket_name) {
+        logbook.info("Retrieving information for bucket [" + bucket_name + "]");
+
+        Gson gson = new Gson();
+
+        String url = URLs.getBucketURL(ipaddress, bucket_name);
+
+        logbook.debug("GET: " + url);
+
+        Connector conn = new Connector();
+        Bucket bucket = null;
+
+        try {
+            String response = conn.GET(url, token);
+
+            bucket = gson.fromJson(response, Bucket.class);
+        } catch(Exception e) {
+            logbook.error(e.getMessage());
+        }
+
+        return bucket;
+    }
+
+    public ArrayList<CapacitySummary> getCapacitySummary(String ipaddress)
+    {
+        logbook.info("Retrieving capacity summary for sphere at " + ipaddress);
+        
+        Gson gson = new Gson();
+
+        String url = URLs.capacitySummarySphereURL(ipaddress);
+
+        logbook.debug("GET: " + url);
+
+        Connector conn = new Connector();
+        ArrayList<CapacitySummary> capacity_list = new ArrayList<CapacitySummary>();
+
+        try {
+            String response = conn.GET(url, token);
+            
+            CapacitySummary[] capacities = gson.fromJson(response, CapacitySummary[].class);
+
+            for(int i=0; i<capacities.length; i++)
+            {
+                capacity_list.add(capacities[i]);
+            }
+
+        } catch (JsonParseException e) {
+            logbook.error(e.getMessage());
+            System.err.println(e.getMessage());
+        } catch (Exception e) {
+            logbook.error(e.getMessage());
+            System.err.println(e.getMessage());
+        }
+        
+        return capacity_list;
+    }
 
 	public Account[] listAccounts(String ipaddress)
 	{
@@ -779,6 +868,38 @@ public class BasicCommands
 			Bucket bucket = gson.fromJson(response, Bucket.class);
 
 			logbook.logWithSizedLogRotation("Successfully updated " + bucket.name, 2);
+
+			return bucket;
+		}
+		catch(JsonParseException e)
+		{
+			logbook.logWithSizedLogRotation("ERROR: " + e.getMessage(), 3);
+			logbook.logWithSizedLogRotation("BODY: " + json_body, 1);
+			logbook.logWithSizedLogRotation(response, 3);
+
+			return null;
+		}
+	}
+	
+    public Bucket updateBucket(String ipaddress, String name, Bucket body)
+	{
+		Gson gson = new Gson();
+		
+		String url = URLs.getBucketURL(ipaddress, name);
+        String json_body = gson.toJson(body);
+
+		logbook.info("Updating bucket (" + name + ") ...");
+		logbook.info("PATCH " + url);
+
+		Connector conn = new Connector();
+		
+		String response = conn.PATCH(url, token, json_body);
+
+		try
+		{
+			Bucket bucket = gson.fromJson(response, Bucket.class);
+
+			logbook.logWithSizedLogRotation("Successfully updated " + name, 2);
 
 			return bucket;
 		}

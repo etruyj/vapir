@@ -6,6 +6,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.StringBuilder;
 import java.net.URL;
+// PATCH REQUEST TEST START
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
+// PATCH REQUEST TEST END
 import java.net.HttpURLConnection;
 
 import javax.net.ssl.HostnameVerifier;
@@ -18,22 +28,28 @@ import java.security.cert.X509Certificate;
 
 public class Connector
 {
+    private HttpClient http_client; // Used for PATCH requests
+
 	public Connector()
 	{
 		// Turn off SSL certification since the SSL certificate on
 		// these libraries is always flagged.
 		TrustManager[] trustAllCerts = new TrustManager[] { 
 			new X509TrustManager() {
-				public java.security.cert.X509Certificate[] getAcceptedIssuers() { return null; }
-				public void checkClientTrusted(X509Certificate[] certs, String authType) {}
-				public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+				@Override
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() { return new X509Certificate[]{}; }
+				@Override
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+				@Override
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {}
 			}
 		};
+		
+        // Install the all-trusting trust manager
 
-		// Install the all-trusting trust manager
 		try
 		{
-			SSLContext sc = SSLContext.getInstance("SSL");
+            SSLContext sc = SSLContext.getInstance("TLS");
 			sc.init(null, trustAllCerts, new java.security.SecureRandom());
 			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 		
@@ -44,7 +60,12 @@ public class Connector
 
 			// Install the all-trustng host verifier
 			HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-		}
+
+		    http_client = HttpClients.custom()
+                               .setSSLSocketFactory(new SSLConnectionSocketFactory(sc, NoopHostnameVerifier.INSTANCE))
+                               .build();
+        
+        }
 		catch(Exception e)
 		{
 			System.out.println(e.getMessage());
@@ -242,6 +263,29 @@ public class Connector
 		}
 
 		return response.toString();
+	}
+	
+	public String PATCH(String httpRequest, String token, String body)
+	{
+		// Open connection		
+		HttpResponse response = null;
+        try
+		{
+            HttpPatch request = new HttpPatch(httpRequest);
+            request.setHeader("Content-Type", "application/merge-patch+json");
+            request.setHeader("Accepts", "application/json");
+            request.setHeader("Authorization", token);
+            request.setEntity(new StringEntity(body));
+
+
+            response = http_client.execute(request);
+        }
+		catch(Exception e)
+		{
+			return e.getMessage();
+		}
+
+		return null;
 	}
 	
 	public String PUT(String httpRequest, String token, String body)
