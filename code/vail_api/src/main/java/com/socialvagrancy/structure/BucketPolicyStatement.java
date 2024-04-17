@@ -6,18 +6,36 @@
 
 package com.socialvagrancy.vail.structures;
 
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
+import com.socialvagrancy.vail.utils.http.ArrayOrStringAdapter;
+import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 
 public class BucketPolicyStatement {
-    private ArrayList<String> action;
-    private String effect;
-    private BucketPolicyPrincipal principal;
-    private ArrayList<String> resource;
-    private String sid;
+    @SerializedName("Action")
+    @JsonAdapter(ArrayOrStringAdapter.class)
+    public ArrayList<String> action;
+    @SerializedName("Effect")
+    public String effect;
+    @SerializedName("Principal")
+    public BucketPolicyPrincipal principal;
+    @SerializedName("Resource")
+    public ArrayList<String> resource;
+    @SerializedName("Sid")
+    public String sid;
 
     public BucketPolicyStatement() {
         action = new ArrayList<String>();
         resource = new ArrayList<String>();
+    }
+
+    public BucketPolicyStatement(BucketPolicyStatement other) {
+        action = other.getAction();
+        effect = other.getEffect();
+        principal = new BucketPolicyPrincipal(other.getPrincipal());
+        resource = other.getResource();
+        sid = other.getSid();
     }
 
     //==========================================

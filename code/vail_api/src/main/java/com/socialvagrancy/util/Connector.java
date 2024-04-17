@@ -1,12 +1,5 @@
 package com.socialvagrancy.vail.utils;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.StringBuilder;
-import java.net.URL;
-// PATCH REQUEST TEST START
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPatch;
@@ -15,7 +8,14 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
-// PATCH REQUEST TEST END
+import org.apache.http.util.EntityUtils;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.StringBuilder;
+import java.net.URL;
 import java.net.HttpURLConnection;
 
 import javax.net.ssl.HostnameVerifier;
@@ -279,13 +279,14 @@ public class Connector
 
 
             response = http_client.execute(request);
+		    
+            return EntityUtils.toString(response.getEntity());
         }
 		catch(Exception e)
 		{
 			return e.getMessage();
 		}
 
-		return null;
 	}
 	
 	public String PUT(String httpRequest, String token, String body)

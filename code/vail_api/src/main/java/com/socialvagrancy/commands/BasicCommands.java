@@ -1,6 +1,7 @@
 package com.socialvagrancy.vail.commands;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.socialvagrancy.vail.structures.Account;
 import com.socialvagrancy.vail.structures.Bucket;
@@ -428,22 +429,17 @@ public class BasicCommands
 
 		String response = conn.DELETE(url, token);
 
-		try
-		{
-			User user =  gson.fromJson(response, User.class);
-
+        if(response.equals("204")) {
 			logbook.INFO("User [" + username + "] deleted successfully.");
-
-			return user;
-		}
-		catch(JsonParseException e)
-		{
-			logbook.ERR(e.getMessage());
+        
+            return new User();
+        }
+        else {
 			logbook.ERR("Failed to delete user [" + username + "].");
 			logbook.ERR(response);
-
-			return null;
-		}
+            
+            return null;
+        }
 	}
 
 	public boolean deleteUserKey(String ipaddress, String account, String user, String access_key)
@@ -502,6 +498,29 @@ public class BasicCommands
         }
 
         return bucket;
+    }
+
+    public Lifecycle getLifecycle(String ipaddress, String lifecycle_id) {
+        logbook.info("Retrieving information for lifecycle [" + lifecycle_id + "]");
+
+        Gson gson = new Gson();
+
+        String url = URLs.getLifecycleURL(ipaddress, lifecycle_id);
+
+        logbook.debug("GET: " + url);
+
+        Connector conn = new Connector();
+        Lifecycle lifecycle = null;
+
+        try {
+            String response = conn.GET(url, token);
+
+            lifecycle = gson.fromJson(response, Lifecycle.class);
+        } catch(Exception e) {
+            logbook.error(e.getMessage());
+        }
+
+        return lifecycle;
     }
 
     public ArrayList<CapacitySummary> getCapacitySummary(String ipaddress)
@@ -883,7 +902,9 @@ public class BasicCommands
 	
     public Bucket updateBucket(String ipaddress, String name, Bucket body)
 	{
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder()
+                            .serializeNulls()
+                            .create();
 		
 		String url = URLs.getBucketURL(ipaddress, name);
         String json_body = gson.toJson(body);

@@ -17,6 +17,7 @@ public class Lifecycle
 	//=======================================
 	
 	public int ruleCount() { return rules.length; }
+    public LifecycleRule[] getRules() { return rules; }
 	public int storageCount(int r) { return rules[r].storageCount(); }
 	public String storageID(int r, int s) { return rules[r].storageID(s); }
 
@@ -25,6 +26,7 @@ public class Lifecycle
 	//=======================================
 
 	public void clearDestinationCount(int r) { rules[r].clearDestinationCount(); }	
+    public void setRules(LifecycleRule[] rules) { this.rules = rules; }
 	public void setStorage(int r, int s, String sid) { rules[r].setStorage(s, sid); }
 	
 	public void setTypeMarkers()

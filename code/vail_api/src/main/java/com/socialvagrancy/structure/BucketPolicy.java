@@ -7,16 +7,30 @@
 
 package com.socialvagrancy.vail.structures;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class BucketPolicy {
+    @SerializedName("Version")
     private String version;
+    @SerializedName("Id")
     private String id;
+    @SerializedName("Statement")
     private ArrayList<BucketPolicyStatement> statement;
 
     public BucketPolicy() {
         version = "2012-10-17";
         statement = new ArrayList<BucketPolicyStatement>();
+    }
+
+    public BucketPolicy(BucketPolicy other) {
+        version = other.getVersion();
+        id = other.getId();
+        statement = new ArrayList<BucketPolicyStatement>();
+
+        for(BucketPolicyStatement other_statement : other.getStatement()) {
+            statement.add(new BucketPolicyStatement(other_statement));
+        }
     }
 
     //==========================================
@@ -35,5 +49,6 @@ public class BucketPolicy {
     public void setVersion(String version) { this.version = version; }
     public void setId(String id) { this.id = id; }
     public void setStatement(ArrayList<BucketPolicyStatement> statement) { this.statement = statement; }
+    public void setStatement(BucketPolicyStatement statement) { this.statement.add(statement); }
 }
 

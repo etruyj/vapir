@@ -6,15 +6,22 @@
 
 package com.socialvagrancy.vail.structures;
 
+import com.socialvagrancy.vail.utils.http.ArrayOrStringAdapter;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class BucketPolicyPrincipal {
     @SerializedName("AWS")
-    private ArrayList<String> aws;
+    @JsonAdapter(ArrayOrStringAdapter.class)
+    public ArrayList<String> aws;
 
     public BucketPolicyPrincipal() {
         aws = new ArrayList<String>();
+    }
+
+    public BucketPolicyPrincipal(BucketPolicyPrincipal other) {
+        if(other != null) { aws = other.getAWS(); }
     }
 
     //==========================================

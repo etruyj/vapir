@@ -33,6 +33,7 @@ import com.socialvagrancy.vail.structures.BucketPolicyPrincipal;
 import com.socialvagrancy.vail.structures.BucketPolicyStatement;
 import com.socialvagrancy.vail.structures.BucketSummary;
 import com.socialvagrancy.vail.structures.Lifecycle;
+import com.socialvagrancy.vail.structures.LifecycleRule;
 import com.socialvagrancy.vail.structures.Storage;
 import com.socialvagrancy.vail.structures.User;
 import com.socialvagrancy.vail.structures.UserKey;
@@ -41,12 +42,13 @@ import com.socialvagrancy.vail.structures.veeam.SystemInfo;
 import com.socialvagrancy.vail.utils.aws.S3Connector;
 import com.socialvagrancy.vail.utils.io.XmlParser;
 import com.socialvagrancy.vail.utils.map.MapAccounts;
+import com.socialvagrancy.vail.utils.map.MapStorage;
 import com.socialvagrancy.utils.io.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.Scanner;
 public class EnableVeeam {
     public static String configureSosapi(BasicCommands sphere, String ip_address, String bucket_name, Logger log) {
         String message = "Unable to configure SOSAPI.";
@@ -59,7 +61,9 @@ public class EnableVeeam {
 
         if(bucket != null) {
             // Bucket Exists - Proceed.
-            String storage_id = getStorageId(sphere, ip_address, log);
+            String storage_id = getStorageId(sphere, ip_address, bucket, log);
+            UserKey access_keys = null;
+            String account_id = "";
 
             if(storage_id.length() == 0) {
                 message = message + " Unable to find a storage tier for capacity.xml.";
@@ -67,21 +71,28 @@ public class EnableVeeam {
             else {
                 // Continue account creation.
                 try {
-                    String account_id = getAccountId(sphere, ip_address, bucket.getOwner(), log);
-                    UserKey access_keys = createUser(sphere, ip_address, account_id, temp_user, log);                
+                    account_id = getAccountId(sphere, ip_address, bucket.getOwner(), log);
+                    access_keys = createUser(sphere, ip_address, account_id, temp_user, log);                
                     updateBucketPolicyAddUserToPolicy(sphere, ip_address, bucket, account_id, temp_user, log);
                     createXmlDocs(file_path, storage_id, log);
                     putXmlDocsToBucket(ip_address, bucket.getName(), veeam_prefix, file_path, "system.xml", access_keys, ignore_ssl, log);
                     putXmlDocsToBucket(ip_address, bucket.getName(), veeam_prefix, file_path, "capacity.xml", access_keys, ignore_ssl, log);
-                    
-                    // Clean-up Tasks
-                    updateBucketResetToOriginal(sphere, ip_address, bucket, log);
-                    sphere.deleteUserKey(ip_address, account_id, temp_user, access_keys.getId());
-                    sphere.deleteUser(ip_address, account_id, temp_user);
+                   
+                    message = "Success. Bucket [" + bucket.getName() + "] configured for Veeam Archive tier."; 
                 } catch(Exception e) {
-                    log.error(e.getMessage());
+                    message = e.getMessage();
+                    e.printStackTrace();
                 }
+                    
+                // Clean-up Tasks
+                log.info("Performing clean-up tasks...");
+                updateBucketResetToOriginal(sphere, ip_address, bucket, log);
                 
+                if(access_keys != null) { 
+                    sphere.deleteUserKey(ip_address, account_id, temp_user, access_keys.getId());
+                }
+                    
+                sphere.deleteUser(ip_address, account_id, temp_user);
             }
         
         }
@@ -163,7 +174,7 @@ public class EnableVeeam {
         return storage_list;
     }
 
-    private static String getStorageId(BasicCommands sphere, String ip_address, Logger log) {
+    private static String getStorageId(BasicCommands sphere, String ip_address, Bucket bucket, Logger log) {
         log.info("Searching for standard-tier storage id.");
         
         String storage_id = "";
@@ -176,6 +187,12 @@ public class EnableVeeam {
         }
         else if(storage_list.size() > 1) {
             // We need to figure out what our Storage location should be.
+            storage_id = selectStorageFromLifecycle(sphere, ip_address, bucket, storage_list, log);
+
+            if(storage_id.length() == 0) { 
+                log.info("Requesting user input to select storage.");
+                storage_id = inputStorageId(storage_list);
+            }
         }
         else {
             log.error("No standard storage configured in this Vail Sphere.");
@@ -184,7 +201,43 @@ public class EnableVeeam {
         return storage_id;
     }
 
-    public static void putXmlDocsToBucket(String ip_address, String bucket, String prefix, String file_path, String file, UserKey access_keys, boolean ignore_ssl, Logger log) throws Exception {
+    private static String inputStorageId(ArrayList<Storage> storage_list) {
+        String storage_id = "";
+        boolean storage_selected = false;
+        Map<String, String> storage_verification = MapStorage.createIdNameMap(storage_list);
+
+        Scanner input = new Scanner(System.in);
+        
+        do {
+            System.out.println("Unable to determine desired storage for the bucket.");
+            System.out.println("Please end the id of the desired storage from the list.");
+            System.out.println("Enter [q] to quit.");
+            System.out.println("\nStorage:");
+            
+            for(Storage storage : storage_list) {
+                System.out.println("[" + storage.getId() + "]: " + storage.getName());
+            } 
+
+            System.out.print("\nEnter selection: ");
+            storage_id = input.nextLine();
+            System.out.print("\n"); // Add a new line
+
+            if(storage_id.equals("q")) {
+                storage_id = "";
+                storage_selected = true;
+            }
+            else if(storage_verification.get(storage_id) != null) {
+                storage_selected = true;
+            }
+            else {
+                System.out.println("Invalid selection.");
+            }
+        } while(!storage_selected);
+
+        return storage_id;
+    }
+
+    private static void putXmlDocsToBucket(String ip_address, String bucket, String prefix, String file_path, String file, UserKey access_keys, boolean ignore_ssl, Logger log) throws Exception {
         log.info("Putting objects to S3 bucket " + bucket);
         Map<String, String> metadata = new HashMap<String, String>();
 
@@ -198,18 +251,57 @@ public class EnableVeeam {
         log.info("Created " + object_key + " with eTag " + etag);
     }
 
-    public static void updateBucketPolicyAddUserToPolicy(BasicCommands sphere, String ip_address, Bucket bucket, String account_id, String user, Logger log) {
-        log.info("Updating bucket policy for " + bucket.getName() + " to allow PUT access for " + user);
+    private static String selectStorageFromLifecycle(BasicCommands sphere, String ip_address, Bucket bucket, ArrayList<Storage> storage_list, Logger log) {
+        log.info("Searching bucket lifecycle for associated standard storage.");
 
-        Bucket new_config = bucket;
+        String storage_id = "";
+        int matched_storage = 0;
 
-        if(new_config.getPolicy() == null) {
-            BucketPolicy policy = new BucketPolicy();
-            policy.setId("AllowTempUserAccess");
-            
-            new_config.setPolicy(policy);
+        Map<String, String> storage_map = MapStorage.createIdNameMap(storage_list);
+
+        if(bucket.getLifecycle() != null) {
+            Lifecycle lifecycle = sphere.getLifecycle(ip_address, bucket.getLifecycle());
+
+            for(LifecycleRule rule : lifecycle.getRules()) {
+                for(String storage : rule.getDestinations().getStorage()) {
+                    // Check if specified storage is in the list of standard storage
+                    if(storage_map.get(storage) != null) {
+                        storage_id = storage;
+                        matched_storage++;
+                    }
+                }
+            }
+
         }
 
+        if(matched_storage == 1) {
+            return storage_id; 
+        }
+        else {
+            log.info("Unable to determine storage from bucket lifecycle.");
+            return ""; // No location found.
+        }
+    }
+
+    private static void updateBucketPolicyAddUserToPolicy(BasicCommands sphere, String ip_address, Bucket bucket, String account_id, String user, Logger log) {
+        log.info("Updating bucket policy for " + bucket.getName() + " to allow PUT access for " + user);
+
+        Bucket new_config = new Bucket(bucket);
+
+        if(new_config.getPolicy() == null) {
+            // Create a new bucket policy if it doesn't exist.
+            log.info("Bucket [" + bucket.getName() + "] does not have an associated bucket policy.");
+            BucketPolicy policy = new BucketPolicy();
+            policy.setId("AllowTempUserAccess");
+
+            new_config.setPolicy(policy);
+        }
+        else {
+            // Copy the data over it it already exists.
+            log.info("Bucket [" + bucket.getName() + "] has an existing bucket policy");
+        }
+
+        // Create the required permission statement.
         BucketPolicyStatement statement = new BucketPolicyStatement();
         BucketPolicyPrincipal principal = new BucketPolicyPrincipal();
 
@@ -218,7 +310,7 @@ public class EnableVeeam {
 
         log.debug("AWS Principal: " + principal.getAWS());
 
-        statement.setSid("AllowTempUserPut");
+        statement.setSid("AllowSpectraTempUserPutForVeeam");
         statement.addAction("s3:Put*");
         statement.addAction("s3:BypassGovernanceRetention");
         statement.setEffect("Allow");
@@ -226,16 +318,24 @@ public class EnableVeeam {
         statement.addResource(resource);
         statement.addResource(resource + "/*");
 
+        // Add it to the new policy and then add the policy to the new_config
         new_config.addPolicyStatement(statement);
 
         sphere.updateBucket(ip_address, new_config.getName(), new_config);
-
+    
     }
 
     public static void updateBucketResetToOriginal(BasicCommands sphere, String ip_address, Bucket bucket, Logger log) {
         log.info("Resetting bucket to original configuration.");
 
-        if(bucket.getPolicy() != null) { System.err.println("Bucket Policy Exists."); }
+        if(bucket.getPolicy() != null) {
+            // Check the statement for our bucket policy
+            // And delete if it exists
+            if(bucket.getPolicy().getStatement().size() == 0) {
+                log.info("Setting bucket policy to null as no permissions are configured.");
+                bucket.setPolicy(null);
+            }
+        }
         sphere.updateBucket(ip_address, bucket.getName(), bucket);
     }
 }

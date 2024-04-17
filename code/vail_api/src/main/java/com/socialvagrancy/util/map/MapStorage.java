@@ -11,6 +11,7 @@
 package com.socialvagrancy.vail.utils.map;
 
 import com.socialvagrancy.vail.structures.Storage;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MapStorage
@@ -22,6 +23,17 @@ public class MapStorage
 		for(int i=0; i < locations.length; i++)
 		{
 			id_name_map.put(locations[i].id, locations[i].name);
+		}
+		
+		return id_name_map;
+	}
+
+	public static HashMap<String, String> createIdNameMap(ArrayList<Storage> locations)
+	{
+		HashMap<String, String> id_name_map = new HashMap<String, String>();
+
+		for(Storage location : locations) {
+			id_name_map.put(location.getId(), location.getName());
 		}
 		
 		return id_name_map;

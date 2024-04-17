@@ -61,6 +61,10 @@ public class URLs
         return  getBaseApiUrl(ipaddress) + "/buckets/" + bucket;
     }
 
+    public static String getLifecycleURL(String ipaddress, String lifecycle) {
+        return getBaseApiUrl(ipaddress) + "/lifecycles/" + lifecycle;
+    }
+
 	public static String groupsURL(String ipaddress, String account)
 	{
 		return "https://" + ipaddress + "/sl/api/iam/groups/" + account;

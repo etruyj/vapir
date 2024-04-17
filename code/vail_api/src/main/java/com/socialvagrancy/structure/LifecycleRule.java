@@ -23,7 +23,8 @@ public class LifecycleRule
 	// GETTER FUNCTIONS
 	//==============================================
 
-	public int storageCount() { return destinations.storage.length; }	
+    public Destination getDestinations() { return destinations; }
+    public int storageCount() { return destinations.storage.length; }	
 	public String storageID(int s) { return destinations.storage[s]; }
 	public String type() { return type; }
 
@@ -33,6 +34,7 @@ public class LifecycleRule
 
 	public void clearDestinationCount() { destinations.count = null; }
 	public void setDeletion(boolean d) { deletion = d; }
+    public void setDestinations(Destination destinations) { this.destinations = destinations; }
 	public void setExpiration(boolean e) { expiration = e; }
 	public void setStorage(int s, String sid) { destinations.storage[s] = sid; }
 
@@ -45,7 +47,19 @@ public class LifecycleRule
 	{
 		public Integer count;
 		public String[] storage;
-	}
+
+        //=======================================
+        // Getters
+        //=======================================
+        
+        public String[] getStorage() { return storage; }
+
+        //=======================================
+        // Getters
+        //=======================================
+	
+        public void setStorage(String[] storage) { this.storage = storage; }
+    }
 
 	public class Schedule
 	{
