@@ -1,6 +1,0 @@
-Basic Commands
-
-These are the basic commands that query the specified API on the Spectra Logic Vail Sphere. 
-
-list-accounts		List all the accounts linked with the Vail Sphere system
-list-users		List all the IAM users belonging to any account paired with the Vail system. 
