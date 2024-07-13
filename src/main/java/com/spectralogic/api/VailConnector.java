@@ -54,6 +54,17 @@ public class VailConnector
 		rest_client = new RestClient(ignore_ssl);
 	}
 
+    //===========================================
+    // Getters
+    //===========================================
+    public String getIpAddress() { return ip_address; }
+
+    //===========================================
+    // Setters
+    //===========================================
+    public void setIpAddress(String ip) { this.ip_address = ip; }
+
+
 	//===========================================================
 	// Commands
 	//===========================================================

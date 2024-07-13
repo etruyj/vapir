@@ -6,6 +6,8 @@
 
 package com.spectralogic.vail.vapir.util.s3;
 
+import com.spectralogic.vail.vapir.util.http.AddressResolver;
+
 import software.amazon.awssdk.utils.AttributeMap;
 import software.amazon.awssdk.core.internal.http.loader.DefaultSdkHttpClientBuilder;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
@@ -49,6 +51,13 @@ public class S3Connector {
     private static S3Client buildClient(String endpoint, String region, String access_key, String secret_key, boolean ignore_ssl) {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(access_key, secret_key);
         SdkHttpClient httpClient;
+
+        try {
+            endpoint = AddressResolver.resolveDomainNameToIP(endpoint);
+        } catch(Exception e) {
+            System.err.println(e.getMessage());
+            System.err.println("Failed to resolve address " + endpoint);
+        }
 
         // Add https:// and / to the endpoint as the arg parser
         // converts the endpoint a format missing this.
