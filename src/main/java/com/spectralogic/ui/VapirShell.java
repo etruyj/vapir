@@ -83,7 +83,7 @@ public class VapirShell
                 */
 				break;
 			case "list-groups":
-				Display.output(controller.listGroups(ip, option1), outputFormat);
+				Display.output(controller.listGroups(option1), outputFormat);
 				break;
 			case "list-storage":
 				Display.output(controller.listStorage(ip), outputFormat);

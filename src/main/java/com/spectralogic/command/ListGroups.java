@@ -56,14 +56,19 @@ public class ListGroups
         }
     }
 
+    @Deprecated // removed ip address requirement.
 	public static ArrayList<Summary> summary(String ip, String account, VailConnector sphere) {
+	    return summary(account, sphere);
+    }
+
+	public static ArrayList<Summary> summary(String account, VailConnector sphere) {
 		log.info("Listing groups that belong to the account " + account);
         
         ArrayList<Summary> group_list = null;
     
         try {
 
-            Account[] accounts = sphere.listAccounts(ip);
+            Account[] accounts = sphere.listAccounts();
             log.info("Found (" + accounts.length + ") AWS accounts associated with Vail sphere.");
 		
 		    if(account.equalsIgnoreCase("sphere"))
@@ -91,12 +96,12 @@ public class ListGroups
 
 		    if(account.equals("none") || account.equals("all"))
 		    {
-			    group_list = listAllGroups(sphere, ip, accounts);
+			    group_list = listAllGroups(sphere, accounts);
 		
 		    }
 		    else
 		    {
-			    group_list = listAccountGroups(sphere, ip, accounts, account);
+			    group_list = listAccountGroups(sphere, accounts, account);
 		    }
         } catch(Exception e) {
             System.err.println(e.getMessage());
@@ -123,7 +128,7 @@ public class ListGroups
 		
 	}
 
-	private static ArrayList<Summary> listAccountGroups(VailConnector sphere, String ip, Account[] accounts, String account) throws Exception {
+	private static ArrayList<Summary> listAccountGroups(VailConnector sphere, Account[] accounts, String account) throws Exception {
         log.info("Searching for groups that belong to account " + account);
         ArrayList<Summary> group_list = new ArrayList<Summary>();
 		GroupData groups;
@@ -168,7 +173,7 @@ public class ListGroups
 		// 	The account name specified exists in one of the maps.
 		//	We can find the users.
 
-		groups = sphere.listGroups(ip, account);
+		groups = sphere.listGroups(account);
 
 
 
@@ -180,7 +185,7 @@ public class ListGroups
 		return group_list;
 	}
 
-	private static ArrayList<Summary> listAllGroups(VailConnector sphere, String ip, Account[] accounts) throws Exception
+	private static ArrayList<Summary> listAllGroups(VailConnector sphere, Account[] accounts) throws Exception
 	{
         log.info("Listing groups that belong to all accounts.");
 		ArrayList<Summary> group_list = new ArrayList<Summary>();
@@ -188,7 +193,7 @@ public class ListGroups
 
 		for(int i=0; i < accounts.length; i++)
 		{
-			groups = sphere.listGroups(ip, accounts[i].getId());
+			groups = sphere.listGroups(accounts[i].getId());
 			
 			// Error Handling for pre-2.0.0 sphere 
 			// and for the event where people delete all their groups.

@@ -129,8 +129,8 @@ public class VailController {
         return ListEndpoints.blackpearl(sphere);
     }
 
-    public ArrayList<Summary> listGroups(String ip_address, String account) {
-        return ListGroups.summary(ip_address, account, sphere);
+    public ArrayList<Summary> listGroups(String account) {
+        return ListGroups.summary(account, sphere);
     }
 
     public Storage[] listStorage(String ip_address) {
