@@ -55,7 +55,7 @@ public class VapirShell
 				Display.print(controller.createUser(ip, option1, option3));
 				break;
             case "enable-veeam":
-                Display.print(controller.enableVeeam(ip, option2));
+                Display.print(controller.enableVeeam(option2));
                 break;
             case "fetch-config":
                 System.out.println("Code coming soon.");

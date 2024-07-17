@@ -67,6 +67,7 @@ public class Bucket {
         this.mode = other.getMode();
         this.timeUnits = other.getTimeUnits();
         this.time = other.getTime();
+        this.restore = other.isRestore();
     }
     
     //===========================================

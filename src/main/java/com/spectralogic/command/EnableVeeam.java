@@ -58,7 +58,12 @@ import org.slf4j.LoggerFactory;
 public class EnableVeeam {
     private static final Logger log = LoggerFactory.getLogger(EnableVeeam.class);
 
-    public static String configureSosapi(VailConnector sphere, String ip_address, String bucket_name) {
+    //============= MAIN FUNCTION ===============
+    // configureSosapi
+    //      This is the main function in this class
+    //      and intended as the primary entry point
+    //      for executing this command.
+    public static String configureSosapi(VailConnector sphere, String bucket_name) {
         log.info("Enabling Veeam SOSAPI on bucket [" + bucket_name + "]");
 
         String message = "Unable to configure SOSAPI.";
@@ -70,14 +75,14 @@ public class EnableVeeam {
 
 
         try {
-            bucket = sphere.getBucket(ip_address, bucket_name);
+            bucket = sphere.getBucket(bucket_name);
         } catch(Exception e) {
             log.error(e.getMessage());
         }
 
         if(bucket != null) {
             // Bucket Exists - Proceed.
-            String storage_id = getStorageId(sphere, ip_address, bucket);
+            String storage_id = getStorageId(sphere, bucket);
             UserKey access_keys = null;
             String account_id = "";
 
@@ -90,12 +95,12 @@ public class EnableVeeam {
                     // All these functions can be grouped together in a 
                     // single try-block. If any of these fail, we should
                     // abort the execution.
-                    account_id = getAccountId(sphere, ip_address, bucket.getOwner());
-                    access_keys = createUser(sphere, ip_address, account_id, temp_user);                
-                    updateBucketPolicyAddUserToPolicy(sphere, ip_address, bucket, account_id, temp_user);
+                    account_id = getAccountId(sphere, bucket.getOwner());
+                    access_keys = createUser(sphere, account_id, temp_user);                
+                    updateBucketPolicyAddUserToPolicy(sphere, bucket, account_id, temp_user);
                     createXmlDocs(file_path, storage_id);
-                    putXmlDocsToBucket(ip_address, bucket.getName(), veeam_prefix, file_path, "system.xml", access_keys, ignore_ssl);
-                    putXmlDocsToBucket(ip_address, bucket.getName(), veeam_prefix, file_path, "capacity.xml", access_keys, ignore_ssl);
+                    putXmlDocsToBucket(sphere.getIpAddress(), bucket.getName(), veeam_prefix, file_path, "system.xml", access_keys, ignore_ssl);
+                    putXmlDocsToBucket(sphere.getIpAddress(), bucket.getName(), veeam_prefix, file_path, "capacity.xml", access_keys, ignore_ssl);
                    
                     message = "Success. Bucket [" + bucket.getName() + "] configured for Veeam Archive tier."; 
                 } catch(Exception e) {
@@ -109,14 +114,14 @@ public class EnableVeeam {
                 // fails.
                 log.info("Performing clean-up tasks...");
                 
-                updateBucketResetToOriginal(sphere, ip_address, bucket);
+                updateBucketResetToOriginal(sphere, bucket);
                 
                 try {
                     if(access_keys != null) { 
-                        sphere.deleteUserKey(ip_address, account_id, temp_user, access_keys.getId());
+                        sphere.deleteUserKey(account_id, temp_user, access_keys.getId());
                     }
                 
-                    sphere.deleteUser(ip_address, account_id, temp_user);
+                    sphere.deleteUser(account_id, temp_user);
                 } catch(Exception e) {
                     log.error(e.getMessage());
                 } 
@@ -134,16 +139,16 @@ public class EnableVeeam {
     // Private Functions
     //===========================================
 
-    private static UserKey createUser(VailConnector sphere, String ip_address, String account_id, String username) {
+    private static UserKey createUser(VailConnector sphere, String account_id, String username) {
         log.info("Creating temp user [" + username + "] for bucket.");
 
         UserKey key_pair = null;
         
         try {
-            User user = sphere.createUser(ip_address, account_id, username);
+            User user = sphere.createUser(account_id, username);
 
             if(user != null) {
-                key_pair = sphere.createUserKey(ip_address, account_id, username);            
+                key_pair = sphere.createUserKey(account_id, username);            
             }
         } catch(Exception e) {
             log.error(e.getMessage());
@@ -181,8 +186,8 @@ public class EnableVeeam {
         }
     }
 
-    private static String getAccountId(VailConnector sphere, String ip_address, String canonical_id) throws IOException {
-        Account[] accounts = sphere.listAccounts(ip_address);
+    private static String getAccountId(VailConnector sphere, String canonical_id) throws IOException {
+        Account[] accounts = sphere.listAccounts();
 
         Map<String, String> canon_id_map = MapAccounts.createCanonicalIDMap(accounts);
 
@@ -191,11 +196,11 @@ public class EnableVeeam {
         return canon_id_map.get(canonical_id);
     }
 
-    private static ArrayList<Storage> getStandardStorage(VailConnector sphere, String ip_address) {
+    private static ArrayList<Storage> getStandardStorage(VailConnector sphere) {
         ArrayList<Storage> storage_list = new ArrayList<Storage>();
 
         try {
-            Storage[] storage = sphere.listStorage(ip_address);
+            Storage[] storage = sphere.listStorage();
 
             for(Storage location : storage) {
                 /*
@@ -213,12 +218,12 @@ public class EnableVeeam {
         return storage_list;
     }
 
-    private static String getStorageId(VailConnector sphere, String ip_address, Bucket bucket) {
+    private static String getStorageId(VailConnector sphere, Bucket bucket) {
         log.info("Searching for standard-tier storage id.");
         
         String storage_id = "";
 
-        ArrayList<Storage> storage_list = getStandardStorage(sphere, ip_address);
+        ArrayList<Storage> storage_list = getStandardStorage(sphere);
 
         if(storage_list.size() == 1) {
             storage_id = storage_list.get(0).getId();
@@ -226,7 +231,8 @@ public class EnableVeeam {
         }
         else if(storage_list.size() > 1) {
             // We need to figure out what our Storage location should be.
-            storage_id = selectStorageFromLifecycle(sphere, ip_address, bucket, storage_list);
+            // We do this by looking at the lifecycle.
+            storage_id = selectStorageFromLifecycle(sphere, bucket, storage_list);
 
             if(storage_id.length() == 0) { 
                 log.info("Requesting user input to select storage.");
@@ -290,7 +296,7 @@ public class EnableVeeam {
         log.info("Created " + object_key + " with eTag " + etag);
     }
 
-    private static String selectStorageFromLifecycle(VailConnector sphere, String ip_address, Bucket bucket, ArrayList<Storage> storage_list) {
+    private static String selectStorageFromLifecycle(VailConnector sphere, Bucket bucket, ArrayList<Storage> storage_list) {
         log.info("Searching bucket lifecycle for associated standard storage.");
 
         String storage_id = "";
@@ -300,7 +306,7 @@ public class EnableVeeam {
 
         if(bucket.getLifecycle() != null) {
             try {
-                Lifecycle lifecycle = sphere.getLifecycle(ip_address, bucket.getLifecycle());
+                Lifecycle lifecycle = sphere.getLifecycle(bucket.getLifecycle());
 
                 for(LifecycleRule rule : lifecycle.getRules()) {
                     for(String storage : rule.getDestinations().getStorage()) {
@@ -325,7 +331,7 @@ public class EnableVeeam {
         }
     }
 
-    private static void updateBucketPolicyAddUserToPolicy(VailConnector sphere, String ip_address, Bucket bucket, String account_id, String user) throws IOException {
+    private static void updateBucketPolicyAddUserToPolicy(VailConnector sphere, Bucket bucket, String account_id, String user) throws IOException {
         log.info("Updating bucket policy for " + bucket.getName() + " to allow PUT access for " + user);
 
         Bucket new_config = new Bucket(bucket);
@@ -363,11 +369,11 @@ public class EnableVeeam {
         // Add it to the new policy and then add the policy to the new_config
         new_config.addPolicyStatement(statement);
 
-        sphere.updateBucket(ip_address, new_config);
+        sphere.updateBucket(new_config);
     
     }
 
-    public static void updateBucketResetToOriginal(VailConnector sphere, String ip_address, Bucket bucket) {
+    public static void updateBucketResetToOriginal(VailConnector sphere, Bucket bucket) {
         log.info("Resetting bucket to original configuration.");
 
         if(bucket.getPolicy() != null) {
@@ -380,7 +386,7 @@ public class EnableVeeam {
         }
         
         try {
-            sphere.updateBucket(ip_address, bucket);
+            sphere.updateBucket(bucket);
         } catch(Exception e) {
             log.error(e.getMessage());
             log.error("Failed to reset bucket policy");
