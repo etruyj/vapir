@@ -18,19 +18,23 @@ package com.spectralogic.vail.vapir.command;
 import com.spectralogic.vail.vapir.api.VailConnector;
 import com.spectralogic.vail.vapir.model.Account;
 import com.spectralogic.vail.vapir.model.Bucket;
+import com.spectralogic.vail.vapir.model.BucketPolicy;
 import com.spectralogic.vail.vapir.model.Endpoint;
 import com.spectralogic.vail.vapir.model.Group;
 import com.spectralogic.vail.vapir.model.Lifecycle;
 import com.spectralogic.vail.vapir.model.SphereConfig;
 import com.spectralogic.vail.vapir.model.Storage;
 import com.spectralogic.vail.vapir.model.Summary;
+import com.spectralogic.vail.vapir.model.User;
 import com.spectralogic.vail.vapir.model.blackpearl.BpDataPolicy;
 import com.spectralogic.vail.vapir.model.requests.EndpointStorageRequest;
 import com.spectralogic.vail.vapir.util.map.MapAccounts;
 import com.spectralogic.vail.vapir.util.map.MapDataPolicies;
 import com.spectralogic.vail.vapir.util.map.MapEndpoints;
+import com.spectralogic.vail.vapir.util.map.MapGroups;
 import com.spectralogic.vail.vapir.util.map.MapLifecycle;
 import com.spectralogic.vail.vapir.util.map.MapStorage;
+import com.spectralogic.vail.vapir.util.map.MapUsers;
 
 import com.google.gson.Gson;
 // Removing YAML support for now
@@ -98,6 +102,11 @@ public class ConfigureSphere
 
 		log.info("Adding (" + buckets.size() + ") buckets to Sphere...");
 
+        // Map user and groups for putting bucket policies.
+        HashMap<String, HashMap<String, String>> account_user_arn_map = createAccountUserArnMap(sphere);
+        HashMap<String, HashMap<String, String>> account_group_arn_map = createAccountGroupArnMap(sphere);
+        BucketPolicy policy;
+
 		for(int i=0; i<buckets.size(); i++)
 		{
 			// Default settings.
@@ -119,7 +128,16 @@ public class ConfigureSphere
 				buckets.get(i).setControl("BucketOwnerEnforced");
 			}
 
-			// Find account Canonical ID
+            // Create bucket policy
+            // Must be completed before we change the bucket owner to the canonical id
+            if(buckets.get(i).getPolicy() != null) {
+                log.debug("Bucket contains policy.");
+                policy = ConfigureBucketPolicy.translateFromSimplifiedPolicy(buckets.get(i).getName(), buckets.get(i).getPolicy(), account_group_arn_map.get(buckets.get(i).getOwner()), account_user_arn_map.get(buckets.get(i).getOwner()));
+
+                buckets.get(i).setPolicy(policy);
+            }
+			
+            // Find account Canonical ID
 			if(account_map.get(buckets.get(i).getOwner()) != null)
 			{
 				buckets.get(i).setOwner(account_map.get(buckets.get(i).getOwner()));
@@ -488,5 +506,39 @@ storage_map.get(lifecycles.get(i).getRule(r).getDestinations().getStorage().get(
 			return report;
 		}
 	}
+
+    public static HashMap<String, HashMap<String, String>> createAccountGroupArnMap(VailConnector sphere) {
+        HashMap<String, HashMap<String, String>> account_name_arn_map = new HashMap<String, HashMap<String, String>>();
+
+        Account[] accounts = ListAccounts.all(sphere.getIpAddress(), sphere);
+        Group[] groups;
+        HashMap<String, String> name_arn_map; 
+
+        for(Account account : accounts) {
+            groups = ListGroups.inAccount(account.getId(), sphere);
+            name_arn_map = MapGroups.createNameArnMap(groups);
+
+            account_name_arn_map.put(account.getUsername(), name_arn_map);
+        }
+
+        return account_name_arn_map;
+    }
+
+    public static HashMap<String, HashMap<String, String>> createAccountUserArnMap(VailConnector sphere) {
+        HashMap<String, HashMap<String, String>> account_name_arn_map = new HashMap<String, HashMap<String, String>>();
+
+        Account[] accounts = ListAccounts.all(sphere.getIpAddress(), sphere);
+        User[] users;
+        HashMap<String, String> name_arn_map; 
+
+        for(Account account : accounts) {
+            users = ListUsers.all(sphere.getIpAddress(), account.getId(), sphere);
+            name_arn_map = MapUsers.createNameArnMap(users);
+
+            account_name_arn_map.put(account.getUsername(), name_arn_map);
+        }
+
+        return account_name_arn_map;
+    }
 }
 

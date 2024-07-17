@@ -97,8 +97,8 @@ public class VailController {
         }
     }
 
-    public String enableVeeam(String ip_address, String bucket) {
-        return EnableVeeam.configureSosapi(sphere, ip_address, bucket);
+    public String enableVeeam(String bucket) {
+        return EnableVeeam.configureSosapi(sphere, bucket);
     }
 
     public ArrayList<CapacitySummary> getCapacitySummary(String ip_address) {

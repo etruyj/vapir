@@ -28,6 +28,21 @@ public class ListGroups
 {
     private static final Logger log = LoggerFactory.getLogger(ListGroups.class);
 
+    public static Group[] inAccount(String account, VailConnector sphere) {
+        log.info("Listing all groups associated with account id: " + account);
+        Group[] groups = null;
+
+        try {
+           groups = sphere.listGroups(account).getData();
+           log.info("Found (" + groups.length + ") groups.");
+        } catch(Exception e) {
+            log.error(e.getMessage());
+            log.error("Failed to list groups.");
+        }
+
+        return groups;
+    }
+
     public static Group[] inAccount(String ip_address, String account, VailConnector sphere) {
         try {
             Account[] accounts = ListAccounts.all(ip_address, sphere);
