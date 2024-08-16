@@ -23,6 +23,23 @@ import org.slf4j.LoggerFactory;
 public class Groups {
     private static final Logger log = LoggerFactory.getLogger(Groups.class);
 
+    public static Group create(Group group, String ip_address, String token, RestClient rest_client) throws IOException, JsonParseException {
+        Gson gson = new Gson();
+
+        String url = URLs.createGroupURL(ip_address, group.getAccountId(), group.getName());
+        String payload = gson.toJson(group);
+
+        log.debug("API URL: PUT " + url);
+        log.debug("API Payload: " + payload);
+
+        String response = rest_client.put(url, token, payload);
+
+        log.debug("API Response: " + response);
+
+        return gson.fromJson(response, Group.class);
+    }
+    
+    @Deprecated // doesn't work with current API
     public static Group createGroup(String ip_address, String account_id, String name, String token, RestClient rest_client) throws IOException, JsonParseException {
         Gson gson = new Gson();
 

@@ -30,6 +30,13 @@ public class AddressResolver {
     //  @param domainName the domain name to resolve
     //  @return the resolved IP address as a string, or null if resolution fails
     public static String resolveDomainNameToIP(String domainName) throws UnknownHostException {
+        // remove https:// or http:// if its included.
+        if(domainName.contains("https")) {
+            domainName = domainName.substring(8, domainName.length());
+        } else if(domainName.contains("http")) {
+            domainName = domainName.substring(7, domainName.length());
+        }
+
         if(isIPv4Address(domainName)) {
             return domainName;
         } else {

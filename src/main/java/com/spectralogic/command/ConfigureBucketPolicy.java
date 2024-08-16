@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class ConfigureBucketPolicy {
     private static final Logger log = LoggerFactory.getLogger(ConfigureBucketPolicy.class);
 
-    public static BucketPolicy translateFromSimplifiedPolicy(String bucket_name, BucketPolicy simple_policy, HashMap<String, String> group_arn_map, HashMap<String, String> user_arn_map) {
+    public static BucketPolicy translateFromSimplifiedPolicy(String bucket_name, BucketPolicy simple_policy, HashMap<String, String> group_arn_map, HashMap<String, String> user_arn_map) throws Exception {
         BucketPolicy policy = new BucketPolicy();
         BucketPolicyPrincipal principal;
         BucketPolicyStatement statement;
@@ -67,6 +67,10 @@ public class ConfigureBucketPolicy {
                     // find user arn.
                     arn = user_arn_map.get(princ.substring(user_length, princ.length()));
                     log.debug("Principal [" + princ + "] has ARN " + arn);
+
+                    if(arn == null) {
+                        throw new Exception("Unable to find principal [" + princ + "]");
+                    }
 
                     principal.addAWS(arn);
                 }

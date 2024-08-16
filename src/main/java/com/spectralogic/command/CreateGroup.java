@@ -43,5 +43,21 @@ public class CreateGroup {
             return null;
         }
 	}
+
+    public static Group fromObject(Group group, VailConnector sphere) {
+        log.info("Creating group [" + group.getName() + "] for account " + group.getAccountId());
+
+        Group new_group = null;
+        try {
+            new_group = sphere.createGroup(group);
+
+            log.info("Successfully created group " + group.getName());
+        } catch(Exception e) {
+            log.error(e.getMessage());
+            log.error("Failed to create group.");
+        }
+
+        return new_group;
+    }
 }
 

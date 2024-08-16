@@ -109,70 +109,76 @@ public class ConfigureSphere
 
 		for(int i=0; i<buckets.size(); i++)
 		{
-			// Default settings.
-			if(buckets.get(i).isLocking())
-			{
-				log.warn("Bucket [" + buckets.get(i).getName() + "] has object locking enabled.");
-				log.warn("Creating bucket without object locking. Locking can be configured by editing the bucket on the UI.");
-				System.err.println("WARNING: Bucket [" + buckets.get(i).getName() + "] has object locking enabled.");
-				System.err.println("WARNING: Creating bucket without object locking. Locking can be configured by editing the bucket on the UI.");
+            try {
+			    // Default settings.
+			    if(buckets.get(i).isLocking())
+			    {
+				    log.warn("Bucket [" + buckets.get(i).getName() + "] has object locking enabled.");
+				    log.warn("Creating bucket without object locking. Locking can be configured by editing the bucket on the UI.");
+				    System.err.println("WARNING: Bucket [" + buckets.get(i).getName() + "] has object locking enabled.");
+				    System.err.println("WARNING: Creating bucket without object locking. Locking can be configured by editing the bucket on the UI.");
 				
-				buckets.get(i).setLocking(false);
-				buckets.get(i).setDefaultRetention(null);
-			}
+				    buckets.get(i).setLocking(false);
+				    buckets.get(i).setDefaultRetention(null);
+			    }
 
-			if(buckets.get(i).getControl() == null)
-			{
-				log.warn("Bucket control not specified. Setting to the recommended BucketOwnerEnforce.");
-				System.err.println("WARNING: Bucket control not specified. Setting to the recommended BucketOwnerEnforced.");
-				buckets.get(i).setControl("BucketOwnerEnforced");
-			}
+			    if(buckets.get(i).getControl() == null)
+			    {
+				    log.warn("Bucket control not specified. Setting to the recommended BucketOwnerEnforce.");
+				    System.err.println("WARNING: Bucket control not specified. Setting to the recommended BucketOwnerEnforced.");
+				    buckets.get(i).setControl("BucketOwnerEnforced");
+			    }
 
-            // Create bucket policy
-            // Must be completed before we change the bucket owner to the canonical id
-            if(buckets.get(i).getPolicy() != null) {
-                log.debug("Bucket contains policy.");
-                policy = ConfigureBucketPolicy.translateFromSimplifiedPolicy(buckets.get(i).getName(), buckets.get(i).getPolicy(), account_group_arn_map.get(buckets.get(i).getOwner()), account_user_arn_map.get(buckets.get(i).getOwner()));
+                // Create bucket policy
+                // Must be completed before we change the bucket owner to the canonical id
+                if(buckets.get(i).getPolicy() != null) {
+                    log.debug("Bucket contains policy.");
+                
+                    policy = ConfigureBucketPolicy.translateFromSimplifiedPolicy(buckets.get(i).getName(), buckets.get(i).getPolicy(), account_group_arn_map.get(buckets.get(i).getOwner()), account_user_arn_map.get(buckets.get(i).getOwner()));
 
-                buckets.get(i).setPolicy(policy);
-            }
+                    buckets.get(i).setPolicy(policy);
+                }
 			
-            // Find account Canonical ID
-			if(account_map.get(buckets.get(i).getOwner()) != null)
-			{
-				buckets.get(i).setOwner(account_map.get(buckets.get(i).getOwner()));
-			    account_found = true;
+                // Find account Canonical ID
+			    if(account_map.get(buckets.get(i).getOwner()) != null)
+			    {
+				    buckets.get(i).setOwner(account_map.get(buckets.get(i).getOwner()));
+			        account_found = true;
+                }
+			    else
+			    {
+				    log.error("Unabled to find account [" + buckets.get(i).getOwner() + "] for bucket " + buckets.get(i).getName());
+				    account_found = false;
+			    }
+
+			    // Convert lifecycle names to lifecycle identifiers
+			    if(lifecycle_map.get(buckets.get(i).getLifecycle()) != null)
+			    {
+				    buckets.get(i).setLifecycle(lifecycle_map.get(buckets.get(i).getLifecycle()));
+			        lifecycle_found = true;
+                }
+			    else if(buckets.get(i).getLifecycle() != null && !buckets.get(i).getLifecycle().equals("none")) // no need to do anything for none.
+			    {
+				    log.error("ERROR: Unable to find lifecycle [" + buckets.get(i).getLifecycle() + "] for bucket " + buckets.get(i).getName());
+
+				    lifecycle_found = false;
+
+			    }
+
+			    // Proceed only if translation was successful.
+			    if(account_found && lifecycle_found)
+			    {
+                    log.info("Attempting to create bucket " + buckets.get(i).getName());
+				    bucket_verify = CreateBucket.create(ip_address, buckets.get(i), sphere);
+				    if(bucket_verify != null)
+				    {
+					    success_count++;
+				    }
+			    }
+            } catch(Exception e) {
+                log.error(e.getMessage());
+                log.error("Failed to create bucket [" + buckets.get(i).getName());
             }
-			else
-			{
-				log.error("Unabled to find account [" + buckets.get(i).getOwner() + "] for bucket " + buckets.get(i).getName());
-				account_found = false;
-			}
-
-			// Convert lifecycle names to lifecycle identifiers
-			if(lifecycle_map.get(buckets.get(i).getLifecycle()) != null)
-			{
-				buckets.get(i).setLifecycle(lifecycle_map.get(buckets.get(i).getLifecycle()));
-			    lifecycle_found = true;
-            }
-			else if(buckets.get(i).getLifecycle() != null && !buckets.get(i).getLifecycle().equals("none")) // no need to do anything for none.
-			{
-				log.error("ERROR: Unable to find lifecycle [" + buckets.get(i).getLifecycle() + "] for bucket " + buckets.get(i).getName());
-
-				lifecycle_found = false;
-
-			}
-
-			// Proceed only if translation was successful.
-			if(account_found && lifecycle_found)
-			{
-                log.info("Attempting to create bucket " + buckets.get(i).getName());
-				bucket_verify = CreateBucket.create(ip_address, buckets.get(i), sphere);
-				if(bucket_verify != null)
-				{
-					success_count++;
-				}
-			}
 		}
 
 		log.warn("Successfully added (" + success_count + ") buckets.");
@@ -189,11 +195,34 @@ public class ConfigureSphere
 		account_pair[0] = "";
 
 		log.info("Adding (" + groups.size() + ") groups to Sphere...");
+        
+        Group group;
+        String account_id;
+        
+        for(Summary summary : groups) {
+            log.info("Building group " + summary.getName());
+            group = new Group();
+            group.setName(summary.getName());
 
+            // Search for account id
+            account_id = name_id_map.get(summary.getAccountName());
+            log.info("Group owner [" + summary.getAccountName() + "] belongs to account: " + account_id);
+
+            if(account_id != null) {
+                group.setAccountId(account_id);
+
+                group = CreateGroup.fromObject(group, sphere);
+
+                if(group != null) {
+                    success_count++;
+                }
+            }
+        }
+        
+        /*
 		for(int i=0; i<groups.size(); i++)
 		{
 			// Find account id
-
 			if(!groups.get(i).getAccountName().equals(account_pair[0]))
 			{
 				account_pair[0] = groups.get(i).getAccountName();
@@ -212,7 +241,7 @@ public class ConfigureSphere
 
 			if(!account_pair[1].equals("none"))
 			{
-                Group group = CreateGroup.create(ip_address, groups.get(i).getName(), account_pair[1], sphere);
+                Group group = CreateGroup.fromObject(groups.get(i), sphere);
 				if(group != null)
 				{
 					success_count++;
@@ -220,7 +249,7 @@ public class ConfigureSphere
 			
 			}
 		}
-
+*/
 		log.info("Successfully created (" + success_count + ") groups");
 		log.warn("Failed to create (" + String.valueOf(groups.size() - success_count) + ") groups.");
 

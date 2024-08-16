@@ -162,6 +162,10 @@ public class VailConnector
 	    return Groups.createGroup(ip_address, account_id, name, token, rest_client);
     }
 
+    public Group createGroup(Group group) throws IOException, JsonParseException {
+        return Groups.create(group, ip_address, token, rest_client);
+    }
+
     @Deprecated // removing ip address requirement
 	public Lifecycle createLifecycle(String ipaddress, String name, String json_body) throws IOException, JsonParseException {
         return createLifecycle(name, json_body);
