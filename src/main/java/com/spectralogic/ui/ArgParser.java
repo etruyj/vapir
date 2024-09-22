@@ -227,6 +227,8 @@ public class ArgParser
                 case "--option1":
 				case "-a":
 				case "--account":
+                case "-k":
+                case "--key":
 					if((i+1)<args.length)
 					{
 						setOption1(args[i+1]);
@@ -238,6 +240,7 @@ public class ArgParser
 				case "--bucket":
 				case "-g":
 				case "--group":
+                case "--license-server":
 					if((i+1)<args.length)
 					{
 						setOption2(args[i+1]);

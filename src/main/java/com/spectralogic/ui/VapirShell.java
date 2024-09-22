@@ -34,6 +34,9 @@ public class VapirShell
 
 		switch(command)
 		{
+            case "activate":
+                Display.print(controller.activateNode(option1, option2));
+                break;
             case "capacity-summary":
                 System.err.println("Doesn't work.");
 //                controller.getCapacitySummary(ip);
@@ -126,6 +129,17 @@ public class VapirShell
 			{
 				ui.execute("",  aparser.getCommand(), "", "", "", "", false, "");
 			}
+            else if(aparser.getCommand().equals("activate")) {
+                // Special exception here as there are no required credentials
+                // to activate a Vail sphere (at this moment
+                ui.execute("", aparser.getCommand(),
+                        aparser.getOption1(),
+                        aparser.getOption2(),
+                        aparser.getOption3(),
+                        aparser.getOption4(),
+                        aparser.getBooleanFlag(),
+                        aparser.getOutputFormat());
+            }
 			else if(ui.login(aparser.getIP(), aparser.getUsername(), aparser.getPassword()))
 			{
 				ui.execute(aparser.getIP(), aparser.getCommand(), aparser.getOption1(), aparser.getOption2(), aparser.getOption3(), aparser.getOption4(), aparser.getBooleanFlag(), aparser.getOutputFormat());

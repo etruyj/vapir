@@ -7,6 +7,10 @@ public class URLs
 		return "https://" + ipaddress + "/sl/api/accounts";
 	}
 
+    public static String activateURL(String ipaddress) {
+        return "https://" + ipaddress + "/sl/api/sphere/activate";
+    }
+
 	public static String blackpearlLoginURL(String url)
 	{
 		// No https:// as vail stores the domain name of the 

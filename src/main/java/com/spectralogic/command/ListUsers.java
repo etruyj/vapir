@@ -37,7 +37,7 @@ public class ListUsers
         } catch(Exception e) {
             log.error(e.getMessage());
             System.err.println(e.getMessage());
-            return null;
+            return new User[0];
         }
     }
     

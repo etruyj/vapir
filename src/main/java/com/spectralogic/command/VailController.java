@@ -32,8 +32,23 @@ public class VailController {
     }
 
     //===============================================================
+    // Getters
+    //===============================================================
+    public void printTest() { System.err.println("PRINT TEST"); }
+    public boolean getConnectionStatus() { 
+        if(sphere == null) {
+            return false;
+        } else {
+            return sphere.getConnectionStatus(); 
+        }
+    }
+
+    //===============================================================
     // Commands
     //===============================================================
+    public String activateNode(String key, String license_server) {
+        return ActivateNode.withKey(key, license_server, sphere);
+    }
 
     public String addAccount(String ip_address, String role_arn, String external_id, String username, String description) {
         try {

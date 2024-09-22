@@ -19,6 +19,7 @@ import com.spectralogic.vail.vapir.model.Token;
 import com.spectralogic.vail.vapir.model.CapacitySummary;
 import com.spectralogic.vail.vapir.model.Group;
 import com.spectralogic.vail.vapir.model.GroupData;
+import com.spectralogic.vail.vapir.model.NodeActivationPacket;
 import com.spectralogic.vail.vapir.model.UserData;
 import com.spectralogic.vail.vapir.model.User;
 import com.spectralogic.vail.vapir.model.UserKey;
@@ -57,6 +58,13 @@ public class VailConnector
     //===========================================
     // Getters
     //===========================================
+    public boolean getConnectionStatus() { 
+        if(token != null && token.length() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     public String getIpAddress() { return ip_address; }
 
     //===========================================
@@ -69,6 +77,10 @@ public class VailConnector
 	// Commands
 	//===========================================================
 	
+    public boolean activateNode(NodeActivationPacket packet) throws IOException, JsonParseException {
+        return ActivateNode.activate(packet, ip_address, token, rest_client);
+    }
+
     @Deprecated // removing ip address requirement
     public Account addAccount(String ipaddress, String json_body) throws IOException, JsonParseException {
 	    return addAccount(json_body);
@@ -348,7 +360,6 @@ public class VailConnector
 
 	public boolean login(String username, String password) throws IOException, JsonParseException {
 	    this.token = "Bearer " + Tokens.login(ip_address, username, password, rest_client).getToken();
-
         return true;
     }
 
