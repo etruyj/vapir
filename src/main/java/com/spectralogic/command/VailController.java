@@ -164,4 +164,8 @@ public class VailController {
     public boolean login(String ip_address, String user, String password) {
         return Login.toSphere(ip_address, user, password, sphere);
     }
+
+    public ArrayList<UserSummary> searchUsers(String ip_address, String account, String access_key, boolean active_only) {
+        return SearchUsers.withAccessKey(ip_address, account, access_key, active_only, sphere);
+    }
 }

@@ -88,7 +88,10 @@ public class VapirShell
 			case "list-groups":
 				Display.output(controller.listGroups(option1), outputFormat);
 				break;
-			case "list-storage":
+            case "list-endpoints":
+                Display.output(controller.listEndpointsAll(), outputFormat);
+                break;
+            case "list-storage":
 				Display.output(controller.listStorage(ip), outputFormat);
 				break;
 			case "list-users":
@@ -99,7 +102,10 @@ public class VapirShell
                 System.out.println("Code coming soon.");
 //				controller.updateOwner(ip, option2, option1);
 				break;
-			case "default":
+            case "search-users":
+                Display.output(controller.searchUsers(ip, option1, option4, boolean_flag), outputFormat);
+                break;
+            case "default":
 				Display.print("Invalid command [" + command + "] selected. Please used -c help for a list of valid commands.");
 				break;
 		}
