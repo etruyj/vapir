@@ -13,6 +13,15 @@ package com.spectralogic.vail.vapir.model;
 public class NodeActivationPacket {
     private String key;
     private String url;
+    
+    //===========================================
+    // Constructors
+    //===========================================
+    public NodeActivationPacket() {} // blank to allow for a copy constructor
+    public NodeActivationPacket(NodeActivationPacket other) {
+        this.key = other.getKey();
+        this.url = other.getUrl();
+    }
 
     //===========================================
     // Getters

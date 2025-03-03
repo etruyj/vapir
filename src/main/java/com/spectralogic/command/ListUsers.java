@@ -97,7 +97,6 @@ public class ListUsers
         log.info("Finding groups associated with users.");
         for(int i=0; i < user_list.size(); i++)
 		{
-            System.out.println("SySTEM: " + user_list.get(i).getAccountId());
 			Group[] groups = sphere.listUserGroups(ip, user_list.get(i).getAccountId(), user_list.get(i).getName());
 	
             if(groups == null) {

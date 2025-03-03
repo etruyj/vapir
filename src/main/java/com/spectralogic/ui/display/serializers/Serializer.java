@@ -11,6 +11,7 @@ package com.spectralogic.vail.vapir.ui.display.serializers;
 import com.spectralogic.vail.vapir.model.Account;
 import com.spectralogic.vail.vapir.model.Bucket;
 import com.spectralogic.vail.vapir.model.BucketSummary;
+import com.spectralogic.vail.vapir.model.Endpoint;
 import com.spectralogic.vail.vapir.model.OutputFormat;
 import com.spectralogic.vail.vapir.model.Storage;
 import com.spectralogic.vail.vapir.model.Summary;
@@ -266,8 +267,9 @@ public class Serializer
 			if(list.get(0) instanceof BucketSummary)
 			{
 				output = SerializeBucketSummary.forOutput(list);
-			}
-			else if(list.get(0) instanceof UserSummary)
+			} else if(list.get(0) instanceof Endpoint) {
+                output = SerializeEndpoint.forOutput(list);
+            } else if(list.get(0) instanceof UserSummary)
 			{
 				output = SerializeUserSummary.forOutput(list);
 			}

@@ -1,8 +1,8 @@
 //===================================================================
 // Endpoint.java
 // Description:
-//     This holds the endpoint information that is returned
-//     from the sl/api/endpoints command as well as credential
+//     This holds the url information that is returned
+//     from the sl/api/urls command as well as credential
 //     information to reduce the number of times a password
 //     has to be entered when configuring storage.
 //===================================================================
@@ -14,10 +14,10 @@ public class Endpoint {
     private String type;
     private String name;
     private String location;
-    private String currentVersion;
+    private String version;
     private String preferredVersion;
-    private String endpoint;
-    private String managementEndpoint;
+    private String url;
+    private String managementURL;
     private String status;
 
     // Credential for creating storage
@@ -34,10 +34,11 @@ public class Endpoint {
     public String getType() { return type; }
     public String getName() { return name; }
     public String getLocation() { return location; }
-    public String getCurrentVersion() { return currentVersion; }
+    public String getVersion() { return version; }
     public String getPreferredVersion() { return preferredVersion; }
-    public String getEndpoint() { return endpoint; }
-    public String getManagementEndpoint() { return managementEndpoint; }
+    public String getUrl() { return url; }
+    public String getManagementURL() { return managementURL; }
+    public String getManagementEndpoint() { return managementURL; } // servicing the legacy variable name: managementEndpoint, which is now managementURL;
     public String getStatus() { return status; }
     public String getLogin() { return login; }
     public String getAccessKey() { return access_key; }
@@ -53,10 +54,10 @@ public class Endpoint {
     public void setType(String type) { this.type = type; }
     public void setName(String name) { this.name = name; }
     public void setLocation(String location) { this.location = location; }
-    public void setCurrentVersion(String currentVersion) { this.currentVersion = currentVersion; }
+    public void setVersion(String version) { this.version = version; }
     public void setPreferredVersion(String preferredVersion) { this.preferredVersion = preferredVersion; }
-    public void setEndpoint(String endpoint) { this.endpoint = endpoint; }
-    public void setManagementEndpoint(String managementEndpoint) { this.managementEndpoint = managementEndpoint; }
+    public void setUrl(String url) { this.url = url; }
+    public void setManagementURL(String managementURL) { this.managementURL = managementURL; }
     public void setStatus(String status) { this.status = status; }
     public void setLogin(String login) { this.login = login; }
     public void setAccessKey(String key) { this.access_key = key; }

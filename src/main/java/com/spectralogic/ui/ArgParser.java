@@ -256,7 +256,8 @@ public class ArgParser
 					}
 					break;	
 				case "--option4":
-				case "--file":
+                case "--access-key":
+                case "--file":
                 case "--filter":
                 case "--input-file":
 					if((i+1)<args.length)

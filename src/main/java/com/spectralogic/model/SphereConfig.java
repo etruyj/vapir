@@ -16,7 +16,13 @@ public class SphereConfig
 	private ArrayList<Lifecycle> lifecycles;
 	private ArrayList<Bucket> buckets;
 	private ArrayList<Summary> groups;
-	
+
+	//=======================================
+	// Constructors
+	//=======================================
+    public SphereConfig() {}
+
+
 	//=======================================
 	// Getters
 	//=======================================

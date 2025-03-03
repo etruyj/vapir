@@ -35,6 +35,7 @@ import com.spectralogic.vail.vapir.util.map.MapGroups;
 import com.spectralogic.vail.vapir.util.map.MapLifecycle;
 import com.spectralogic.vail.vapir.util.map.MapStorage;
 import com.spectralogic.vail.vapir.util.map.MapUsers;
+import com.spectralogic.vail.vapir.util.search.SearchConfigVariables;
 
 import com.google.gson.Gson;
 // Removing YAML support for now
@@ -48,6 +49,7 @@ import java.io.InputStream;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -391,9 +393,12 @@ storage_map.get(lifecycles.get(i).getRule(r).getDestinations().getStorage().get(
 
 	public static ArrayList<String> buildSphere(VailConnector sphere, String ip_address, SphereConfig config)
 	{
+        
 		int[] success = new int[5];
 		ArrayList<String> report = new ArrayList<String>();
-
+        
+        config = SearchConfigVariables.populateFields(config, ip_address, sphere);
+        
 		// Error Handling on import
 		if(config.getAccounts() == null) { config.setAccounts(new ArrayList<Account>()); }
 		if(config.getGroups() == null) { config.setGroups(new ArrayList<Summary>()); }
@@ -458,9 +463,20 @@ storage_map.get(lifecycles.get(i).getRule(r).getDestinations().getStorage().get(
 		report.add("Added " + success[2] + "/" + config.getStorage().size() + " storage locations.");
 		report.add("Created " + success[3] + "/" + config.getLifecycles().size() + " lifecycle rules.");
 		report.add("Created " + success[4] + "/" + config.getBuckets().size() + " buckets.");
-
+        
 		return report;
 	}
+
+    public static Endpoint findThisEndpoint(List<Endpoint> endpoint_list, String ip_address) {
+        // This function searches the list of endpoints to determine which one has this IP address
+        // This is to be used with the "this" specification for the Vail configuration.
+        for(Endpoint endpoint : endpoint_list) {
+//            if(endpoint.
+        }
+
+        return null;
+    
+    }
 
 	public static SphereConfig importJSONConfigFile(String filename)
 	{
@@ -522,7 +538,7 @@ storage_map.get(lifecycles.get(i).getRule(r).getDestinations().getStorage().get(
 
 		SphereConfig config = importJSONConfigFile(filename);
         if(config != null) {
-			report = buildSphere(sphere, ip_address, config);
+            report = buildSphere(sphere, ip_address, config);
 
 			return report;
         }

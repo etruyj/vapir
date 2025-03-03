@@ -75,7 +75,7 @@ public class Table
 					build_successful = false;
 				}
 				
-				headings.add(headers[1]);
+				headings.add(headers[headers.length-1]); // Add the last value of the index
 				values.add(output.get(i).getValue());
 				
 				if(line == 0)
