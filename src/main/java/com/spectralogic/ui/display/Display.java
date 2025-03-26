@@ -69,7 +69,7 @@ public class Display
 		print(output, output_format);
 	}
 
-	public static void output(SphereConfig config, String output_format, String file_path)
+    public static void output(SphereConfig config, String output_format, String file_path)
 	{
 		switch(output_format)
 		{

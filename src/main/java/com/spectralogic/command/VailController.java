@@ -14,6 +14,7 @@ import com.spectralogic.vail.vapir.model.Bucket;
 import com.spectralogic.vail.vapir.model.BucketSummary;
 import com.spectralogic.vail.vapir.model.CapacitySummary;
 import com.spectralogic.vail.vapir.model.Endpoint;
+import com.spectralogic.vail.vapir.model.Object;
 import com.spectralogic.vail.vapir.model.SphereConfig;
 import com.spectralogic.vail.vapir.model.Storage;
 import com.spectralogic.vail.vapir.model.Summary;
@@ -146,6 +147,10 @@ public class VailController {
 
     public ArrayList<Summary> listGroups(String account) {
         return ListGroups.summary(account, sphere);
+    }
+
+    public ArrayList<Object> listObjectsInBucket(String bucket, String max_keys) {
+        return GetBucketObjects.all(bucket, max_keys, sphere);
     }
 
     public Storage[] listStorage(String ip_address) {

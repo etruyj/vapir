@@ -248,7 +248,8 @@ public class ArgParser
 					}
 					break;	
 				case "--option3":
-				case "--user": // For specifying Vail user, not to be confused with -u/--username which is for logging in.
+                case "--max-keys":
+                case "--user": // For specifying Vail user, not to be confused with -u/--username which is for logging in.
 					if((i+1)<args.length)
 					{
 						setOption3(args[i+1]);

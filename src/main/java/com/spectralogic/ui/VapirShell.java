@@ -91,6 +91,9 @@ public class VapirShell
             case "list-endpoints":
                 Display.output(controller.listEndpointsAll(), outputFormat);
                 break;
+            case "list-objects":
+                Display.output(controller.listObjectsInBucket(option2, option3), outputFormat);
+                break; 
             case "list-storage":
 				Display.output(controller.listStorage(ip), outputFormat);
 				break;

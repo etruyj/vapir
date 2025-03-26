@@ -98,6 +98,10 @@ public class URLs
 		return "https://" + ipaddress + "/sl/api/tokens";
 	}
 
+    public static String objectsURL(String ipaddress, String bucket_id) {
+        return getBaseApiUrl(ipaddress) + "/buckets/" + bucket_id + "/objects";
+    }
+
 	public static String storageURL(String ipaddress)
 	{
 		return "https://" + ipaddress + "/sl/api/storage";

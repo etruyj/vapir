@@ -11,6 +11,7 @@ package com.spectralogic.vail.vapir.api;
 
 import com.spectralogic.vail.vapir.model.Account;
 import com.spectralogic.vail.vapir.model.Bucket;
+import com.spectralogic.vail.vapir.model.BucketObjects;
 import com.spectralogic.vail.vapir.model.Endpoint;
 import com.spectralogic.vail.vapir.model.Lifecycle;
 import com.spectralogic.vail.vapir.model.Message;
@@ -315,6 +316,10 @@ public class VailConnector
 
 	public Lifecycle[] listLifecycles() throws IOException, JsonParseException {
 	    return Lifecycles.list(ip_address, token, rest_client);
+    }
+
+    public BucketObjects listObjectsInBucket(String bucket_id, String marker, Integer max_keys) throws IOException, JsonParseException {
+        return Objects.list(ip_address, bucket_id, marker, max_keys, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
