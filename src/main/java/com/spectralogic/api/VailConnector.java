@@ -12,6 +12,7 @@ package com.spectralogic.vail.vapir.api;
 import com.spectralogic.vail.vapir.model.Account;
 import com.spectralogic.vail.vapir.model.Bucket;
 import com.spectralogic.vail.vapir.model.BucketObjects;
+import com.spectralogic.vail.vapir.model.Clone;
 import com.spectralogic.vail.vapir.model.Endpoint;
 import com.spectralogic.vail.vapir.model.Lifecycle;
 import com.spectralogic.vail.vapir.model.Message;
@@ -249,6 +250,10 @@ public class VailConnector
 
     public Bucket getBucket(String bucket_name) throws IOException, JsonParseException {
         return Buckets.getBucket(ip_address, bucket_name, token, rest_client);
+    }
+
+    public Clone getClones(String bucket_name, String key, String version_id) throws IOException, JsonParseException {
+        return Clones.get(ip_address, bucket_name, key, version_id, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement

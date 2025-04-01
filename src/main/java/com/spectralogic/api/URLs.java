@@ -47,6 +47,10 @@ public class URLs
 		return "https://" + ipaddress + "/sl/api/iam/users/clear_cache";
 	}
 
+    public static String clonesURL(String ipaddress, String bucket_name, String object_key) {
+        return getBaseApiUrl(ipaddress) + "/buckets/" + bucket_name + "/clones?object=" + object_key;
+    }
+
 	public static String createGroupURL(String ipaddress, String account_id, String group)
 	{
 		return "https://" + ipaddress + "/sl/api/iam/groups/" + account_id + "/" + group;

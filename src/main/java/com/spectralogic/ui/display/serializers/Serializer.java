@@ -18,6 +18,7 @@ import com.spectralogic.vail.vapir.model.Storage;
 import com.spectralogic.vail.vapir.model.Summary;
 import com.spectralogic.vail.vapir.model.UserSummary;
 import com.spectralogic.vail.vapir.model.User;
+import com.spectralogic.vail.vapir.model.report.BucketDetails;
 
 import java.util.ArrayList;
 
@@ -163,6 +164,10 @@ public class Serializer
 
 		return output;
 	}
+
+    public static ArrayList<OutputFormat> convert(BucketDetails report) {
+        return SerializeBucketDetails.forOutput(report);
+    }
 
 	public static ArrayList<OutputFormat> convert(String response)
 	{

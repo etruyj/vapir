@@ -16,6 +16,8 @@ import com.spectralogic.vail.vapir.model.BucketObjects;
 import com.spectralogic.vail.vapir.util.http.RestClient;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class Objects {
     private static final Logger log = LoggerFactory.getLogger(Objects.class);
 
-    public static BucketObjects list(String ip_address, String bucket_id, String marker, Integer max_keys, String token, RestClient rest_client) throws IOException, JsonParseException {
+    public static BucketObjects list(String ip_address, String bucket_id, String marker, Integer max_keys, String token, RestClient rest_client) throws IOException, JsonParseException, UnsupportedEncodingException {
         Gson gson = new Gson();
 
         String url = URLs.objectsURL(ip_address, bucket_id);
@@ -37,8 +39,11 @@ public class Objects {
         url += "?max-keys=" + max_keys;
 
         if(marker != null) {
+            marker = URLEncoder.encode(marker, "UTF-8");
+            marker = marker.replace(" ", "%20");
             url += "&marker=" + marker;
         }
+
         log.debug("API URL: GET " + url);
 
         String response = rest_client.get(url, token);

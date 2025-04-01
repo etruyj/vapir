@@ -249,6 +249,7 @@ public class ArgParser
 					break;	
 				case "--option3":
                 case "--max-keys":
+                case "--threads":
                 case "--user": // For specifying Vail user, not to be confused with -u/--username which is for logging in.
 					if((i+1)<args.length)
 					{
@@ -258,6 +259,7 @@ public class ArgParser
 					break;	
 				case "--option4":
                 case "--access-key":
+                case "--batch-size":
                 case "--file":
                 case "--filter":
                 case "--input-file":

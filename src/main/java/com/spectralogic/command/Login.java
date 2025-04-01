@@ -20,7 +20,7 @@ public class Login {
     public static boolean toSphere(String ip_address, String user, String password, VailConnector sphere) {
         try {
             log.info("Connecting to Vail sphere at " + ip_address + " as user [" + user + "]");
-            sphere.login(ip_address, user, password);
+            sphere.login(user, password);
             log.info("Login successful.");
             return true;
         } catch(Exception e) {

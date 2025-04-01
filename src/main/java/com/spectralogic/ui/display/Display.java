@@ -12,6 +12,7 @@ import com.spectralogic.vail.vapir.model.SphereConfig;
 import com.spectralogic.vail.vapir.model.Storage;
 import com.spectralogic.vail.vapir.model.Summary;
 import com.spectralogic.vail.vapir.model.User;
+import com.spectralogic.vail.vapir.model.report.BucketDetails;
 import com.spectralogic.vail.vapir.ui.display.serializers.Serializer;
 
 import java.io.BufferedReader;
@@ -37,7 +38,13 @@ public class Display
 		print(output, output_format);
 	}
 
-	public static void output(String result, String output_format)
+	public static void output(BucketDetails report, String output_format) {
+        ArrayList<OutputFormat> output = Serializer.convert(report);
+
+        print(output, output_format);
+    }
+    
+    public static void output(String result, String output_format)
 	{
 		switch(output_format)
 		{

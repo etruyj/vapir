@@ -64,7 +64,10 @@ public class VapirShell
                 System.out.println("Code coming soon.");
 //				Display.output(controller.fetchConfiguration(ip), outputFormat, option4);
 				break;
-			case "help":
+            case "get-bucket":
+                Display.output(controller.getBucket(option2, option3, option4), outputFormat);
+                break;
+            case "help":
 				Display.printHelp("../lib/help/options.txt");
 				break;
 			case "list-accounts":

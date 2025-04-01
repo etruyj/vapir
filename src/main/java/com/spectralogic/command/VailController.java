@@ -20,12 +20,15 @@ import com.spectralogic.vail.vapir.model.Storage;
 import com.spectralogic.vail.vapir.model.Summary;
 import com.spectralogic.vail.vapir.model.User;
 import com.spectralogic.vail.vapir.model.UserSummary;
+import com.spectralogic.vail.vapir.model.report.BucketDetails;
 
 import java.util.ArrayList;
 
 public class VailController {
     private VailConnector sphere;
     boolean ignore_ssl; // Stored for using the S3Connector in EnableVeeam
+    private String user; // Stored for using with GetBucket.threaded to allow token refresh.
+    private String password; // Stored for using with GetBucket.threaded to allow token refresh.
 
     public VailController(String ip_address, boolean ignore_ssl) {
         sphere = new VailConnector(ip_address, ignore_ssl);
@@ -117,6 +120,10 @@ public class VailController {
         return EnableVeeam.configureSosapi(sphere, bucket);
     }
 
+    public BucketDetails getBucket(String bucket, String max_keys, String limit) {
+        return GetBucketSize.threaded(bucket, max_keys, limit, user, password, sphere);
+    }
+
     public ArrayList<CapacitySummary> getCapacitySummary(String ip_address) {
         return GetCapacitySummary.fromSphere(ip_address, sphere);
     }
@@ -167,6 +174,10 @@ public class VailController {
     }
 
     public boolean login(String ip_address, String user, String password) {
+        // Cache the username and password just in case we need to request a new token.
+        this.user = user;
+        this.password = password;
+
         return Login.toSphere(ip_address, user, password, sphere);
     }
 
