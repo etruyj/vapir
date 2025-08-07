@@ -38,83 +38,6 @@ import org.slf4j.LoggerFactory;
 public class GetBucketSize {
     private static final Logger log = LoggerFactory.getLogger(GetBucketSize.class);
 
-    public static BucketDetails chunked(String bucket, String max_keys, String limit, VailConnector sphere) {
-        log.info("Calculating total size of the objects and clone placement for bucket [" + bucket + "]");
-
-        BucketDetails report = new BucketDetails();
-
-        HashMap<String, CloneLocation> clone_map = new HashMap<String, CloneLocation>();
-        CloneLocation location = null;
-        long object_count = 0;
-        long object_size = 0;
-        long object_counter = 0;
-        long clone_counter = 0;
-
-        ArrayList<Object> object_list = null;
-        String marker = null;
-
-        // Set the limit to 1000 if not specified.
-        if(limit == null || limit.equals("none")) {
-            limit = "1000";
-        }
-
-        do {
-            // Fetch a chunk of objects from the bucket.
-            if(object_list != null) {
-                marker = object_list.get(object_list.size()-1).getKey(); // The marker is the last key in the result.
-            }
-
-            try {
-                log.info("Fetching object batch...");
-                object_list = GetBucketObjects.limited(bucket, max_keys, marker, limit, sphere);
-                
-                object_counter += object_list.size();
-                log.info("Retrieved (" + object_list.size() + ") objects. Total result set is " + object_counter + " objects.");
-
-                for(Object object : object_list) {
-                    log.debug("Searching for clones associated with object [" + clone_counter + "]: " + object.getKey());
-                    // Tally overall bucket info.
-                    object_count++;
-                    object_size += object.getSize();
-
-                    // Tally clone information
-                    Clone clone = sphere.getClones(bucket, object.getKey(), null); // null is version id
-
-                    if(clone.getStorage() != null) {
-                        for(Clone.CloneInfo info : clone.getStorage()) {
-                            if(clone_map.get(info.getId()) == null) {
-                                location = new CloneLocation();
-                                location.setClones(1);
-                                location.setSize(object.getSize());
-                            } else {
-                                location = clone_map.get(info.getId());
-                                location.setClones(location.getClones()+1);
-                                location.setSize(location.getSize() + object.getSize());
-                            }
-
-                            clone_map.put(info.getId(), location);
-                        }
-                    }
-            
-                    clone_counter++;
-                }
-
-                log.info("Current bucket statistics: " + object_count + " objects and size: " + object_size + " bytes"); 
-            } catch(Exception e) {
-                log.warn(e.getMessage());
-                log.warn("Failed to get object batch starting with: " + marker);
-            }
-
-        } while(object_list.size() > 0);
-       
-        report.setName(bucket);            
-        report.setObjects(object_count);
-        report.setSize(object_size);
-        report.setClones(clone_map);
-        
-        return report; 
-    }
-
     public static BucketDetails threaded(String bucket, String thread_count, String batch_size, String username, String password, VailConnector sphere) {
         log.info("Calculating total size of the objects and clone placement for bucket [" + bucket + "]");
         BucketDetails report = null;
@@ -183,11 +106,12 @@ public class GetBucketSize {
                         log.info("No more objects in bucket.");
                         keepRunning.set(false);
                     } else { // post results to the queue
-                        //queue.put(object_batch.get());
+                        queue.put(object_batch.get());
                     }
                 } catch(Exception e) {
-                    log.warn(e.getMessage());
-                    log.warn("Failed to retrieve batch stating with marker: " + marker);
+                    log.error(e.getMessage());
+                    log.error("Failed to retrieve batch stating with marker: " + marker);
+                    
                 }
 
                 try {
@@ -195,7 +119,13 @@ public class GetBucketSize {
                 } catch(InterruptedException e) {
                     log.warn(e.getMessage());
                     log.warn("Thread interrupted.");
+                    
+                    // Stop processing all threads
                     Thread.currentThread().interrupt();
+                    queue.clear();
+                    loginThread.interrupt();
+                    statusThread.interrupt();
+
                 }
             }
         });
