@@ -125,7 +125,7 @@ public class VailController {
         }
     }
 
-    public String enableVeeam(String bucket) {
+    public String enableVeeam(String bucket) throws Exception {
         return EnableVeeam.configureSosapi(sphere, bucket);
     }
 

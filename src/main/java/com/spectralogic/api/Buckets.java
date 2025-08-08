@@ -23,20 +23,25 @@ import org.slf4j.LoggerFactory;
 public class Buckets {
     private static final Logger log = LoggerFactory.getLogger(Buckets.class);
 
-    public static Bucket createBucket(String ip_address, String name, String body, String token, RestClient rest_client) throws IOException, JsonParseException {
+    public static Bucket createBucket(String ip_address, String name, String body, String token, RestClient rest_client) throws IOException, JsonParseException, Exception {
         Gson gson = new Gson();
 
-        String url = URLs.bucketsURL(ip_address);
+        String url = URLs.getPath("bucketCreate", ip_address);
+
+        log.debug("POST " + url);
+        log.debug("PAYLOAD: " + body);
 
         String response = rest_client.post(url, token, body);
+
+        log.debug("RESPONSE: " + response);
 
         return gson.fromJson(response, Bucket.class);
     }
 
-    public static Bucket createBucket(String ip_address, Bucket bucket, String token, RestClient rest_client) throws IOException, JsonParseException {
+    public static Bucket createBucket(String ip_address, Bucket bucket, String token, RestClient rest_client) throws IOException, JsonParseException, Exception {
         Gson gson = new Gson();
 
-        String url = URLs.bucketsURL(ip_address);
+        String url = URLs.getPath("bucketCreate", ip_address);
         String payload = gson.toJson(bucket);
 
         log.debug("API URL: POST " + url);
@@ -65,10 +70,11 @@ public class Buckets {
         }
     }
 
-    public static Bucket getBucket(String ip_address, String bucket_name, String token, RestClient rest_client) throws IOException, JsonParseException {
+    public static Bucket getBucket(String ip_address, String bucket_name, String token, RestClient rest_client) throws IOException, JsonParseException, Exception {
         Gson gson = new Gson();
 
-        String url = URLs.getBucketURL(ip_address, bucket_name);
+        String url = URLs.getPath("bucketDetails", ip_address)
+                        .replace("{{name}}", bucket_name);
 
         log.debug("API URL: GET " + url);
 
@@ -80,17 +86,10 @@ public class Buckets {
         
     } 
 
-    public static Bucket[] list(String ip_address, String token, RestClient rest_client) throws IOException, JsonParseException {
+    public static Bucket[] list(String ip_address, String token, RestClient rest_client) throws IOException, JsonParseException, Exception {
         Gson gson = new Gson();
 
-        // Debug
-        try {
-            URLs.getPath("test", ip_address);
-        } catch(Exception e) {
-            System.err.println(e.getMessage());
-        }
-            // END Debug
-        String url = URLs.bucketsURL(ip_address);
+        String url = URLs.getPath("bucketList", ip_address);
 
         log.debug("API URL: GET " + url);
 
@@ -101,14 +100,16 @@ public class Buckets {
         return gson.fromJson(response, Bucket[].class);
     }
 
-    public static Bucket updateBucket(String ip_address, Bucket bucket, String token, RestClient rest_client) throws IOException, JsonParseException {
+    public static Bucket updateBucket(String ip_address, Bucket bucket, String token, RestClient rest_client) throws IOException, JsonParseException, Exception {
         // SerializeNulls is required to encode a policy: null value in the Json.
         // This allows us to remove or reset a bucket policy by setting it to null
         // on the patch. If this is omitted, the policy field is not included in the
         // json and we never remove the policy.
         Gson gson = new GsonBuilder().serializeNulls().create();
 
-        String url = URLs.getBucketURL(ip_address, bucket.getName());
+        String url = URLs.getPath("bucketUpdate", ip_address)
+                        .replace("{{name}}", bucket.getName());
+
         String payload = gson.toJson(bucket);
 
         log.debug("API URL: PATCH " + url);

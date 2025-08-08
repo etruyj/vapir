@@ -63,7 +63,7 @@ public class EnableVeeam {
     //      This is the main function in this class
     //      and intended as the primary entry point
     //      for executing this command.
-    public static String configureSosapi(VailConnector sphere, String bucket_name) {
+    public static String configureSosapi(VailConnector sphere, String bucket_name) throws Exception {
         log.info("Enabling Veeam SOSAPI on bucket [" + bucket_name + "]");
 
         String message = "Unable to configure SOSAPI.";
@@ -186,7 +186,7 @@ public class EnableVeeam {
         }
     }
 
-    private static String getAccountId(VailConnector sphere, String canonical_id) throws IOException {
+    private static String getAccountId(VailConnector sphere, String canonical_id) throws IOException, Exception {
         Account[] accounts = sphere.listAccounts();
 
         Map<String, String> canon_id_map = MapAccounts.createCanonicalIDMap(accounts);
@@ -196,7 +196,7 @@ public class EnableVeeam {
         return canon_id_map.get(canonical_id);
     }
 
-    private static ArrayList<Storage> getStandardStorage(VailConnector sphere) {
+    private static ArrayList<Storage> getStandardStorage(VailConnector sphere) throws Exception {
         ArrayList<Storage> storage_list = new ArrayList<Storage>();
 
         try {
@@ -218,7 +218,7 @@ public class EnableVeeam {
         return storage_list;
     }
 
-    private static String getStorageId(VailConnector sphere, Bucket bucket) {
+    private static String getStorageId(VailConnector sphere, Bucket bucket) throws Exception {
         log.info("Searching for standard-tier storage id.");
         
         String storage_id = "";
@@ -246,7 +246,7 @@ public class EnableVeeam {
         return storage_id;
     }
 
-    private static String inputStorageId(ArrayList<Storage> storage_list) {
+    private static String inputStorageId(ArrayList<Storage> storage_list) throws Exception {
         String storage_id = "";
         boolean storage_selected = false;
         Map<String, String> storage_verification = MapStorage.createIdNameMap(storage_list);
@@ -296,7 +296,7 @@ public class EnableVeeam {
         log.info("Created " + object_key + " with eTag " + etag);
     }
 
-    private static String selectStorageFromLifecycle(VailConnector sphere, Bucket bucket, ArrayList<Storage> storage_list) {
+    private static String selectStorageFromLifecycle(VailConnector sphere, Bucket bucket, ArrayList<Storage> storage_list) throws Exception {
         log.info("Searching bucket lifecycle for associated standard storage.");
 
         String storage_id = "";
@@ -331,7 +331,7 @@ public class EnableVeeam {
         }
     }
 
-    private static void updateBucketPolicyAddUserToPolicy(VailConnector sphere, Bucket bucket, String account_id, String user) throws IOException {
+    private static void updateBucketPolicyAddUserToPolicy(VailConnector sphere, Bucket bucket, String account_id, String user) throws IOException, Exception {
         log.info("Updating bucket policy for " + bucket.getName() + " to allow PUT access for " + user);
 
         Bucket new_config = new Bucket(bucket);

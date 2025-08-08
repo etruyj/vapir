@@ -42,90 +42,94 @@ public class VapirShell
 	public void execute(String ip, String command, String option1, String option2, String option3, String option4, boolean boolean_flag, String outputFormat)
 	{
 		ArrayList response;
-
-		switch(command)
-		{
-            case "activate":
-                Display.print(controller.activateNode(option1, option2));
-                break;
-            case "capacity-summary":
-                System.err.println("Doesn't work.");
-//                controller.getCapacitySummary(ip);
-                break;
-			case "clear-cache":
-				controller.clearCache(ip);
-				break;
-			case "configure":
-			case "configure-sphere":
-				Display.print(controller.configureSphere(ip, option4));
-				break;
-			case "create-bucket":
-				Display.output(controller.createBucket(ip, option2, option1), outputFormat);
-				break;
-			case "create-group":
-				Display.print(controller.createGroup(ip, option2, option1));
-				break;
-			case "create-user":
-				Display.print(controller.createUser(ip, option1, option3));
-				break;
-            case "enable-veeam":
-                Display.print(controller.enableVeeam(option2));
-                break;
-            case "fetch-config":
-                System.out.println("Code coming soon.");
-//				Display.output(controller.fetchConfiguration(ip), outputFormat, option4);
-				break;
-            case "get-bucket":
-                Display.output(controller.getBucket(option2, option3, option4), outputFormat);
-                break;
-            case "help":
-				Display.printHelp("../lib/help/options.txt");
-				break;
-			case "list-accounts":
-				Display.output(controller.listAccounts(ip), outputFormat);
-				break;
-			case "list-buckets":
-                Display.output(controller.listBuckets(ip, option1), outputFormat);
-                /* Cleaning up this code. 
-                   Not sure what was supposed to happen here. Will remove and
-                   revisit later.
-				if(outputFormat.equals("raw"))
-				{
-					Display.output(controller.listBuckets(ip, option4), outputFormat);
-				}
-				else
-				{
-					Display.output(controller.listBucketSummary(ip, option1), outputFormat);
-				}
-                */
-				break;
-			case "list-groups":
-				Display.output(controller.listGroups(option1), outputFormat);
-				break;
-            case "list-endpoints":
-                Display.output(controller.listEndpointsAll(), outputFormat);
-                break;
-            case "list-objects":
-                Display.output(controller.listObjectsInBucket(option2, option3), outputFormat);
-                break; 
-            case "list-storage":
-				Display.output(controller.listStorage(ip), outputFormat);
-				break;
-			case "list-users":
-				response = controller.listUsers(ip, option1, boolean_flag);
-				Display.output(response, outputFormat);
-				break;
-			case "update-owner":
-                System.out.println("Code coming soon.");
-//				controller.updateOwner(ip, option2, option1);
-				break;
-            case "search-users":
-                Display.output(controller.searchUsers(ip, option1, option4, boolean_flag), outputFormat);
-                break;
-            case "default":
-				Display.print("Invalid command [" + command + "] selected. Please used -c help for a list of valid commands.");
-				break;
-		}
+        
+        try {
+		    switch(command)
+		    {
+                case "activate":
+                    Display.print(controller.activateNode(option1, option2));
+                    break;
+                case "capacity-summary":
+                    System.err.println("Doesn't work.");
+//                  controller.getCapacitySummary(ip);
+                    break;
+			    case "clear-cache":
+				    controller.clearCache(ip);
+				    break;
+			    case "configure":
+			    case "configure-sphere":
+				    Display.print(controller.configureSphere(ip, option4));
+				    break;
+			    case "create-bucket":
+				    Display.output(controller.createBucket(ip, option2, option1), outputFormat);
+				    break;
+			    case "create-group":
+				    Display.print(controller.createGroup(ip, option2, option1));
+				    break;
+			    case "create-user":
+				    Display.print(controller.createUser(ip, option1, option3));
+				    break;
+                case "enable-veeam":
+                    Display.print(controller.enableVeeam(option2));
+                    break;
+                case "fetch-config":
+                    System.out.println("Code coming soon.");
+//				    Display.output(controller.fetchConfiguration(ip), outputFormat, option4);
+				    break;
+                case "get-bucket":
+                    Display.output(controller.getBucket(option2, option3, option4), outputFormat);
+                    break;
+                case "help":
+				    Display.printHelp("../lib/help/options.txt");
+				    break;
+			    case "list-accounts":
+				    Display.output(controller.listAccounts(ip), outputFormat);
+				    break;
+			    case "list-buckets":
+                    Display.output(controller.listBuckets(ip, option1), outputFormat);
+                    /* Cleaning up this code. 
+                    Not sure what was supposed to happen here. Will remove and
+                    revisit later.
+				    if(outputFormat.equals("raw"))
+				    {
+					    Display.output(controller.listBuckets(ip, option4), outputFormat);
+				    }
+				    else
+				    {
+					    Display.output(controller.listBucketSummary(ip, option1), outputFormat);
+				    }
+                    */
+				    break;
+			    case "list-groups":
+				    Display.output(controller.listGroups(option1), outputFormat);
+				    break;
+                case "list-endpoints":
+                    Display.output(controller.listEndpointsAll(), outputFormat);
+                    break;
+                case "list-objects":
+                    Display.output(controller.listObjectsInBucket(option2, option3), outputFormat);
+                    break; 
+                case "list-storage":
+				    Display.output(controller.listStorage(ip), outputFormat);
+				    break;
+			    case "list-users":
+				    response = controller.listUsers(ip, option1, boolean_flag);
+				    Display.output(response, outputFormat);
+				    break;
+			    case "update-owner":
+                    System.out.println("Code coming soon.");
+//				    controller.updateOwner(ip, option2, option1);
+				    break;
+                case "search-users":
+                    Display.output(controller.searchUsers(ip, option1, option4, boolean_flag), outputFormat);
+                    break;
+                case "default":
+				    Display.print("Invalid command [" + command + "] selected. Please used -c help for a list of valid commands.");
+				    break;
+		    }
+        } catch(Exception e) {
+            System.err.println(e.getMessage());
+        }
 	}
 
 	public boolean login(String ip, String username, String password)

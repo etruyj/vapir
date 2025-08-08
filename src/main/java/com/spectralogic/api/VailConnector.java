@@ -93,6 +93,7 @@ public class VailConnector
             return false;
         }
     }
+
     public String getIpAddress() { return ip_address; }
 
     //===========================================
@@ -105,64 +106,64 @@ public class VailConnector
 	// Commands
 	//===========================================================
 	
-    public boolean activateNode(NodeActivationPacket packet) throws IOException, JsonParseException {
+    public boolean activateNode(NodeActivationPacket packet) throws IOException, JsonParseException, Exception {
         return ActivateNode.activate(packet, ip_address, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-    public Account addAccount(String ipaddress, String json_body) throws IOException, JsonParseException {
+    public Account addAccount(String ipaddress, String json_body) throws IOException, JsonParseException, Exception {
 	    return addAccount(json_body);
     }
 
-    public Account addAccount(String json_body) throws IOException, JsonParseException {
+    public Account addAccount(String json_body) throws IOException, JsonParseException, Exception {
 	    return Accounts.addAccount(ip_address, token, json_body, rest_client);
     }
    
     @Deprecated // removing ip address requirement
-	public Account addAccount(String ipaddress, Account account) throws IOException, JsonParseException {
+	public Account addAccount(String ipaddress, Account account) throws IOException, JsonParseException, Exception {
         return addAccount(account);
     }
 
-	public Account addAccount(Account account) throws IOException, JsonParseException {
+	public Account addAccount(Account account) throws IOException, JsonParseException, Exception {
 	    return Accounts.addAccount(ip_address, token, account, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public Account addAccount(String ipaddress, String account_name, String email, String external_id, String role_arn) throws IOException, JsonParseException {
+	public Account addAccount(String ipaddress, String account_name, String email, String external_id, String role_arn) throws IOException, JsonParseException, Exception {
         return addAccount(account_name, email, external_id, role_arn);
     }
 
-	public Account addAccount(String account_name, String email, String external_id, String role_arn) throws IOException, JsonParseException {
+	public Account addAccount(String account_name, String email, String external_id, String role_arn) throws IOException, JsonParseException, Exception {
 	    return Accounts.addAccount(ip_address, account_name, email, external_id, role_arn, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public Storage addStorage(String ipaddress, String name, String body) throws IOException, JsonParseException {
+	public Storage addStorage(String ipaddress, String name, String body) throws IOException, JsonParseException, Exception {
         return addStorage(name, body);
     }
 
-	public Storage addStorage(String name, String body) throws IOException, JsonParseException {
+	public Storage addStorage(String name, String body) throws IOException, JsonParseException, Exception {
 	    return StorageLocations.addStorage(ip_address, name, body, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public Storage addStorage(String ipaddress, Storage location) throws IOException, JsonParseException {
+	public Storage addStorage(String ipaddress, Storage location) throws IOException, JsonParseException, Exception {
         return addStorage(location);
     }
 
-	public Storage addStorage(Storage location) throws IOException, JsonParseException {
+	public Storage addStorage(Storage location) throws IOException, JsonParseException, Exception {
 	    return StorageLocations.addStorage(ip_address, location, token, rest_client);
     }
 
-	public String blackpearlLogin(String ipaddress, String username, char[] password) throws IOException, JsonParseException {
+	public String blackpearlLogin(String ipaddress, String username, char[] password) throws IOException, JsonParseException, Exception {
 	    return BlackPearl.login(ipaddress, username, password, rest_client).getToken();
     }
 
-	public BPUser blackpearlUserList(String ipaddress, String token) throws IOException, JsonParseException {
+	public BPUser blackpearlUserList(String ipaddress, String token) throws IOException, JsonParseException, Exception {
 	    return BlackPearl.listUsers(ipaddress, token, rest_client);
     }
 
-	public Ds3KeyPair blackpearlUserKeys(String ipaddress, String id, String token) throws IOException, JsonParseException {
+	public Ds3KeyPair blackpearlUserKeys(String ipaddress, String id, String token) throws IOException, JsonParseException, Exception {
         return BlackPearl.getUserKeys(ipaddress, id, token, rest_client);
     }
 
@@ -176,78 +177,78 @@ public class VailConnector
     }
 
     @Deprecated // removing ip address requirement
-	public Bucket createBucket(String ipaddress, String name, String json_body) throws IOException, JsonParseException {
+	public Bucket createBucket(String ipaddress, String name, String json_body) throws IOException, JsonParseException, Exception {
         return createBucket(name, json_body);
     }
 
-	public Bucket createBucket(String name, String json_body) throws IOException, JsonParseException {
+	public Bucket createBucket(String name, String json_body) throws IOException, JsonParseException, Exception {
 	    return Buckets.createBucket(ip_address, name, json_body, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-    public Bucket createBucket(String ipaddress, Bucket bucket) throws IOException, JsonParseException {
+    public Bucket createBucket(String ipaddress, Bucket bucket) throws IOException, JsonParseException, Exception {
         return createBucket(bucket);
     }
 
-    public Bucket createBucket(Bucket bucket) throws IOException, JsonParseException {
+    public Bucket createBucket(Bucket bucket) throws IOException, JsonParseException, Exception {
         return Buckets.createBucket(ip_address, bucket, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public Group createGroup(String ipaddress, String name, String account_id) throws IOException, JsonParseException {
+	public Group createGroup(String ipaddress, String name, String account_id) throws IOException, JsonParseException, Exception {
         return createGroup(name, account_id);
     }
 
-	public Group createGroup(String name, String account_id) throws IOException, JsonParseException {
+	public Group createGroup(String name, String account_id) throws IOException, JsonParseException, Exception {
 	    return Groups.createGroup(ip_address, account_id, name, token, rest_client);
     }
 
-    public Group createGroup(Group group) throws IOException, JsonParseException {
+    public Group createGroup(Group group) throws IOException, JsonParseException, Exception {
         return Groups.create(group, ip_address, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public Lifecycle createLifecycle(String ipaddress, String name, String json_body) throws IOException, JsonParseException {
+	public Lifecycle createLifecycle(String ipaddress, String name, String json_body) throws IOException, JsonParseException, Exception {
         return createLifecycle(name, json_body);
     }
 
-	public Lifecycle createLifecycle(String name, String json_body) throws IOException, JsonParseException {
+	public Lifecycle createLifecycle(String name, String json_body) throws IOException, JsonParseException, Exception {
 	    return Lifecycles.createLifecycle(ip_address, name, json_body, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public Lifecycle createLifecycle(String ipaddress, Lifecycle lifecycle) throws IOException, JsonParseException {
+	public Lifecycle createLifecycle(String ipaddress, Lifecycle lifecycle) throws IOException, JsonParseException, Exception {
         return createLifecycle(lifecycle);
     }
 
-	public Lifecycle createLifecycle(Lifecycle lifecycle) throws IOException, JsonParseException {
+	public Lifecycle createLifecycle(Lifecycle lifecycle) throws IOException, JsonParseException, Exception {
 	    return Lifecycles.createLifecycle(ip_address, lifecycle, token, rest_client);
     }
 
     @Deprecated // removed the need to have the ip in the call
-    public Storage createStorage(Storage storage, String ip_address) throws IOException, JsonParseException {
+    public Storage createStorage(Storage storage, String ip_address) throws IOException, JsonParseException, Exception {
         return createStorage(storage);
     }
 
-    public Storage createStorage(Storage storage) throws IOException, JsonParseException {
+    public Storage createStorage(Storage storage) throws IOException, JsonParseException, Exception {
         return StorageLocations.createStorage(storage, ip_address, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public User createUser(String ipaddress, String account_id, String username) throws IOException, JsonParseException {
+	public User createUser(String ipaddress, String account_id, String username) throws IOException, JsonParseException, Exception {
         return createUser(account_id, username);
     }
 
-	public User createUser(String account_id, String username) throws IOException, JsonParseException {
+	public User createUser(String account_id, String username) throws IOException, JsonParseException, Exception {
 	    return Users.createUser(ip_address, account_id, username, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public UserKey createUserKey(String ipaddress, String account, String user) throws IOException, JsonParseException {
+	public UserKey createUserKey(String ipaddress, String account, String user) throws IOException, JsonParseException, Exception {
         return createUserKey(account, user);
     }
 
-	public UserKey createUserKey(String account, String user) throws IOException, JsonParseException {
+	public UserKey createUserKey(String account, String user) throws IOException, JsonParseException, Exception {
 	    return UserKeys.createUserKey(ip_address, account, user, token, rest_client);
     }
 
@@ -270,141 +271,141 @@ public class VailConnector
     }
 
     @Deprecated // removing ip address requirement
-    public Bucket getBucket(String ipaddress, String bucket_name) throws IOException, JsonParseException {
+    public Bucket getBucket(String ipaddress, String bucket_name) throws IOException, JsonParseException, Exception {
         return getBucket(bucket_name);
     }
 
-    public Bucket getBucket(String bucket_name) throws IOException, JsonParseException {
+    public Bucket getBucket(String bucket_name) throws IOException, JsonParseException, Exception {
         return Buckets.getBucket(ip_address, bucket_name, token, rest_client);
     }
 
-    public Clone getClones(String bucket_name, String key, String version_id) throws IOException, JsonParseException {
+    public Clone getClones(String bucket_name, String key, String version_id) throws IOException, JsonParseException, Exception {
         return Clones.get(ip_address, bucket_name, key, version_id, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-    public Lifecycle getLifecycle(String ipaddress, String lifecycle_id) throws IOException, JsonParseException {
+    public Lifecycle getLifecycle(String ipaddress, String lifecycle_id) throws IOException, JsonParseException, Exception {
         return getLifecycle(lifecycle_id);
     }
 
-    public Lifecycle getLifecycle(String lifecycle_id) throws IOException, JsonParseException {
+    public Lifecycle getLifecycle(String lifecycle_id) throws IOException, JsonParseException, Exception {
         return Lifecycles.getLifecycle(ip_address, lifecycle_id, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-    public ArrayList<CapacitySummary> getCapacitySummary(String ipaddress) throws IOException, JsonParseException {
+    public ArrayList<CapacitySummary> getCapacitySummary(String ipaddress) throws IOException, JsonParseException, Exception {
         return getCapacitySummary();
     }
 
-    public ArrayList<CapacitySummary> getCapacitySummary() throws IOException, JsonParseException {
+    public ArrayList<CapacitySummary> getCapacitySummary() throws IOException, JsonParseException, Exception {
         return Capacity.getCapacitySummary(ip_address, token, rest_client);
     }
 
     @Deprecated // removing the ip_address from the function call
-	public Account[] listAccounts(String ipaddress) throws IOException, JsonParseException {
+	public Account[] listAccounts(String ipaddress) throws IOException, JsonParseException, Exception {
 	    return listAccounts();
     }
 
-    public Account[] listAccounts() throws IOException, JsonParseException {
+    public Account[] listAccounts() throws IOException, JsonParseException, Exception {
         return Accounts.list(ip_address, token, rest_client);
     }
 
     @Deprecated // removing the ip_address from the calls.
-	public Bucket[] listBuckets(String ipaddress) throws IOException, JsonParseException {
+	public Bucket[] listBuckets(String ipaddress) throws IOException, JsonParseException, Exception {
 	    return listBuckets();
     }
 
-    public Bucket[] listBuckets() throws IOException, JsonParseException {
+    public Bucket[] listBuckets() throws IOException, JsonParseException, Exception {
         return Buckets.list(ip_address, token, rest_client);
     }
 
     @Deprecated // removing ip_address from the calls.
-	public Endpoint[] listEndpoints(String ipaddress) throws IOException, JsonParseException {
+	public Endpoint[] listEndpoints(String ipaddress) throws IOException, JsonParseException, Exception {
         return listEndpoints(); // Keeping this function for backwards compatibility.
     }
 
-    public Endpoint[] listEndpoints() throws IOException, JsonParseException {
+    public Endpoint[] listEndpoints() throws IOException, JsonParseException, Exception {
 	    return Endpoints.list(ip_address, token, rest_client);
     }
 
-    public ArrayList<BpDataPolicy> listEndpointDataPolicies(String endpoint_id) throws IOException, JsonParseException {
+    public ArrayList<BpDataPolicy> listEndpointDataPolicies(String endpoint_id) throws IOException, JsonParseException, Exception {
         return Endpoints.listDataPolicies(ip_address, endpoint_id, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public GroupData listGroups(String ipaddress, String account) throws IOException, JsonParseException {
+	public GroupData listGroups(String ipaddress, String account) throws IOException, JsonParseException, Exception {
         return listGroups(account);
     }
 
-	public GroupData listGroups(String account) throws IOException, JsonParseException {
+	public GroupData listGroups(String account) throws IOException, JsonParseException, Exception {
 	    return Groups.list(ip_address, account, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public Lifecycle[] listLifecycles(String ipaddress) throws IOException, JsonParseException {
+	public Lifecycle[] listLifecycles(String ipaddress) throws IOException, JsonParseException, Exception {
 	    return listLifecycles();
     }
 
-	public Lifecycle[] listLifecycles() throws IOException, JsonParseException {
+	public Lifecycle[] listLifecycles() throws IOException, JsonParseException, Exception {
 	    return Lifecycles.list(ip_address, token, rest_client);
     }
 
-    public BucketObjects listObjectsInBucket(String bucket_id, String marker, Integer max_keys) throws IOException, JsonParseException {
+    public BucketObjects listObjectsInBucket(String bucket_id, String marker, Integer max_keys) throws IOException, JsonParseException, Exception {
         return Objects.list(ip_address, bucket_id, marker, max_keys, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public Storage[] listStorage(String ipaddress) throws IOException, JsonParseException {
+	public Storage[] listStorage(String ipaddress) throws IOException, JsonParseException, Exception {
 	    return listStorage();
     }
 
-	public Storage[] listStorage() throws IOException, JsonParseException {
+	public Storage[] listStorage() throws IOException, JsonParseException, Exception {
 	    return StorageLocations.list(ip_address, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public Group[] listUserGroups(String ipaddress, String account_id, String username) throws IOException, JsonParseException {
+	public Group[] listUserGroups(String ipaddress, String account_id, String username) throws IOException, JsonParseException, Exception {
 	    return listUserGroups(account_id, username);
     }
 
-	public Group[] listUserGroups(String account_id, String username) throws IOException, JsonParseException {
+	public Group[] listUserGroups(String account_id, String username) throws IOException, JsonParseException, Exception {
 	    return UserGroups.list(ip_address, account_id, username, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public UserData listUsers(String ipaddress, String account_id) throws IOException, JsonParseException {
+	public UserData listUsers(String ipaddress, String account_id) throws IOException, JsonParseException, Exception {
 	    return listUsers(account_id);
     }
 
-	public UserData listUsers(String account_id) throws IOException, JsonParseException {
+	public UserData listUsers(String account_id) throws IOException, JsonParseException, Exception {
 	    return Users.list(ip_address, account_id, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public UserKey[] listUserKeys(String ipaddress, String account, String user) throws IOException, JsonParseException {
+	public UserKey[] listUserKeys(String ipaddress, String account, String user) throws IOException, JsonParseException, Exception {
 	    return listUserKeys(account, user);
     }
 
-	public UserKey[] listUserKeys(String account, String user) throws IOException, JsonParseException {
+	public UserKey[] listUserKeys(String account, String user) throws IOException, JsonParseException, Exception {
 	    return UserKeys.list(ip_address, account, user, token, rest_client);
     }
 
     @Deprecated // removing ip address requirement
-	public boolean login(String ipaddress, String username, String password) throws IOException, JsonParseException {
+	public boolean login(String ipaddress, String username, String password) throws IOException, JsonParseException, Exception {
 	    return login(username, password);
     }
 
-	public boolean login(String username, String password) throws IOException, JsonParseException {
+	public boolean login(String username, String password) throws IOException, JsonParseException, Exception {
 	    this.token = "Bearer " + Tokens.login(ip_address, username, password, rest_client).getToken();
         return true;
     }
 
     @Deprecated // removing ip address requirement
-    public Bucket updateBucket(String ipaddress, Bucket body) throws IOException, JsonParseException {
+    public Bucket updateBucket(String ipaddress, Bucket body) throws IOException, JsonParseException, Exception {
 	    return updateBucket(body);
     }
     
-    public Bucket updateBucket(Bucket body) throws IOException, JsonParseException {
+    public Bucket updateBucket(Bucket body) throws IOException, JsonParseException, Exception {
 	    return Buckets.updateBucket(ip_address, body, token, rest_client);
     }
 }
