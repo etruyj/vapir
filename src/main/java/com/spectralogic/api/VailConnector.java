@@ -25,11 +25,13 @@ import com.spectralogic.vail.vapir.model.NodeActivationPacket;
 import com.spectralogic.vail.vapir.model.UserData;
 import com.spectralogic.vail.vapir.model.User;
 import com.spectralogic.vail.vapir.model.UserKey;
+import com.spectralogic.vail.vapir.model.VapirConfigModel;
 import com.spectralogic.vail.vapir.model.blackpearl.BpDataPolicy;
 import com.spectralogic.vail.vapir.model.blackpearl.BPUser;
 import com.spectralogic.vail.vapir.model.blackpearl.Ds3KeyPair;
 import com.spectralogic.vail.vapir.util.http.RestClient;
 
+import com.socialvagrancy.utils.http.OpenApiPathLoader;
 
 import com.google.gson.JsonParseException;
 
@@ -56,6 +58,30 @@ public class VailConnector
         this.ip_address = ip_address;
 		rest_client = new RestClient(ignore_ssl);
 	}
+
+    public VailConnector(String ip_address, boolean ignore_ssl, VapirConfigModel config) {
+        if(ignore_ssl) {
+            log.info("Initializing script with ingore_ssl = true");
+        } else {
+            log.info("Initializing script with ingore_ssl = false");
+        }
+
+        this.ip_address = ip_address;
+		rest_client = new RestClient(ignore_ssl);
+        
+        if(config.getApiPath() != null) {
+            log.info("Loading api paths from " + config.getApiPath());
+            OpenApiPathLoader.loadJson(config.getApiPath());
+        } else {
+            log.error("No API paths specified. Please specified API path location in the config file under the apiPath key.");
+        }
+
+        if(config.getApiMap() != null) {
+            URLs.load(config.getApiMap());
+        } else {
+            log.error("No API commands specified. Please map API commands in the config file under apiMap key.");
+        }
+    }
 
     //===========================================
     // Getters

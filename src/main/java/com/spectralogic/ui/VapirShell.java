@@ -15,7 +15,10 @@ import com.spectralogic.vail.vapir.model.Bucket;
 import com.spectralogic.vail.vapir.model.OutputFormat;
 import com.spectralogic.vail.vapir.model.Summary;
 import com.spectralogic.vail.vapir.model.User;
+import com.spectralogic.vail.vapir.model.VapirConfigModel;
 import com.spectralogic.vail.vapir.ui.display.Display;
+
+import com.socialvagrancy.utils.io.Configuration;
 
 import java.util.ArrayList;
 
@@ -23,10 +26,18 @@ public class VapirShell
 {
 	VailController controller;
 
-	public VapirShell(String ip_address, boolean ignore_ssl)
+	public VapirShell(String ip_address, boolean ignore_ssl, String configPath)
 	{
-		controller = new VailController(ip_address, ignore_ssl);
-	}
+        try {
+            Configuration.load(configPath, VapirConfigModel.class);
+            VapirConfigModel config = Configuration.get();
+
+		    controller = new VailController(ip_address, ignore_ssl, config);
+	    } catch(Exception e) {
+            System.err.println(e.getMessage());
+            System.err.println("Failed to initialize script.");
+        }
+    }
 
 	public void execute(String ip, String command, String option1, String option2, String option3, String option4, boolean boolean_flag, String outputFormat)
 	{
@@ -128,7 +139,8 @@ public class VapirShell
 
 		if(aparser.parseArgs(args))
 		{
-			VapirShell ui = new VapirShell(aparser.getIP(), aparser.isIgnoreSsl());
+            String configPath = "../vapir.yml";
+			VapirShell ui = new VapirShell(aparser.getIP(), aparser.isIgnoreSsl(), configPath);
 		
 			if(aparser.helpRequested())
 			{

@@ -83,6 +83,13 @@ public class Buckets {
     public static Bucket[] list(String ip_address, String token, RestClient rest_client) throws IOException, JsonParseException {
         Gson gson = new Gson();
 
+        // Debug
+        try {
+            URLs.getPath("test", ip_address);
+        } catch(Exception e) {
+            System.err.println(e.getMessage());
+        }
+            // END Debug
         String url = URLs.bucketsURL(ip_address);
 
         log.debug("API URL: GET " + url);

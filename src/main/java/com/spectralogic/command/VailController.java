@@ -20,6 +20,7 @@ import com.spectralogic.vail.vapir.model.Storage;
 import com.spectralogic.vail.vapir.model.Summary;
 import com.spectralogic.vail.vapir.model.User;
 import com.spectralogic.vail.vapir.model.UserSummary;
+import com.spectralogic.vail.vapir.model.VapirConfigModel;
 import com.spectralogic.vail.vapir.model.report.BucketDetails;
 
 import java.util.ArrayList;
@@ -30,8 +31,16 @@ public class VailController {
     private String user; // Stored for using with GetBucket.threaded to allow token refresh.
     private String password; // Stored for using with GetBucket.threaded to allow token refresh.
 
+    // Legacy Constructor. Won't work with new API calls
     public VailController(String ip_address, boolean ignore_ssl) {
         sphere = new VailConnector(ip_address, ignore_ssl);
+        this.ignore_ssl = ignore_ssl;
+    }
+
+    public VailController(String ip_address, boolean ignore_ssl, VapirConfigModel config) {
+        // Takes the config model from the calling function. This allows the flexibility
+        // to use this script with the evaporator (spectra_config) script.
+        sphere = new VailConnector(ip_address, ignore_ssl, config);
         this.ignore_ssl = ignore_ssl;
     }
 

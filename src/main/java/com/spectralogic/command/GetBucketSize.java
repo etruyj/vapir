@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 
 public class GetBucketSize {
     private static final Logger log = LoggerFactory.getLogger(GetBucketSize.class);
+    private static Thread loginThread;
+    private static Thread statusThread;
 
     public static BucketDetails threaded(String bucket, String thread_count, String batch_size, String username, String password, VailConnector sphere) {
         log.info("Calculating total size of the objects and clone placement for bucket [" + bucket + "]");
@@ -136,7 +138,7 @@ public class GetBucketSize {
         // Running status logging separately from the
         // other threads to allow it to occur on a 
         // more regularly basis.
-        Thread statusThread = new Thread(() -> {
+        statusThread = new Thread(() -> {
             while(keepRunning.get()) {
                 try {
                     Thread.sleep(3600000); // Sleep first as there's no need for an initial report. Report every 5 minutes.
@@ -156,7 +158,7 @@ public class GetBucketSize {
         // expires after 12 hours, and I haven't
         // successfully completed this script in
         // that window.
-        Thread loginThread = new Thread(() -> {
+        loginThread = new Thread(() -> {
             while(keepRunning.get()) {
                 try {
                     Thread.sleep(36000000); // Login ever 5 seconds for a test

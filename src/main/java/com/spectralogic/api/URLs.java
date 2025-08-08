@@ -1,7 +1,30 @@
 package com.spectralogic.vail.vapir.api;
 
-public class URLs
-{
+import com.socialvagrancy.utils.http.OpenApiPathLoader;
+
+import java.util.Map;
+
+public class URLs {
+    private static Map<String, String> apiMap; // map the desired calls to the current api paths.
+
+    public static void load(Map<String, String> commands) {
+        // Set the command map.
+        apiMap = commands;
+    }
+
+    //===========================================
+    // API Paths
+    //===========================================
+    public static String getPath(String command, String ipaddress) throws Exception {
+        if(apiMap.get(command) == null) {
+            throw new Exception("API Path [" + command + "] is not defined in the configuration file.");
+        }
+
+        String path = OpenApiPathLoader.get(ipaddress, apiMap.get(command));
+
+        return "https://" + path;
+    }
+
 	public static String accountsURL(String ipaddress)
 	{
 		return "https://" + ipaddress + "/sl/api/accounts";
