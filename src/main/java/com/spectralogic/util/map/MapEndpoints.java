@@ -11,7 +11,7 @@
 package com.spectralogic.vail.vapir.util.map;
 
 import com.spectralogic.vail.vapir.model.Endpoint;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 
 public class MapEndpoints
@@ -28,7 +28,7 @@ public class MapEndpoints
 		return endpoint_map;
 	}
 
-    public static HashMap<String, Endpoint> createIdObjectMap(ArrayList<Endpoint> endpoint_list) {
+    public static HashMap<String, Endpoint> createIdObjectMap(List<Endpoint> endpoint_list) {
 		HashMap<String, Endpoint> endpoint_map = new HashMap<String, Endpoint>();
 
 		for(Endpoint endpoint : endpoint_list) {
@@ -38,7 +38,7 @@ public class MapEndpoints
 		return endpoint_map;
     }
 
-    public static HashMap<String, Endpoint> createNameObjectMap(ArrayList<Endpoint> endpoint_list) {
+    public static HashMap<String, Endpoint> createNameObjectMap(List<Endpoint> endpoint_list) {
 		HashMap<String, Endpoint> endpoint_map = new HashMap<String, Endpoint>();
 
 		for(Endpoint endpoint : endpoint_list) {

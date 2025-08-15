@@ -24,6 +24,16 @@ public class FindEndpoint {
     public static Endpoint byIp(String ip, VailConnector sphere) {
         log.info("Searching for endpoint associated with endpoint " + ip);
 
+        // Ensure a domain name is converted to an IP address.
+        try {
+            String this_ip = AddressResolver.resolveDomainNameToIP(ip);
+            log.info("IP Address for " + ip + " is " + this_ip);
+            ip = this_ip;
+        } catch(Exception e) {
+            log.warn(e.getMessage());
+            log.warn("Failed to resolve IP address for " + ip);
+        }
+
         Endpoint this_endpoint = null;
         String ip_address = null;
 

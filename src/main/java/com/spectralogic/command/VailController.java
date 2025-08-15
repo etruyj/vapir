@@ -77,12 +77,12 @@ public class VailController {
         return ClearCache.clearIamPermissions(ip_address, sphere);
     }
 
-    public ArrayList<String> configureSphere(String ip_address, String file_name) {
+    public ArrayList<String> configureSphere(String ip_address, String file_name) throws Exception {
         ArrayList<String> report = ConfigureSphere.start(sphere, ip_address, file_name);
         return report;
     }
 
-    public ArrayList<String> configureSphereFromObject(SphereConfig config, String ip_address) {
+    public ArrayList<String> configureSphereFromObject(SphereConfig config, String ip_address) throws Exception {
         return ConfigureSphere.buildSphere(sphere, ip_address, config);
     }
 

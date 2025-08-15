@@ -391,8 +391,7 @@ storage_map.get(lifecycles.get(i).getRule(r).getDestinations().getStorage().get(
 		return success_count;	
 	}
 
-	public static ArrayList<String> buildSphere(VailConnector sphere, String ip_address, SphereConfig config)
-	{
+	public static ArrayList<String> buildSphere(VailConnector sphere, String ip_address, SphereConfig config) throws Exception 	{
         
 		int[] success = new int[5];
 		ArrayList<String> report = new ArrayList<String>();
@@ -529,8 +528,7 @@ storage_map.get(lifecycles.get(i).getRule(r).getDestinations().getStorage().get(
 		return null;
 	}
 */
-	public static ArrayList<String> start(VailConnector sphere, String ip_address, String filename)
-	{
+	public static ArrayList<String> start(VailConnector sphere, String ip_address, String filename) throws Exception {
 		ArrayList<String> report = new ArrayList<String>();
 
 		log.info("Starting configuration of Vail Sphere (" + ip_address + ")...");
