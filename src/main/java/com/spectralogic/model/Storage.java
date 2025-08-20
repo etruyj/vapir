@@ -49,9 +49,11 @@ public class Storage {
     private String arn;
     private String podId;
     private String target;
+    private String units;
     private String item;
     private boolean cloneRestore;
     private boolean recoverable;
+
 
     public Storage() {} // empty constructor to allow for copy constructor.
     
@@ -76,6 +78,7 @@ public class Storage {
         this.podId = location.getPodId();
         this.target = location.getTarget();
         this.item = location.getItem();
+        this.units = location.getUnits();
         this.cloneRestore = location.isCloneRestore();
         this.recoverable = location.isRecoverable();
     }
@@ -103,6 +106,7 @@ public class Storage {
     public boolean isForceDelete() { return forceDelete; }
     public String getTarget() { return target; }
     public String getItem() { return item; }
+    public String getUnits() { return units; }
     public boolean isCloneRestore() { return cloneRestore; }
     public boolean isRecoverable() { return recoverable; }
 
@@ -129,6 +133,7 @@ public class Storage {
     public void setWarningThreshold(Integer warningThreshold) { this.warningThreshold = warningThreshold; }
     public void setTarget(String target) { this.target = target; }
     public void setItem(String item) { this.item = item; }
+    public void setUnits(String units) { this.units = units; }
     public void setCloneRestore(boolean cloneRestore) { this.cloneRestore = cloneRestore; }
     public void setRecoverable(boolean recoverable) { this.recoverable = recoverable; }
 }

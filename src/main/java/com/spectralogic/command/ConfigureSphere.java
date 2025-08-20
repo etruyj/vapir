@@ -144,7 +144,8 @@ public class ConfigureSphere
                 // Find account Canonical ID
 			    if(account_map.get(buckets.get(i).getOwner()) != null)
 			    {
-				    buckets.get(i).setOwner(account_map.get(buckets.get(i).getOwner()));
+				    log.info("Setting bucket owner [" + buckets.get(i).getOwner() + "] to " + account_map.get(buckets.get(i).getOwner()));
+                    buckets.get(i).setOwner(account_map.get(buckets.get(i).getOwner()));
 			        account_found = true;
                 }
 			    else

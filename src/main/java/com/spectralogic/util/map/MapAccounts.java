@@ -76,22 +76,18 @@ public class MapAccounts
 		return account_map;
 	}
 	
-	public static HashMap<String, String> createNameCanonicalIDMap(Account[] accounts)
-	{
+	public static HashMap<String, String> createNameCanonicalIDMap(Account[] accounts) {
 		HashMap<String, String> account_map = new HashMap<String, String>();
 
-		for(int i=0; i < accounts.length; i++)
-		{
+		for(int i=0; i < accounts.length; i++) {
 			account_map.put(accounts[i].getUsername(), accounts[i].getCanonicalId());
 			
-			// Check for Sphere account
-			// add account without ARN to name map as sphere as well.
-			if(accounts[i].getRoleArn() == null || accounts[i].getRoleArn() == "")
-			{
-				account_map.put("sphere", accounts[i].getCanonicalId());
-				account_map.put("spectra", accounts[i].getCanonicalId());
-			}
-
+            // If the username for the account is "spectra" i.e. the primary local account,
+            // also apply this account as the "sphere" account, which is an old configuration
+            // parameter. Not really necessary, but preserved for backwards compatibility.
+            if(accounts[i].getUsername().equals("spectra")) {
+                account_map.put("sphere", accounts[i].getCanonicalId());
+            }
 		}
 
 		return account_map;	
