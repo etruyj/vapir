@@ -70,38 +70,44 @@ public class ListGroups
 
             Account[] accounts = sphere.listAccounts();
             log.info("Found (" + accounts.length + ") AWS accounts associated with Vail sphere.");
-		
-		    if(account.equalsIgnoreCase("sphere"))
-		    {
-			    boolean searching = true;
-			    int itr = 0;
+	
+            // === Find Account Id ===
+            // Parse the account list to determine the account
+            // ID to provide to the API.
+            // First convert "sphere" the old account name to spectra
+		    if(account.equalsIgnoreCase("sphere")) {
+                account = "spectra";
+            }
 
-			    // Find the account id
-			    while(searching)
-			    {
-				    if(accounts[itr].getRoleArn() == "")
-				    {
-			    		account = accounts[itr].getId();
+            // Search as long as none or all are not specified.
+            if(!(account.equals("none") || account.equals("all"))) {
+                boolean searching = true;
+                int itr = 0;
+                String account_id = null;
+
+			    while(searching) {
+                    // Search for username or if the ID matches.
+				    if(accounts[itr].getUsername().equalsIgnoreCase(account) || accounts[itr].getId().equals(account)) {
+                        log.info("Account [" + account + "] has id " + accounts[itr].getId());
+			    		account_id = accounts[itr].getId();
 			    		searching = false;
 			    	}
 
 			    	itr++;
 
-			    	if(itr >= accounts.length)
-			    	{
-				    	searching = false;
+			    	if(searching && itr >= accounts.length) {
+				    	// Account not found
+                        // break the loop with a failure
+                        throw new Exception("Failed to find account [" + account + "].");
 				    }   
 			    }
-		    }   
-
-		    if(account.equals("none") || account.equals("all"))
-		    {
+			    
+                // search for groups associated with the specified account
+                group_list = listAccountGroups(sphere, account_id, account);
+		    } else {  
+                // none or all was specified.
+                // search for all groups.
 			    group_list = listAllGroups(sphere, accounts);
-		
-		    }
-		    else
-		    {
-			    group_list = listAccountGroups(sphere, accounts, account);
 		    }
         } catch(Exception e) {
             System.err.println(e.getMessage());
@@ -128,58 +134,16 @@ public class ListGroups
 		
 	}
 
-	private static ArrayList<Summary> listAccountGroups(VailConnector sphere, Account[] accounts, String account) throws Exception {
-        log.info("Searching for groups that belong to account " + account);
+	private static ArrayList<Summary> listAccountGroups(VailConnector sphere, String account_id, String account) throws Exception {
+        log.info("Searching for groups that belong to account " + account + "[" + account_id + "]");
         ArrayList<Summary> group_list = new ArrayList<Summary>();
 		GroupData groups;
 		boolean searching = true;
 
-		HashMap<String, String> account_id_map = MapAccounts.createNameIDMap(accounts);
-		HashMap<String, Account> account_map = MapAccounts.createIDAccountMap(accounts);
-		HashMap<String, String> account_canon_map = MapAccounts.createCanonicalIDMap(accounts);
-
-		// Filter out account == sphere which is valid input
-		if(account.equalsIgnoreCase("sphere"))
-		{
-			account = "";
-		}	
-
-		if(searching && account_id_map.get(account) == null)
-		{
-			throw new Exception("Account name [" + account + "] was not found in account list");
-		}
-		else if(searching)
-		{
-			account = account_id_map.get(account);
-			searching = false;
-		}
-
-		if(searching && account_canon_map.get(account) == null)
-		{
-			throw new Exception("Account canonical ID [" + account + "] was not found in account list"); 
-		}
-		else if(searching)
-		{
-			account = account_canon_map.get(account);
-			searching = false;
-		}
-
-		if(searching && account_map.get(account) == null)
-		{
-			throw new Exception("Invalid account [" + account + "] specified in parameters.");
-		}
-	
-		// Else
-		// 	The account name specified exists in one of the maps.
-		//	We can find the users.
-
 		groups = sphere.listGroups(account);
 
-
-
-		for(int i=0; i < groups.count(); i++)
-		{
-			group_list.add(buildGroupSummary(groups.name(i), groups.accountID(i), account_map.get(account).getUsername()));
+		for(int i=0; i < groups.count(); i++) {
+			group_list.add(buildGroupSummary(groups.name(i), account_id, account));
 		}
 
 		return group_list;
