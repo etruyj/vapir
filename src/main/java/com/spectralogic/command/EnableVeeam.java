@@ -73,8 +73,8 @@ public class EnableVeeam {
         boolean ignore_ssl = true;
         Bucket bucket = null;
 
-
         try {
+            log.info("Verifying bucket (" + bucket_name + ") exists.");
             bucket = sphere.getBucket(bucket_name);
         } catch(Exception e) {
             log.error(e.getMessage());

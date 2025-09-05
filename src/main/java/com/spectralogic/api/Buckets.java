@@ -74,7 +74,7 @@ public class Buckets {
         Gson gson = new Gson();
 
         String url = URLs.getPath("bucketDetails", ip_address)
-                        .replace("{{name}}", bucket_name);
+                        .replace("{name}", bucket_name);
 
         log.debug("API URL: GET " + url);
 
@@ -108,7 +108,7 @@ public class Buckets {
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         String url = URLs.getPath("bucketUpdate", ip_address)
-                        .replace("{{name}}", bucket.getName());
+                        .replace("{name}", bucket.getName());
 
         String payload = gson.toJson(bucket);
 
