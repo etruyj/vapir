@@ -13,6 +13,7 @@ package com.spectralogic.vail.vapir.util.map;
 import com.spectralogic.vail.vapir.model.Storage;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MapStorage
 {
@@ -46,6 +47,18 @@ public class MapStorage
 		for(int i=0; i < locations.length; i++)
 		{
 			name_id_map.put(locations[i].getName(), locations[i].getId());
+		}
+
+		return name_id_map;
+	}
+
+	public static HashMap<String, String> createNameIdMap(List<Storage> locations)
+	{
+		HashMap<String, String> name_id_map = new HashMap<String, String>();
+
+		for(Storage location : locations)
+		{
+			name_id_map.put(location.getName(), location.getId());
 		}
 
 		return name_id_map;

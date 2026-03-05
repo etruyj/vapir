@@ -30,7 +30,8 @@ public class GetBucketObjects {
         BucketObjects results = new BucketObjects();
 
         //==== QUICK FILTER ARGPARSER DEFAULTS ====
-        if(max_keys.equals("none")) {
+        if(max_keys == null) {
+            log.debug("max-keys argument is unset. Setting value as 0.");
             max_keys = "0";
         }
 

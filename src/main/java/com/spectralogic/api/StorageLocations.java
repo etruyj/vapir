@@ -9,12 +9,15 @@
 package com.spectralogic.vail.vapir.api;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 
 import com.spectralogic.vail.vapir.model.Storage;
 import com.spectralogic.vail.vapir.util.http.RestClient;
+import com.spectralogic.vail.vapir.util.json.StorageArrayAdapter;
 
-import java.io.IOException; 
+import java.io.IOException;
+import java.util.List; 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +70,10 @@ public class StorageLocations {
         return convertResponseToStorage(response);
     }
 
-    public static Storage[] list(String ip_address, String token, RestClient rest_client) throws IOException, JsonParseException {
-        Gson gson = new Gson();
+    public static List<Storage> list(String ip_address, String token, RestClient rest_client) throws IOException, JsonParseException {
+        Gson gson = new GsonBuilder()
+            .registerTypeAdapter(List.class, new StorageArrayAdapter())
+            .create();
 
         String url = URLs.storageURL(ip_address);
 
@@ -76,7 +81,7 @@ public class StorageLocations {
 
         log.debug("API Response: " + response);
 
-        return gson.fromJson(response, Storage[].class);
+        return gson.fromJson(response, List.class);
     }
 
     //===========================================

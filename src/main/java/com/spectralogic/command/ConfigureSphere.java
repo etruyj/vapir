@@ -433,7 +433,7 @@ storage_map.get(lifecycles.get(i).getRule(r).getDestinations().getStorage().get(
 
 		// Add storage
 		success[2] = addStorage(sphere, ip_address, config.getStorage());
-		Storage[] locations = new Storage[0];
+		List<Storage> locations = new ArrayList<>();
         try {
             locations = sphere.listStorage(ip_address);
         } catch(Exception e) {

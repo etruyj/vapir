@@ -19,8 +19,9 @@ import com.spectralogic.vail.vapir.model.VapirConfigModel;
 import com.spectralogic.vail.vapir.ui.display.Display;
 
 import com.socialvagrancy.utils.io.Configuration;
+import com.socialvagrancy.utils.ui.ArgParser;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class VapirShell
 {
@@ -39,54 +40,66 @@ public class VapirShell
         }
     }
 
-	public void execute(String ip, String command, String option1, String option2, String option3, String option4, boolean boolean_flag, String outputFormat)
+	public void execute(ArgParser aparser) throws Exception
 	{
-		ArrayList response;
-        
+		List response;
+        // Parse the inputs for an output-format. if not present, go with the default (table)
+        String outputFormat = aparser.get("output-format") != null ? aparser.get("output-format") : "table";
+
         try {
-		    switch(command)
+		    switch(aparser.getRequired("command"))
 		    {
                 case "activate":
-                    Display.print(controller.activateNode(option1, option2));
+//                    Display.print(controller.activateNode(option1, option2));
                     break;
                 case "capacity-summary":
                     System.err.println("Doesn't work.");
 //                  controller.getCapacitySummary(ip);
                     break;
 			    case "clear-cache":
-				    controller.clearCache(ip);
+				    controller.clearCache(aparser.getRequired("endpoint"));
 				    break;
 			    case "configure":
 			    case "configure-sphere":
-				    Display.print(controller.configureSphere(ip, option4));
+				    Display.print(controller.configureSphere(aparser.getRequired("endpoint"), aparser.getRequired("file")));
 				    break;
 			    case "create-bucket":
-				    Display.output(controller.createBucket(ip, option2, option1), outputFormat);
+				    Display.output(controller.createBucket(aparser.getRequired("endpoint"),
+                                aparser.getRequired("bucket"), 
+                                aparser.getRequired("account")), 
+                            outputFormat);
 				    break;
 			    case "create-group":
-				    Display.print(controller.createGroup(ip, option2, option1));
+				    Display.print(controller.createGroup(aparser.getRequired("endpoint"), 
+                                aparser.getRequired("group"), 
+                                aparser.getRequired("account")));
 				    break;
 			    case "create-user":
-				    Display.print(controller.createUser(ip, option1, option3));
+				    Display.print(controller.createUser(aparser.getRequired("endpoint"), 
+                                aparser.getRequired("account"), 
+                                aparser.getRequired("user")));
 				    break;
                 case "enable-veeam":
-                    Display.print(controller.enableVeeam(option2));
+                    Display.print(controller.enableVeeam(aparser.getRequired("bucket")));
                     break;
                 case "fetch-config":
                     System.out.println("Code coming soon.");
 //				    Display.output(controller.fetchConfiguration(ip), outputFormat, option4);
 				    break;
-                case "get-bucket":
+/*                case "get-bucket":
                     Display.output(controller.getBucket(option2, option3, option4), outputFormat);
                     break;
-                case "help":
+*/                case "help":
 				    Display.printHelp("../lib/help/options.txt");
 				    break;
 			    case "list-accounts":
-				    Display.output(controller.listAccounts(ip), outputFormat);
+				    Display.output(controller.listAccounts(aparser.getRequired("endpoint")), 
+                            outputFormat);
 				    break;
-			    case "list-buckets":
-                    Display.output(controller.listBuckets(ip, option1), outputFormat);
+                case "list-buckets":
+                    Display.output(controller.listBuckets(aparser.getRequired("endpoint"), 
+                                aparser.getRequired("account")),
+                                aparser.get("output-format"));
                     /* Cleaning up this code. 
                     Not sure what was supposed to happen here. Will remove and
                     revisit later.
@@ -100,20 +113,21 @@ public class VapirShell
 				    }
                     */
 				    break;
-			    case "list-groups":
-				    Display.output(controller.listGroups(option1), outputFormat);
+                case "list-groups":
+				    Display.output(controller.listGroups(aparser.getRequired("account")), outputFormat);
 				    break;
                 case "list-endpoints":
                     Display.output(controller.listEndpointsAll(), outputFormat);
                     break;
                 case "list-objects":
-                    Display.output(controller.listObjectsInBucket(option2, option3), outputFormat);
+                    Display.output(controller.listObjectsInBucket(aparser.getRequired("endpoint"), aparser.get("max-keys")), outputFormat);
                     break; 
                 case "list-storage":
-				    Display.output(controller.listStorage(ip), outputFormat);
+				    Display.output(controller.listStorage(aparser.getRequired("endpoint")), 
+                            outputFormat);
 				    break;
 			    case "list-users":
-				    response = controller.listUsers(ip, option1, boolean_flag);
+				    response = controller.listUsers(aparser.getRequired("endpoint"), aparser.getRequired("account"), aparser.getBoolean("active-only"));
 				    Display.output(response, outputFormat);
 				    break;
 			    case "update-owner":
@@ -121,10 +135,14 @@ public class VapirShell
 //				    controller.updateOwner(ip, option2, option1);
 				    break;
                 case "search-users":
-                    Display.output(controller.searchUsers(ip, option1, option4, boolean_flag), outputFormat);
+                    Display.output(controller.searchUsers(aparser.getRequired("endpoint"), 
+                                aparser.getRequired("account"), 
+                                aparser.getRequired("activation-key"), 
+                                aparser.getBoolean("active-only")), 
+                            outputFormat);
                     break;
                 case "default":
-				    Display.print("Invalid command [" + command + "] selected. Please used -c help for a list of valid commands.");
+				    Display.print("Invalid command [" + aparser.getRequired("command") + "] selected. Please used -c help for a list of valid commands.");
 				    break;
 		    }
         } catch(Exception e) {
@@ -140,46 +158,45 @@ public class VapirShell
 	public static void main(String[] args)
 	{
 		ArgParser aparser = new ArgParser();
+        aparser.parse(args);
 
-		if(aparser.parseArgs(args))
-		{
+		try {
             String configPath = "../vapir.yml";
-			VapirShell ui = new VapirShell(aparser.getIP(), aparser.isIgnoreSsl(), configPath);
+			VapirShell ui = new VapirShell(aparser.getRequired("endpoint"), aparser.getBoolean("ignore-ssl"), configPath);
 		
 			if(aparser.helpRequested())
 			{
 				Display.printHelp("../lib/help/options.txt");
 			}
-            else if(aparser.isVersionRequested()) {
+            else if(aparser.getBoolean("version")) {
                 Display.printHelp("../lib/help/version.txt");
             }
-			else if(aparser.getCommand().substring(0, 4).equals("help"))
+			else if(aparser.getRequired("command").substring(0, 4).equals("help"))
 			{
-				ui.execute("",  aparser.getCommand(), "", "", "", "", false, "");
+				ui.execute(aparser);
 			}
-            else if(aparser.getCommand().equals("activate")) {
+            else if(aparser.getRequired("command").equals("activate")) {
                 // Special exception here as there are no required credentials
                 // to activate a Vail sphere (at this moment
-                ui.execute("", aparser.getCommand(),
+/*                ui.execute("", aparser.getCommand(),
                         aparser.getOption1(),
                         aparser.getOption2(),
                         aparser.getOption3(),
                         aparser.getOption4(),
                         aparser.getBooleanFlag(),
                         aparser.getOutputFormat());
+*/
             }
-			else if(ui.login(aparser.getIP(), aparser.getUsername(), aparser.getPassword()))
+			else if(ui.login(aparser.getRequired("endpoint"), aparser.getRequired("username"), aparser.getRequired("password")))
 			{
-				ui.execute(aparser.getIP(), aparser.getCommand(), aparser.getOption1(), aparser.getOption2(), aparser.getOption3(), aparser.getOption4(), aparser.getBooleanFlag(), aparser.getOutputFormat());
+				ui.execute(aparser);
 			}
 			else
 			{
 				Display.print("Unable to login with specified credentials.");
 			}
-		}
-		else
-		{
-			Display.print("Invalid input entered. Please use --help to see a list of valid commands.");
-		}
+		} catch(Exception e) {
+		    System.err.println(e.getMessage());
+        }
 	}
 }

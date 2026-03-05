@@ -48,6 +48,7 @@ import com.spectralogic.vail.vapir.util.map.MapStorage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -200,7 +201,7 @@ public class EnableVeeam {
         ArrayList<Storage> storage_list = new ArrayList<Storage>();
 
         try {
-            Storage[] storage = sphere.listStorage();
+            List<Storage> storage = sphere.listStorage();
 
             for(Storage location : storage) {
                 /*

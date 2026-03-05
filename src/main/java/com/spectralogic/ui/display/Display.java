@@ -21,24 +21,31 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Display
 {
 	public static void output(Account[] accounts, String output_format)
 	{
-		ArrayList<OutputFormat> output = Serializer.convert(accounts);
+        output_format = output_format != null ? output_format : "table";
+
+        ArrayList<OutputFormat> output = Serializer.convert(accounts);
 
 		print(output, output_format);
 	}
 
 	public static void output(Bucket[] buckets, String output_format)
 	{
+        output_format = output_format != null ? output_format : "table";
+
 		ArrayList<OutputFormat> output = Serializer.convert(buckets);
 
 		print(output, output_format);
 	}
 
 	public static void output(BucketDetails report, String output_format) {
+        output_format = output_format != null ? output_format : "table";
+
         ArrayList<OutputFormat> output = Serializer.convert(report);
 
         print(output, output_format);
@@ -46,6 +53,8 @@ public class Display
     
     public static void output(String result, String output_format)
 	{
+        output_format = output_format != null ? output_format : "table";
+
 		switch(output_format)
 		{
 			// Classes without need for special formatting.
@@ -64,13 +73,27 @@ public class Display
 
 	public static void output(Storage[] storage, String output_format)
 	{
+        output_format = output_format != null ? output_format : "table";
+
 		ArrayList<OutputFormat> output = Serializer.convert(storage);
+
+		print(output, output_format);
+	}
+
+	public static void output(List<Storage> storage, String output_format)
+	{
+        output_format = output_format != null ? output_format : "table";
+
+		ArrayList<Storage> storageList = new ArrayList<>(storage);
+		ArrayList<OutputFormat> output = Serializer.convert(storageList);
 
 		print(output, output_format);
 	}
 
 	public static void output(ArrayList summary, String output_format)
 	{
+        output_format = output_format != null ? output_format : "table";
+
 		ArrayList<OutputFormat> output = Serializer.convert(summary);
 
 		print(output, output_format);
@@ -78,6 +101,8 @@ public class Display
 
     public static void output(SphereConfig config, String output_format, String file_path)
 	{
+        output_format = output_format != null ? output_format : "table";
+
 		switch(output_format)
 		{
 			default:
@@ -99,6 +124,8 @@ public class Display
 
 	public static void output(User[] users, String output_format)
 	{
+        output_format = output_format != null ? output_format : "table";
+
 		ArrayList<OutputFormat> output = Serializer.convert(users);
 
 		print(output, output_format);
@@ -126,6 +153,8 @@ public class Display
 
 	private static void print(ArrayList<OutputFormat> output, String output_format)
 	{
+        output_format = output_format != null ? output_format : "table";
+
 		switch(output_format)
 		{
 			case "debug":

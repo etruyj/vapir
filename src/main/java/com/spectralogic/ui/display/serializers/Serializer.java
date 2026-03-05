@@ -21,6 +21,7 @@ import com.spectralogic.vail.vapir.model.User;
 import com.spectralogic.vail.vapir.model.report.BucketDetails;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Serializer
 {
@@ -264,7 +265,7 @@ public class Serializer
 		return output;
 	}
 
-	public static ArrayList<OutputFormat> convert(ArrayList list)
+	public static ArrayList<OutputFormat> convert(List list)
 	{
 		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
 		
@@ -278,6 +279,8 @@ public class Serializer
                 output = SerializeObject.forOutput(list);
             } else if(list.get(0) instanceof UserSummary) {
 				output = SerializeUserSummary.forOutput(list);
+            } else if(list.get(0) instanceof Storage) {
+                output = SerializeStorage.forOutput(list);
 			} else if(list.get(0) instanceof Summary) {
 				output = SerializeSummary.forOutput(list);
 			}

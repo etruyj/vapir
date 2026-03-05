@@ -37,6 +37,7 @@ import com.google.gson.JsonParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -355,11 +356,11 @@ public class VailConnector
     }
 
     @Deprecated // removing ip address requirement
-	public Storage[] listStorage(String ipaddress) throws IOException, JsonParseException, Exception {
+	public List<Storage> listStorage(String ipaddress) throws IOException, JsonParseException, Exception {
 	    return listStorage();
     }
 
-	public Storage[] listStorage() throws IOException, JsonParseException, Exception {
+	public List<Storage> listStorage() throws IOException, JsonParseException, Exception {
 	    return StorageLocations.list(ip_address, token, rest_client);
     }
 

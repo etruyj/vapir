@@ -11,10 +11,11 @@ import com.spectralogic.vail.vapir.model.Object;
 import com.spectralogic.vail.vapir.model.OutputFormat;
 import com.socialvagrancy.utils.storage.UnitConverter;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SerializeObject
 {
-	public static ArrayList<OutputFormat> forOutput(ArrayList<Object> list)
+	public static ArrayList<OutputFormat> forOutput(List<Object> list)
 	{
 		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
 		OutputFormat line; 

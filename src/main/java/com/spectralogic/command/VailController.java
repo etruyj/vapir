@@ -24,6 +24,7 @@ import com.spectralogic.vail.vapir.model.VapirConfigModel;
 import com.spectralogic.vail.vapir.model.report.BucketDetails;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class VailController {
     private VailConnector sphere;
@@ -169,7 +170,7 @@ public class VailController {
         return GetBucketObjects.all(bucket, max_keys, sphere);
     }
 
-    public Storage[] listStorage(String ip_address) {
+    public List<Storage> listStorage(String ip_address) {
         return ListStorage.all(ip_address, sphere);
     }
 

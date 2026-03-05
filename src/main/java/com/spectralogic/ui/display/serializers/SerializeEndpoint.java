@@ -10,10 +10,11 @@ package com.spectralogic.vail.vapir.ui.display.serializers;
 import com.spectralogic.vail.vapir.model.Endpoint;
 import com.spectralogic.vail.vapir.model.OutputFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SerializeEndpoint
 {
-	public static ArrayList<OutputFormat> forOutput(ArrayList<Endpoint> list)
+	public static ArrayList<OutputFormat> forOutput(List<Endpoint> list)
 	{
 		ArrayList<OutputFormat> output = new ArrayList<OutputFormat>();
 		OutputFormat line; 
